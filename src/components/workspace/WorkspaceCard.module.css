@@ -1,0 +1,13 @@
+.card {
+  min-width: 0;
+}
+
+.name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

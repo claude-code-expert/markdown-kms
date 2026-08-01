@@ -19,6 +19,10 @@ export default defineConfig({
     watch: false,
     environment: "node",
     passWithNoTests: true,
+    // e2e/*.spec.ts are Playwright specs (test.describe/test from @playwright/test), not
+    // Vitest tests — Vitest's default include glob matches them by extension alone and
+    // fails trying to run Playwright's test() outside a Playwright runner.
+    exclude: ["**/node_modules/**", "**/dist/**", "e2e/**"],
     globalSetup: ["./tests/global-setup.ts"],
     // Route handlers under test import `@/db`, which reads DATABASE_URL — point that at the
     // test DB for the test run so signup's real transaction hits DATABASE_URL_TEST, not dev data.

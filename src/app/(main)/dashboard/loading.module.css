@@ -1,0 +1,24 @@
+.page {
+  padding: var(--space-xl);
+}
+
+.titleSkeleton {
+  width: 160px;
+  height: 20px;
+  margin: 0 0 var(--space-lg);
+  border-radius: 4px;
+  background: var(--surface-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.cardSkeleton {
+  height: 52px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
