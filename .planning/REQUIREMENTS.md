@@ -10,9 +10,9 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 
 ### Authentication (AUTH)
 
-- [ ] **AUTH-01** (P0, FR-A1): 사용자는 이메일+비밀번호로 가입하고 즉시 로그인된다
-- [ ] **AUTH-02** (P0, FR-A1): 로그인 세션이 브라우저 새로고침 후에도 유지된다
-- [ ] **AUTH-03** (P0, FR-A3): 가입 완료 시 기본 워크스페이스에 EDITOR로 자동 소속되고 사이드바에 표시된다
+- [x] **AUTH-01** (P0, FR-A1): 사용자는 이메일+비밀번호로 가입하고 즉시 로그인된다
+- [x] **AUTH-02** (P0, FR-A1): 로그인 세션이 브라우저 새로고침 후에도 유지된다
+- [x] **AUTH-03** (P0, FR-A3): 가입 완료 시 기본 워크스페이스에 EDITOR로 자동 소속되고 사이드바에 표시된다
 - [ ] **AUTH-04** (P2, FR-A2): 사용자는 Google 계정으로 로그인할 수 있다 (provider 추가만으로 동작해야 함)
 
 ### Editor (EDIT)
@@ -81,9 +81,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
 | WS-01 | Phase 1 | Pending |
 | WS-02 | Phase 1 | Pending |
 | EDIT-01 | Phase 2 | Pending |
@@ -115,6 +115,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-04 | Phase 8 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 32 total
 - Mapped to phases: 32
 - Unmapped: 0
