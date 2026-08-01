@@ -1,7 +1,7 @@
 ---
 phase: 1
 slug: auth-workspace-foundation
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-01
@@ -43,13 +43,11 @@ Declared values (must be multiples of 4):
 | 2xl | 48px | 로그인/가입 페이지 상단 여백 |
 | 3xl | 64px | 페이지 레벨 여백 (사용 시) |
 
-**Exceptions (ui-kit.html 컴포넌트 내부 값 — 이식 원본 그대로, 재반올림하지 않음):**
-- 버튼 세로 패딩 `8px`(btn), 폼 제출 버튼 `9px 14px`(form-submit) — ui-kit 원본 그대로 이식
-- 모달 액션 버튼 `7px 14px`(modal-btn), 확인 다이얼로그 버튼 `7px 14px`(cf-btn)
-- 카드 브랜드 헤더 `20px 20px 14px`(kit-brand) — Phase 1 대시보드 헤더에 미적용(참고용)
-- 입력 필드 패딩 `8px 12px`(form-input, input-field) — 4의 배수 준수, 예외 아님
+Exceptions: 없음 — 위 스케일은 전부 4의 배수이며, 이 phase에서 새로 배치하는 모든 페이지 레벨 레이아웃(카드 그리드, 페이지 패딩, 섹션 간격)은 예외 없이 이 스케일만 따른다.
 
-이 예외들은 `docs/ui-kit.html`의 기존 컴포넌트 CSS를 문자 그대로 이식한 값이다. 새로 만드는 페이지 레벨 레이아웃(카드 그리드, 페이지 패딩)은 위 8-point 스케일을 따른다.
+**출처 및 결정 — 이식된 인프라(spacing 계약 대상 아님):** 버튼류 내부 패딩은 `docs/ui-kit.html` 원본을 문자 그대로 이식하며, 컴포넌트 내부 CSS이지 이 phase가 새로 설계하는 레이아웃 spacing이 아니므로 위 8-point 계약의 적용/검증 대상이 아니다.
+- 버튼 세로 패딩: `btn` 8px, `form-submit` 9px 14px, `modal-btn`/`cf-btn` 7px 14px, `kit-brand` 20px 20px 14px(Phase 1 미적용, 참고용) — 전부 `docs/ui-kit.html` 원본 값 그대로, 재반올림하지 않는다.
+- 입력 필드 패딩 `8px 12px`(form-input, input-field)은 참고로 이미 4의 배수라 이 예외 취급이 불필요하다.
 
 ---
 
@@ -91,6 +89,18 @@ Declared values (must be multiples of 4):
 
 ---
 
+## Visual Hierarchy
+
+각 화면의 포컬 포인트와 시선 흐름 — executor가 임의로 배치를 추측하지 않도록 명시.
+
+| Screen | Focal Point | Reading Order |
+|--------|-------------|----------------|
+| 로그인 | 화면 중앙의 로그인 카드(auth card) — 나머지 배경은 `--bg` 단색으로 시선을 카드에 집중시킨다 | 타이틀("로그인") → 이메일 인풋 → 비밀번호 인풋 → primary CTA("로그인") → 가입 페이지 링크 |
+| 가입 | 화면 중앙의 가입 카드(auth card), 로그인과 동일한 위치·폭으로 배치해 두 화면 전환 시 레이아웃이 흔들리지 않게 한다 | 타이틀("가입하기") → 이름 인풋 → 이메일 인풋 → 비밀번호 인풋 → primary CTA("가입하기") → 로그인 페이지 링크 |
+| 카드 대시보드 | 워크스페이스 카드 그리드 — 사용자가 로그인 직후 가장 먼저 확인해야 할 정보(소속 워크스페이스 목록)이므로 페이지 상단에서 가장 넓은 면적을 차지한다. "워크스페이스 만들기" CTA는 그리드 우측 상단의 보조 액션으로, accent 색으로 강조하되 그리드보다 작은 면적을 차지해 카드 목록의 시각적 우위를 넘보지 않는다 | 페이지 타이틀("내 워크스페이스") → 워크스페이스 만들기 CTA(같은 행, 우측 정렬) → 카드 그리드(위→아래, 좌→우) |
+
+---
+
 ## Copywriting Contract
 
 | Element | Copy |
@@ -107,7 +117,10 @@ Declared values (must be multiples of 4):
 | 에러 — 네트워크/서버 오류 (공통) | "일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요." |
 | 에러 — 권한 부족 (403, WS-01) | "이 작업을 수행할 권한이 없습니다." |
 | 워크스페이스 생성 실패 | "워크스페이스를 만들지 못했어요. 잠시 후 다시 시도해 주세요." |
+| 에러 — 워크스페이스 목록 로드 실패 (대시보드) | `error.tsx` 바운더리에 "워크스페이스 목록을 불러오지 못했어요." + "다시 시도" 버튼(`reset()` 호출) |
 | 워크스페이스 삭제 확인 (destructive, D-15 GitHub식 이름 재입력) | 제목: "워크스페이스를 삭제할까요?" / 본문: "'{워크스페이스 이름}'과(와) 그 안의 모든 문서·폴더가 영구적으로 사라지며 되돌릴 수 없습니다. 계속하려면 워크스페이스 이름을 정확히 입력하세요." / 입력값이 이름과 일치할 때까지 확인 버튼("삭제") disabled |
+| 워크스페이스 삭제 처리 중 (로딩) | 확인 버튼 라벨이 "삭제" → "삭제하는 중…"으로 전환, disabled |
+| 에러 — 워크스페이스 삭제 실패 | 다이얼로그 내 인라인 destructive 문구 "삭제하지 못했어요. 다시 시도해 주세요." — 다이얼로그는 닫지 않는다 |
 | 워크스페이스 삭제 성공 | 목록에서 즉시 제거 (별도 토스트 카피는 이 phase 범위 밖 — 필요 시 planner가 ui-kit Toast(#35) 이식 여부 판단) |
 
 ---
@@ -120,18 +133,25 @@ Declared values (must be multiples of 4):
 > Empty-state and error-state COPY live in `## Copywriting Contract` above — this section covers
 > state coverage and REFERENCES those rows rather than restating the copy (de-dup).
 
-Applicable state considerations resolved: 6 covered, 1 backstop, 1 unresolved
+Probe(Step 9.5) 결과: 5개 표면(E1 로그인 · E2 가입 · E3 카드 대시보드 · E4 생성 모달 · E5 삭제 다이얼로그)에 대해 applicable 26건 → **10 covered · 1 backstop · 1 unresolved · 나머지는 dismiss(분류 노이즈/해당 없음)**.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
-| empty | 워크스페이스 카드 대시보드 | ✅ covered | AUTH-03에 의해 가입 즉시 기본 워크스페이스(EDITOR)에 자동 편입되므로 대시보드가 0개로 렌더링되는 경로 자체가 없다 — "Empty state" 행 참조 |
-| loading | 가입/로그인 제출 버튼 | ✅ covered | 버튼 라벨 전환 + disabled로 표시, 별도 스피너 컴포넌트 없음(Copywriting Contract "처리 중" 행 참조) |
-| error | 가입/로그인/워크스페이스 생성/삭제 실패 | ✅ covered | 각 실패 케이스의 정확한 문구가 Copywriting Contract에 명시됨 |
-| populated | 워크스페이스 카드 대시보드 (1개 이상) | ✅ covered | 카드 그리드 레이아웃, 최소 1장(기본 워크스페이스)부터 표시 |
-| zero-one-many | 사용자 소속 워크스페이스 수 | ✅ covered | 1개(기본만) ~ N개(직접 생성 추가) 모두 동일 카드 그리드 컴포넌트로 처리, 그리드는 auto-wrap |
-| overflow | 워크스페이스 이름 텍스트 (카드 타이틀) | ✅ covered | ui-kit `.kit-item-name` 패턴과 동일하게 `white-space: nowrap; overflow: hidden; text-overflow: ellipsis` 한 줄 말줄임 적용 |
-| long-text | 사용자 이름 입력 (가입 폼) | 🧪 backstop | 표시부는 카드/멤버 목록에서 말줄임 처리 가정 — 실제 렌더 검증은 executor가 극단값(예: 100자 이름)으로 시각 확인 필요 |
-| long-text | 워크스페이스 이름 최대 길이 | ⚠ unresolved | REQUIREMENT/PRD/TRD 어디에도 이름 필드 최대 길이 제약이 없다(DB는 `text`, 무제한). planner는 합리적 상한(예: `maxlength=100`, 서버 zod 동일 상한)을 가정으로 명시하고 plan에 남길 것 |
+| empty | 워크스페이스 카드 대시보드 (E3) | ✅ covered | AUTH-03 자동 편입으로 0개 렌더 경로 없음 — Copywriting "Empty state" 행 참조 |
+| empty | 로그인·가입·생성 모달 폼 (E1·E2·E4) | ✅ covered | 미입력 폼이 곧 초기 상태 — label/placeholder로 안내, 별도 empty 화면 불필요 |
+| loading | 대시보드 카드 그리드 초기 로드 (E3) | ✅ covered | **Next.js 규약**: `app/.../loading.tsx`의 Suspense 스켈레톤 카드로 RSC 서버 fetch 대기 표시 (사용자 결정) |
+| loading | 폼 제출 — 로그인·가입·생성 모달 (E1·E2·E4) | ✅ covered | 버튼 라벨 전환 + disabled — Copywriting "처리 중" 행 참조 (생성 모달은 로그인/가입과 동일 패턴 적용) |
+| loading | 삭제 다이얼로그 처리 중 (E5) | ✅ covered | 확인 버튼 "삭제하는 중…" disabled — Copywriting "삭제 처리 중" 행 참조 (사용자 결정) |
+| error | 대시보드 목록 로드 실패 (E3) | ✅ covered | **Next.js 규약**: `error.tsx` 바운더리 + `reset()` 재시도 버튼 — Copywriting "목록 로드 실패" 행 참조 (사용자 결정) |
+| error | 폼 제출 실패 — 로그인·가입·생성 (E1·E2·E4) | ✅ covered | 필드별/공통 에러 문구가 Copywriting Contract에 명시됨 |
+| error | 삭제 실패 (E5) | ✅ covered | 다이얼로그 내 인라인 destructive 문구, 다이얼로그 유지 — Copywriting "삭제 실패" 행 참조 (사용자 결정) |
+| populated | 워크스페이스 카드 대시보드 1개+ (E3) | ✅ covered | 카드 그리드 레이아웃, 최소 1장(기본 워크스페이스)부터 표시 |
+| zero-one-many | 사용자 소속 워크스페이스 수 (E3) | ✅ covered | 1개(기본만)~N개 모두 동일 auto-wrap 카드 그리드 컴포넌트로 처리 |
+| overflow | 워크스페이스 이름 텍스트 — 카드 타이틀 (E3) | ✅ covered | ui-kit `.kit-item-name`과 동일 `white-space:nowrap; overflow:hidden; text-overflow:ellipsis` 한 줄 말줄임 |
+| long-text | 사용자 이름 입력 (E2 가입 폼) | 🧪 backstop | 카드/멤버 목록 표시부 말줄임 가정 — executor가 극단값(예: 100자)으로 실제 렌더 시각 검증 필요 |
+| long-text | 워크스페이스 이름 최대 길이 (E4) | ⚠ unresolved | REQUIREMENT/PRD/TRD 어디에도 이름 필드 최대 길이 제약이 없다(DB `text`, 무제한). **planner는 합리적 상한(예: `maxlength=100`, 서버 zod 동일 상한)을 가정으로 명시하고 plan에 남길 것** |
+
+**Dismiss(계약 대상 아님):** 로그인·가입 폼(E1·E2)에 프로브가 붙인 `populated`/`overflow`/`zero-one-many`는 폼이 항목 목록이 아니라 heuristic 분류 노이즈 — 해당 없음. 각 폼의 `partial`(일부 필드만 입력)은 제출 시 필드 검증으로 흡수되어 위 `error` 행에 포함, 별도 상태 불필요.
 
 ---
 
@@ -146,11 +166,11 @@ Applicable state considerations resolved: 6 covered, 1 backstop, 1 unresolved
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** VERIFIED (gsd-ui-checker, 수정 루프 1회 후 6/6 PASS) · UI Considerations probe(Step 9.5) 반영 완료
