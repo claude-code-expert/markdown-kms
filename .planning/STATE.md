@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 01
 current_phase_name: auth-workspace-foundation
-status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-08-01T17:41:18.842Z"
+status: verifying
+stopped_at: Completed 01-05-PLAN.md — Phase 1 complete (5/5 plans)
+last_updated: "2026-08-01T17:58:32.323Z"
 last_activity: 2026-08-02
 last_activity_desc: Phase 01 execution started
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 
 Phase: 01 (auth-workspace-foundation) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-02 — Phase 01 execution started
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [████████░░] 80%
 | Phase 01 P02 | 55min | 2 tasks | 17 files |
 | Phase 01 P03 | 50min | 2 tasks | 27 files |
 | Phase 01 P04 | 23min | 4 tasks | 13 files |
+| Phase 01 P05 | 16min | 2 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,7 @@ Recent decisions affecting current work:
 - [Phase ?]: Fixed pre-existing vitest/playwright collision: vitest.config.ts now excludes e2e/** so Vitest stops trying to run Playwright specs
 - [Phase ?]: D-15 override (hard→soft workspace delete) confirmed and implemented in 01-04: workspace.is_deleted flag, memberships preserved, active listings filtered
 - [Phase ?]: requireRole(workspaceId, minRole) established as the single server-side authorization gate every future mutating route reuses
+- [Phase ?]: 01-05: delete-dialog copy corrected to accurately reflect the amended D-15 soft-delete contract (not the stale UI-SPEC hard-delete wording) — human-confirmed at checkpoint
 
 ### Pending Todos
 
@@ -105,6 +107,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-01T17:41:18.821Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-08-01T17:58:32.313Z
+Stopped at: Completed 01-05-PLAN.md — Phase 1 complete (5/5 plans)
 Resume file: None
