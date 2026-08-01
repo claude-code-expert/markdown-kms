@@ -1,0 +1,31 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-md);
+  background: var(--bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 var(--space-md);
+}
+
+.footer {
+  margin-top: var(--space-md);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--accent);
+  font-weight: 600;
+}
