@@ -2,12 +2,16 @@
 // caller against the two Phase-1-actionable mutating routes (POST /api/workspaces,
 // DELETE /api/workspaces/:id) and asserts the PRD §3 outcome. Committed BEFORE src/lib/rbac.ts
 // exists (TRD §10 TDD) — this file is expected to fail to even import until Task 2/4 land.
-import { afterEach, describe, expect, it, vi } from "vitest";
+//
+// The DELETE route (Task 4) lands after a checkpoint, later than the create route (Task 2) —
+// its handler is imported dynamically inside the "delete" describe block's beforeAll, not
+// statically at the top of the file, so `-t "create"` can run the create matrix standalone
+// against Task 2's implementation without needing Task 4's route module to exist yet.
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user, workspace } from "@/db/schema";
 import { POST as createWorkspace } from "@/app/api/workspaces/route";
-import { DELETE as deleteWorkspace } from "@/app/api/workspaces/[id]/route";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor, type Role } from "./helpers";
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
@@ -67,6 +71,11 @@ describe("RBAC matrix — create (POST /api/workspaces, any logged-in member)", 
 describe("RBAC matrix — delete (DELETE /api/workspaces/:id, OWNER only)", () => {
   const createdUsers: string[] = [];
   const createdWorkspaces: string[] = [];
+  let deleteWorkspace: typeof import("@/app/api/workspaces/[id]/route").DELETE;
+
+  beforeAll(async () => {
+    ({ DELETE: deleteWorkspace } = await import("@/app/api/workspaces/[id]/route"));
+  });
 
   afterEach(async () => {
     vi.restoreAllMocks();

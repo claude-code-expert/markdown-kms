@@ -9,3 +9,15 @@ export const signupSchema = z.object({
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
+
+// O2: no cap in REQUIREMENT/PRD/TRD — UI-SPEC delegates to planner. 100 chars, enforced
+// identically client+server via this shared schema. DB column stays `text` (no TRD §3 change).
+export const workspaceSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "워크스페이스 이름을 입력해 주세요.")
+    .max(100, "워크스페이스 이름은 100자를 넘을 수 없습니다."),
+});
+
+export type WorkspaceInput = z.infer<typeof workspaceSchema>;

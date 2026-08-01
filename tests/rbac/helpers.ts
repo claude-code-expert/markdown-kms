@@ -6,6 +6,7 @@
 // (vi.mock is hoisted per-file by vitest, so it must live in the test file itself — this
 // module just drives the resulting mock.)
 import { vi } from "vitest";
+import type { Session } from "next-auth";
 import { db } from "@/db";
 import { user, workspace, workspaceMember } from "@/db/schema";
 import { auth } from "@/auth";
@@ -35,8 +36,13 @@ export async function addMember(workspaceId: string, userId: string, role: Role)
   await db.insert(workspaceMember).values({ workspaceId, userId, role });
 }
 
+// `auth` is overloaded (plain session lookup vs. the middleware-wrapping call signature);
+// pin the overload we actually use so vi.mocked resolves mockResolvedValue's param type
+// correctly instead of picking the unrelated NextMiddleware overload.
+type SessionLookup = () => Promise<Session | null>;
+
 export function mockSessionFor(userId: string | null) {
-  vi.mocked(auth).mockResolvedValue(
-    userId ? ({ user: { id: userId }, expires: "" } as Awaited<ReturnType<typeof auth>>) : null,
+  vi.mocked(auth as SessionLookup).mockResolvedValue(
+    userId ? ({ user: { id: userId }, expires: "" } as Session) : null,
   );
 }

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { verifyPassword } from "@/lib/password";
+import { checkLoginRateLimit, recordLoginFailure } from "@/lib/rate-limit";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -14,17 +15,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
         if (!email || !password) return null;
 
+        // O1: 5 failed attempts / 10 min per email+IP — never disclose the lockout itself,
+        // just fail through the same generic path as a wrong password (T-02-01).
+        const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+        const rateLimitKey = `${email}:${ip}`;
+        if (!checkLoginRateLimit(rateLimitKey)) return null;
+
         const [found] = await db.select().from(user).where(eq(user.email, email));
         // One indistinguishable failure path for both "no such user" and "wrong password" (T-02-01).
-        if (!found?.passwordHash) return null;
+        if (!found?.passwordHash) {
+          recordLoginFailure(rateLimitKey);
+          return null;
+        }
 
         const valid = await verifyPassword(password, found.passwordHash);
-        if (!valid) return null;
+        if (!valid) {
+          recordLoginFailure(rateLimitKey);
+          return null;
+        }
 
         return { id: found.id, email: found.email, name: found.name };
       },
