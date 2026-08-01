@@ -20,5 +20,14 @@ export default defineConfig({
     environment: "node",
     passWithNoTests: true,
     globalSetup: ["./tests/global-setup.ts"],
+    // Route handlers under test import `@/db`, which reads DATABASE_URL — point that at the
+    // test DB for the test run so signup's real transaction hits DATABASE_URL_TEST, not dev data.
+    env: {
+      DATABASE_URL: process.env.DATABASE_URL_TEST,
+    },
+    // Sequential across files: signup-atomicity.test.ts temporarily flips the seeded
+    // workspace's is_default flag off/on, which would race with any other file reading it
+    // concurrently (e.g. signup.test.ts's default-workspace lookup).
+    fileParallelism: false,
   },
 });
