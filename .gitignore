@@ -1,0 +1,44 @@
+# Secrets / env — never commit (only the placeholder .env.example is tracked)
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js build output
+.next/
+out/
+build/
+next-env.d.ts
+
+# Test artifacts
+coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.pem
+
+# GSD / harness (session-local, per .claude/CLAUDE.md)
+.handoff.md
+
+# 프롬프트 추출 워터마크 (Prompt.md 는 추적, 상태 사이드카는 로컬)
+Prompt.md.state
