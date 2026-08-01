@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: auth-workspace-foundation
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-08-01T17:07:28.919Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-08-01T17:41:18.842Z"
 last_activity: 2026-08-02
 last_activity_desc: Phase 01 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 01 (auth-workspace-foundation) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-02 — Phase 01 execution started
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [██████░░░░] 60%
 | Phase 01 P01 | 35min | 4 tasks | 33 files |
 | Phase 01 P02 | 55min | 2 tasks | 17 files |
 | Phase 01 P03 | 50min | 2 tasks | 27 files |
+| Phase 01 P04 | 23min | 4 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Recent decisions affecting current work:
 - [Phase ?]: src/lib/validation.ts left untouched by Plan 03 (read-only consumption of signupSchema) — fully open/additive for Plan 04's workspace-name schema
 - [Phase ?]: ui-kit's #5 card (product-card) generalized into a plain bordered/padded Card component, not literally ported — no image/price fields apply to auth card or workspace tile
 - [Phase ?]: Fixed pre-existing vitest/playwright collision: vitest.config.ts now excludes e2e/** so Vitest stops trying to run Playwright specs
+- [Phase ?]: D-15 override (hard→soft workspace delete) confirmed and implemented in 01-04: workspace.is_deleted flag, memberships preserved, active listings filtered
+- [Phase ?]: requireRole(workspaceId, minRole) established as the single server-side authorization gate every future mutating route reuses
 
 ### Pending Todos
 
@@ -102,6 +105,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-01T17:07:28.909Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-08-01T17:41:18.821Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
