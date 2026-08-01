@@ -24,7 +24,12 @@ export default async function DashboardPage() {
       </div>
       <div className={styles.grid}>
         {memberships.map((membership) => (
-          <WorkspaceCard key={membership.id} name={membership.name} />
+          <WorkspaceCard
+            key={membership.id}
+            id={membership.id}
+            name={membership.name}
+            role={membership.role}
+          />
         ))}
       </div>
     </main>
