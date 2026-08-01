@@ -12,18 +12,17 @@
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] 이메일 가입·로그인, 기본 워크스페이스 EDITOR 자동 가입 — **Phase 1** (AUTH-01/02/03)
+- [x] RBAC 4역할 서버 검증 403(`requireRole`), 워크스페이스 생성(생성자=OWNER)·삭제(OWNER 전용) — **Phase 1** (WS-01/02). 매트릭스 7행은 서버 상주, Phase 1 실동작은 생성/삭제. 워크스페이스 삭제는 D-15 개정으로 **소프트**(`is_deleted`). 보안 경화 2건(01-REVIEW.md Critical) 보류.
 
 ### Active
 
 R1 (P0 — 제품 성립선):
-- [ ] 이메일 가입·로그인, 기본 워크스페이스 EDITOR 자동 가입
 - [ ] 3분할 화면: 폴더 트리 사이드바 + 에디터 + 미리보기 + 하단 저장 상태 바
 - [ ] 에디터 서식 전부(헤딩·인라인 4·목록 3·블록 3·삽입 3 = 플러그인 14종) + 60ms 미리보기
 - [ ] 1초 디바운스 자동 저장 (seq 가드로 역순 도착 무시)
 - [ ] 폴더 트리 CRUD — Closure Table, 서브트리 단일 쿼리
 - [ ] 문서 CRUD, 소프트 삭제 + cascade, 휴지통 복원·완전 삭제
-- [ ] RBAC 4역할, 서버 검증 403, 워크스페이스 생성(생성자=OWNER)
 
 R2 (P1 — 협업·보존):
 - [ ] 이미지 업로드(커서 위치 삽입), 툴바 lucide·툴팁·pressed
@@ -45,7 +44,7 @@ R3 (P2):
 
 ## Context
 
-- 코드 없는 설계 완료 상태. `docs/REQUIREMENT.md`(원 요구사항, 검증 완료) → `docs/PRD.md`(공백 9건 해석 확정, 최종 권한 매트릭스, 릴리스 R1~R3) → `docs/TRD.md`(스택·전체 DDL·API·프로토콜) 순으로 우선한다. 요구사항 모호점은 전부 PRD §2에서 이미 결정됐다.
+- **Phase 1(auth·workspace 파운데이션) 구현 완료** (2026-08-02): Next.js 15 scaffold, Drizzle/PG16 3테이블 + 시드, Auth.js v5 가입/세션, `requireRole` RBAC 게이트, 워크스페이스 생성/소프트삭제 UI. 다음은 Phase 2(마크다운 파이프라인·에디터). `docs/REQUIREMENT.md`(원 요구사항, 검증 완료) → `docs/PRD.md`(공백 9건 해석 확정, 최종 권한 매트릭스, 릴리스 R1~R3) → `docs/TRD.md`(스택·전체 DDL·API·프로토콜) 순으로 우선한다. 요구사항 모호점은 전부 PRD §2에서 이미 결정됐다.
 - `docs/ui-kit.html` — 디자인 토큰 원천 (IBM Plex Sans/Mono, accent #2563eb, lucide, 순수 CSS 변수, 32 컴포넌트).
 - 아키텍처 결정 이력은 `changelog/changelog.md` (append-only).
 - 루트 `CLAUDE.md`에 불변식 10개 정리 (sanitize 필수, RBAC 서버 전용, Closure Table, seq 가드 등).
@@ -88,4 +87,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-01 after initialization*
+*Last updated: 2026-08-02 — Phase 1 (auth-workspace-foundation) complete*
