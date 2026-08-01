@@ -1,0 +1,1 @@
+{"content":"Next.js App Router + CodeMirror SSR needs dynamic(() => import('./Editor'), { ssr:false }) inside a 'use client' file — ssr:false is rejected directly inside Server Components in App Router.","source":"web","provider":"websearch","confidence":"HIGH","fetched_at":"2026-08-01T12:37:21.956Z","ttl":86400000,"kind":"docs"}

@@ -1,0 +1,1 @@
+{"content":"Soft delete + unique constraint needs partial unique index WHERE is_deleted=false; restore can still conflict if a new active row has since claimed the same unique value.","source":"web","provider":"websearch","confidence":"HIGH","fetched_at":"2026-08-01T12:37:21.860Z","ttl":86400000,"kind":"web"}

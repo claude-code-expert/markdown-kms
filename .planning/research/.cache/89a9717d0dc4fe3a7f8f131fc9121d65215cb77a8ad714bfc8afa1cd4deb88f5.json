@@ -1,0 +1,1 @@
+{"content":"Closure table move-subtree cycle prevention requires explicit pre-check that new-parent id is not a descendant of the node being moved, inside the same transaction as the delete/reinsert.","source":"web","provider":"websearch","confidence":"MEDIUM","fetched_at":"2026-08-01T12:37:21.776Z","ttl":86400000,"kind":"web"}

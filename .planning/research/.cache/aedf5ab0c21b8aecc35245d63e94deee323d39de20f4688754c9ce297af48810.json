@@ -1,0 +1,1 @@
+{"content":"rehype-sanitize defaultSchema follows GitHub schema and does NOT allow <input> by default, so GFM task-list checkboxes get silently stripped unless schema is extended with tagNames:['input'] and attributes type/checked/disabled.","source":"web","provider":"websearch","confidence":"HIGH","fetched_at":"2026-08-01T12:37:21.533Z","ttl":86400000,"kind":"docs"}
