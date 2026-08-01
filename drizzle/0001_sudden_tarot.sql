@@ -1,0 +1,1 @@
+ALTER TABLE "workspace" ADD COLUMN "is_deleted" boolean DEFAULT false NOT NULL;

@@ -1,10 +1,11 @@
-// WS-02/D-15: DELETE /api/workspaces/:id — OWNER-only hard cascade delete, default workspace
+// WS-02/D-15 개정: DELETE /api/workspaces/:id — OWNER-only SOFT delete, default workspace
 // protected. Committed before src/app/api/workspaces/[id]/route.ts exists (TDD).
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user, workspace, workspaceMember } from "@/db/schema";
 import { DELETE } from "@/app/api/workspaces/[id]/route";
+import { listMembershipsForUser } from "@/lib/db-membership";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor, type Role } from "../rbac/helpers";
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
@@ -27,8 +28,9 @@ describe("DELETE /api/workspaces/:id", () => {
     await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
   });
 
-  it("OWNER delete removes the workspace and cascades its workspace_member rows", async () => {
+  it("OWNER delete soft-deletes: row and workspace_member rows persist, excluded from active listings", async () => {
     const ws = await createTestWorkspace("delete-owner-ws");
+    createdWorkspaces.push(ws.id);
     const owner = await createTestUser("delete-owner");
     createdUsers.push(owner.id);
     await addMember(ws.id, owner.id, "OWNER");
@@ -38,13 +40,17 @@ describe("DELETE /api/workspaces/:id", () => {
     expect(res.status).toBe(204);
 
     const [remainingWs] = await db.select().from(workspace).where(eq(workspace.id, ws.id));
-    expect(remainingWs).toBeUndefined();
+    expect(remainingWs).toBeTruthy();
+    expect(remainingWs.isDeleted).toBe(true);
 
     const remainingMembers = await db
       .select()
       .from(workspaceMember)
       .where(eq(workspaceMember.workspaceId, ws.id));
-    expect(remainingMembers).toHaveLength(0);
+    expect(remainingMembers).toHaveLength(1);
+
+    const activeMemberships = await listMembershipsForUser(owner.id);
+    expect(activeMemberships.find((m) => m.id === ws.id)).toBeUndefined();
   });
 
   it.each(["ADMIN", "EDITOR", "VIEWER"] as Role[])("%s cannot delete a workspace (403)", async (role) => {
@@ -62,6 +68,7 @@ describe("DELETE /api/workspaces/:id", () => {
 
     const [stillThere] = await db.select().from(workspace).where(eq(workspace.id, ws.id));
     expect(stillThere).toBeTruthy();
+    expect(stillThere.isDeleted).toBe(false);
   });
 
   it("deleting a nonexistent workspace returns 403 (not a member of it), not a 500", async () => {
@@ -86,5 +93,6 @@ describe("DELETE /api/workspaces/:id", () => {
 
     const [stillDefault] = await db.select().from(workspace).where(eq(workspace.id, defaultWs.id));
     expect(stillDefault).toBeTruthy();
+    expect(stillDefault.isDeleted).toBe(false);
   });
 });

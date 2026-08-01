@@ -13,6 +13,7 @@ export const workspace = pgTable("workspace", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   isDefault: boolean("is_default").notNull().default(false),
+  isDeleted: boolean("is_deleted").notNull().default(false), // D-15 개정: 소프트 삭제 (TRD §3)
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

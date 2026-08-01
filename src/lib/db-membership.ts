@@ -1,8 +1,12 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { workspace, workspaceMember } from "@/db/schema";
 
-/** Every workspace a user belongs to, with their role — dashboard now, reused by RBAC-adjacent screens later. */
+/**
+ * Every ACTIVE workspace a user belongs to, with their role — dashboard now, reused by
+ * RBAC-adjacent screens later. Soft-deleted workspaces (is_deleted=true, D-15 개정) are excluded
+ * so a deleted workspace disappears from active views without losing the underlying rows.
+ */
 export async function listMembershipsForUser(userId: string) {
   return db
     .select({
@@ -12,5 +16,5 @@ export async function listMembershipsForUser(userId: string) {
     })
     .from(workspaceMember)
     .innerJoin(workspace, eq(workspaceMember.workspaceId, workspace.id))
-    .where(eq(workspaceMember.userId, userId));
+    .where(and(eq(workspaceMember.userId, userId), eq(workspace.isDeleted, false)));
 }
