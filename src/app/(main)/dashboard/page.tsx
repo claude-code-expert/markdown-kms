@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { listMembershipsForUser } from "@/lib/db-membership";
 import { WorkspaceCard } from "@/components/workspace/WorkspaceCard";
+import { CreateWorkspaceButton } from "@/components/workspace/CreateWorkspaceButton";
 import styles from "./page.module.css";
 
 // D-11: card dashboard landing screen. D-12: showing the workspace here satisfies AUTH-03's
@@ -17,7 +18,10 @@ export default async function DashboardPage() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>내 워크스페이스</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>내 워크스페이스</h1>
+        <CreateWorkspaceButton />
+      </div>
       <div className={styles.grid}>
         {memberships.map((membership) => (
           <WorkspaceCard key={membership.id} name={membership.name} />

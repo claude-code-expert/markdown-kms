@@ -1,0 +1,45 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.box {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: var(--space-lg);
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 0 0 var(--space-sm);
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close:hover {
+  color: var(--text);
+}

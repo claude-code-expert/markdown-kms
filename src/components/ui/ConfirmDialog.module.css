@@ -1,0 +1,68 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.cancel,
+.confirm,
+.confirmDestructive {
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.cancel {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.confirm {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+
+.confirmDestructive {
+  background: var(--destructive);
+  color: #fff;
+  border: 1px solid var(--destructive);
+}
+
+.confirm:disabled,
+.confirmDestructive:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
