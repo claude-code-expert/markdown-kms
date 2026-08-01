@@ -33,7 +33,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. New user is auto-joined to a default workspace as EDITOR and sees it in the sidebar.
   4. Any member can create a workspace and becomes its OWNER; only the OWNER can delete it.
   5. Server rejects an action outside the caller's role with 403, per the Owner/Admin/Editor/Viewer matrix.
-**Plans**: TBD
+**Plans**: 5 plans (4 waves)
+- [ ] 01-01-PLAN.md — Foundation: scaffold Next.js 15 + Drizzle/Postgres + schema + migrate + seed default workspace
+- [ ] 01-02-PLAN.md — Auth tracer: signup + JWT session + minimal dashboard (walking skeleton end-to-end)
+- [ ] 01-03-PLAN.md — Auth UI: login/signup/dashboard + ui-kit port (loading/error boundaries)
+- [ ] 01-04-PLAN.md — RBAC gate (requireRole 403) + workspace create/delete API + login rate-limit
+- [ ] 01-05-PLAN.md — Workspace UI: create modal (E4) + delete dialog (E5) + /w/[wsId] placeholder
 **UI hint**: yes
 
 ### Phase 2: Markdown Rendering & Editor Formatting
