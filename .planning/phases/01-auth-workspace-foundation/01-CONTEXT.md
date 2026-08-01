@@ -38,7 +38,8 @@
 ### 워크스페이스 생성·전환·삭제 UX
 - **D-13:** 워크스페이스 생성 = 모달 다이얼로그(이름 필드 1개). ui-kit 모달 컴포넌트 이식. — **Reversibility:** reversible
 - **D-14:** 생성 직후 = 즉시 `/w/[newId]`로 진입해 새 워크스페이스를 활성화(Phase 1엔 빈 플레이스홀더 화면). "활성 워크스페이스"는 URL 파라미터(`w/[wsId]`, TRD §11)로 표현. — **Reversibility:** reversible
-- **D-15:** 워크스페이스 삭제(OWNER 전용) = 이름 재입력 확인(GitHub 방식). cascade 비가역 액션이라 강한 확인 채택. — **Reversibility:** reversible
+- **D-15:** 워크스페이스 삭제(OWNER 전용) = 이름 재입력 확인(GitHub 방식). ~~cascade 비가역 액션이라 강한 확인 채택.~~ — **Reversibility:** reversible
+  - **개정 (2026-08-02, 제품 오너 결정):** 하드 cascade → **소프트 삭제**(`workspace.is_deleted=true`). 행·멤버십 보존, 활성 조회에서 제외. TRD §3에 `is_deleted` 컬럼 추가, PRD §3 삭제 의미 개정. `is_default` 워크스페이스는 여전히 삭제 불가. 복원 UI는 Phase 4 휴지통과 함께. 근거: 워크스페이스 삭제를 복구 가능하게 하려는 오너 지시(연구가 Phase-1 scope creep으로 기각했던 항목을 명시적 override).
 
 ### Claude's Discretion
 - 로그인 브루트포스 rate-limit / 계정 잠금 정책: 논의에서 확정하지 않음 — researcher/planner가 Auth.js 관례와 위험도에 맞춰 결정.

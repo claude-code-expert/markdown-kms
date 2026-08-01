@@ -1,5 +1,11 @@
 # Changelog — 결정 기록 (append-only, 최신이 위)
 
+## 2026-08-02 — 워크스페이스 삭제: 하드 cascade → 소프트 삭제 (D-15 override)
+- **결정**: `DELETE /api/workspaces/:id`를 하드 cascade가 아니라 소프트 삭제(`workspace.is_deleted=true`)로 확정. 행·멤버십 보존, 활성 조회에서 제외, OWNER 전용·기본 워크스페이스 삭제 불가는 유지. Phase 1 실행 중(Plan 01-04 Task 3 decision checkpoint)에 제품 오너 지시로 잠긴 결정 D-15를 명시적으로 override.
+- **이유**: 워크스페이스 삭제를 복구 가능하게 하려는 오너 요구. 문서·폴더 소프트 삭제(Phase 4)와 삭제 의미를 일관되게.
+- **대안**: 하드 cascade(원 D-15·PRD §3·TRD `ON DELETE CASCADE`) — 스펙 정합·최소지만 비가역이라 오너가 기각. 연구는 워크스페이스 소프트삭제를 Phase-1 scope creep으로 봤으나 오너가 override.
+- **영향**: TRD §3(`workspace.is_deleted` 컬럼 추가)·PRD §3·CONTEXT D-15·`01-04-PLAN.md` Task 4 개정. 새 Drizzle 마이그레이션 1건. `src/lib/db-membership.ts` 활성 조회에 `is_deleted=false` 필터, `tests/workspace/delete.test.ts` soft 의미로 재작성. 복원 UI는 Phase 4 휴지통과 함께 도입.
+
 ## 2026-08-01 — ORM을 Prisma에서 Drizzle로 교체, 패키지 매니저 pnpm 고정
 - **결정**: TRD 확정 당일 사용자 지시로 ORM을 Drizzle ORM으로 교체. 전 명령은 pnpm 경유.
 - **이유**: 스키마가 TS 코드(`src/db/schema.ts`)라 TRD §3 DDL과 1:1 대응, Closure Table 벌크 연산을 `sql` 템플릿으로 그대로 쓸 수 있다.

@@ -43,6 +43,8 @@ REQUIREMENT는 스택을 지정하지 않았다. 아래로 확정한다. 선정 
 
 PRD §2·§3의 확정 해석을 반영한 스키마. Drizzle 스키마(`src/db/schema.ts`)의 원천 정의이며, 충돌 시 이 문서를 갱신한 뒤 drizzle-kit으로 마이그레이션한다.
 
+> **개정 (2026-08-02, D-15 override):** 워크스페이스 삭제는 하드 cascade가 아니라 **소프트 삭제**로 확정한다(제품 오너 결정, PRD §3·CONTEXT D-15 개정). `workspace.is_deleted` 플래그를 set 하며 행/멤버십은 보존하고, 활성 조회는 `is_deleted = false`로 거른다. `is_default = true` 행은 여전히 삭제 불가. 워크스페이스 복원 UI는 Phase 4 휴지통과 함께 도입 예정 — Phase 1에선 플래그만 존재한다. `workspace`는 카디널리티가 극소라 활성 조회 부분 인덱스는 두지 않는다(쿼리 필터로 충분; 규모가 커지면 `WHERE is_deleted = false` 부분 인덱스 추가).
+
 ```sql
 CREATE TABLE "user" (
   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -56,6 +58,7 @@ CREATE TABLE workspace (
   id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name       text NOT NULL,
   is_default boolean NOT NULL DEFAULT false,  -- 시드 1행만 true, 삭제 불가
+  is_deleted boolean NOT NULL DEFAULT false,  -- 소프트 삭제 (D-15 개정, 2026-08-02): OWNER 삭제는 이 플래그 set. is_default=true 행은 삭제 불가. 활성 조회는 is_deleted=false 필터
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -228,7 +231,7 @@ export interface EditorPlugin {
 |-------------|------|----------|
 | POST `/api/auth/signup` | 가입 + 기본 워크스페이스 EDITOR 편입 | - |
 | POST `/api/workspaces` | 워크스페이스 생성, 생성자 OWNER | 회원 |
-| DELETE `/api/workspaces/:id` | 워크스페이스 삭제 | OWNER |
+| DELETE `/api/workspaces/:id` | 워크스페이스 삭제 (소프트, `is_deleted=true`; D-15 개정) | OWNER |
 | GET `/api/workspaces/:id/tree` | 트리 전체 (2쿼리, §4) | VIEWER |
 | POST/PATCH/DELETE `/api/folders*` | 폴더 생성·이름변경·이동 / 소프트 삭제 | EDITOR |
 | POST/PUT/DELETE `/api/documents*` | 문서 생성·저장(§7) / 소프트 삭제 | EDITOR |
