@@ -81,13 +81,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (roadmap 생성 시 채움) | | |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| WS-01 | Phase 1 | Pending |
+| WS-02 | Phase 1 | Pending |
+| EDIT-01 | Phase 2 | Pending |
+| EDIT-02 | Phase 2 | Pending |
+| EDIT-03 | Phase 2 | Pending |
+| EDIT-04 | Phase 2 | Pending |
+| EDIT-05 | Phase 2 | Pending |
+| EDIT-06 | Phase 2 | Pending |
+| EDIT-08 | Phase 2 | Pending |
+| TREE-01 | Phase 3 | Pending |
+| TREE-02 | Phase 3 | Pending |
+| TREE-03 | Phase 3 | Pending |
+| DOC-01 | Phase 4 | Pending |
+| DOC-02 | Phase 4 | Pending |
+| EDIT-07 | Phase 4 | Pending |
+| EDIT-09 | Phase 5 | Pending |
+| EDIT-10 | Phase 5 | Pending |
+| EDIT-11 | Phase 5 | Pending |
+| EDIT-12 | Phase 5 | Pending |
+| DOC-03 | Phase 6 | Pending |
+| DOC-04 | Phase 6 | Pending |
+| EXP-01 | Phase 6 | Pending |
+| EXP-02 | Phase 6 | Pending |
+| WS-03 | Phase 7 | Pending |
+| WS-04 | Phase 7 | Pending |
+| WS-05 | Phase 7 | Pending |
+| PRES-01 | Phase 8 | Pending |
+| PRES-02 | Phase 8 | Pending |
+| AUTH-04 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32 ⚠️ (roadmap 생성 전)
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-08-01*
-*Last updated: 2026-08-01 after initial definition*
+*Last updated: 2026-08-01 after roadmap creation (8 phases, 100% coverage)*
