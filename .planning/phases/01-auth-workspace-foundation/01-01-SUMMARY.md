@@ -217,3 +217,7 @@ None - `DATABASE_URL`, `DATABASE_URL_TEST`, and `AUTH_SECRET` were already provi
 ---
 *Phase: 01-auth-workspace-foundation*
 *Completed: 2026-08-02*
+
+## Self-Check: PASSED
+
+All claimed files (schema, seed, db client, drizzle config + migration, vitest/playwright config, tests, package.json, eslint config, this SUMMARY) and all three commit hashes (`76903e4`, `fd19d05`, `8788abf`) verified present on disk / in `git log`.
