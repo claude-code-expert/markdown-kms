@@ -1,0 +1,121 @@
+// WS-01: the role x route matrix. Enumerates all four roles + a non-member/unauthenticated
+// caller against the two Phase-1-actionable mutating routes (POST /api/workspaces,
+// DELETE /api/workspaces/:id) and asserts the PRD §3 outcome. Committed BEFORE src/lib/rbac.ts
+// exists (TRD §10 TDD) — this file is expected to fail to even import until Task 2/4 land.
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { user, workspace } from "@/db/schema";
+import { POST as createWorkspace } from "@/app/api/workspaces/route";
+import { DELETE as deleteWorkspace } from "@/app/api/workspaces/[id]/route";
+import { addMember, createTestUser, createTestWorkspace, mockSessionFor, type Role } from "./helpers";
+
+vi.mock("@/auth", () => ({ auth: vi.fn() }));
+
+const ROLES: Role[] = ["OWNER", "ADMIN", "EDITOR", "VIEWER"];
+const FORBIDDEN_COPY = "이 작업을 수행할 권한이 없습니다.";
+
+function createRequest(body: unknown) {
+  return new Request("http://localhost/api/workspaces", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+function deleteRequest(id: string) {
+  return new Request(`http://localhost/api/workspaces/${id}`, { method: "DELETE" });
+}
+
+function ctx(id: string) {
+  return { params: Promise.resolve({ id }) };
+}
+
+describe("RBAC matrix — create (POST /api/workspaces, any logged-in member)", () => {
+  const createdUsers: string[] = [];
+  const createdWorkspaces: string[] = [];
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+    await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
+  });
+
+  it.each(ROLES)("succeeds for a %s member — create is role-independent", async (role) => {
+    const caller = await createTestUser(`matrix-create-${role}`);
+    createdUsers.push(caller.id);
+    const contextWs = await createTestWorkspace(`matrix-create-context-${role}`);
+    createdWorkspaces.push(contextWs.id);
+    await addMember(contextWs.id, caller.id, role);
+    mockSessionFor(caller.id);
+
+    const res = await createWorkspace(createRequest({ name: `matrix-created-${role}` }));
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    createdWorkspaces.push(body.id);
+  });
+
+  it("is rejected for an unauthenticated caller", async () => {
+    mockSessionFor(null);
+    const res = await createWorkspace(createRequest({ name: "matrix-create-anon" }));
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe(FORBIDDEN_COPY);
+  });
+});
+
+describe("RBAC matrix — delete (DELETE /api/workspaces/:id, OWNER only)", () => {
+  const createdUsers: string[] = [];
+  const createdWorkspaces: string[] = [];
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+    await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
+  });
+
+  it("succeeds for OWNER", async () => {
+    const ws = await createTestWorkspace("matrix-delete-owner-ws");
+    const owner = await createTestUser("matrix-delete-owner");
+    createdUsers.push(owner.id);
+    await addMember(ws.id, owner.id, "OWNER");
+    mockSessionFor(owner.id);
+
+    const res = await deleteWorkspace(deleteRequest(ws.id), ctx(ws.id));
+    expect(res.status).toBe(204);
+  });
+
+  it.each(["ADMIN", "EDITOR", "VIEWER"] as Role[])("is rejected with 403 for %s", async (role) => {
+    const ws = await createTestWorkspace(`matrix-delete-${role}-ws`);
+    createdWorkspaces.push(ws.id);
+    const member = await createTestUser(`matrix-delete-${role}`);
+    createdUsers.push(member.id);
+    await addMember(ws.id, member.id, role);
+    mockSessionFor(member.id);
+
+    const res = await deleteWorkspace(deleteRequest(ws.id), ctx(ws.id));
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe(FORBIDDEN_COPY);
+  });
+
+  it("is rejected for a non-member", async () => {
+    const ws = await createTestWorkspace("matrix-delete-nonmember-ws");
+    createdWorkspaces.push(ws.id);
+    const outsider = await createTestUser("matrix-delete-outsider");
+    createdUsers.push(outsider.id);
+    mockSessionFor(outsider.id);
+
+    const res = await deleteWorkspace(deleteRequest(ws.id), ctx(ws.id));
+    expect(res.status).toBe(403);
+  });
+
+  it("is rejected for an unauthenticated caller", async () => {
+    const ws = await createTestWorkspace("matrix-delete-anon-ws");
+    createdWorkspaces.push(ws.id);
+    mockSessionFor(null);
+
+    const res = await deleteWorkspace(deleteRequest(ws.id), ctx(ws.id));
+    expect(res.status).toBe(403);
+  });
+});
