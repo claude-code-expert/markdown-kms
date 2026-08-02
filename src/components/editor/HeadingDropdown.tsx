@@ -54,6 +54,10 @@ export function HeadingDropdown({ getView }: HeadingDropdownProps) {
                 key={plugin.id}
                 type="button"
                 className={styles.item}
+                // Same caret-preservation guard as Toolbar.tsx: don't let the menu item's
+                // mousedown blur the EditorView, or the dispatched heading prefix lands with the
+                // caret restored to its pre-edit spot instead of where the TransactionSpec put it.
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {
                   const view = getView();
                   if (view) {

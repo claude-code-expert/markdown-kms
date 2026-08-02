@@ -47,6 +47,11 @@ export function Toolbar({ getView }: ToolbarProps) {
                   type="button"
                   className={styles.button}
                   aria-label={plugin.tooltip}
+                  // Keep the editor focused: a plain button mousedown blurs the EditorView,
+                  // and the blur→dispatch→focus round-trip lets the browser restore the pre-insert
+                  // DOM selection, dropping the caret in FRONT of the just-inserted marker instead
+                  // of the position the plugin's TransactionSpec set. preventDefault stops the blur.
+                  onMouseDown={(event) => event.preventDefault()}
                   onClick={() => {
                     const view = getView();
                     if (!view) return;
