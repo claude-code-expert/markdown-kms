@@ -11,7 +11,9 @@ import styles from "./page.module.css";
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) {
-    redirect("/signup");
+    // WR-09: an expired session is the common case here — send back to /login, not /signup,
+    // since the visitor most likely already has an account.
+    redirect("/login");
   }
 
   const memberships = await listMembershipsForUser(session.user.id);
