@@ -1,0 +1,41 @@
+// D-P2-06/07/08 contract for the task-list plugin. Marker: '- [ ] ' (line prefix),
+// parsed by mdast-util-gfm-task-list-item downstream (02-01 RESEARCH). Toggle-off on
+// re-application, replaces a differing list-type prefix.
+// Pure run(state): TransactionSpec — no EditorView/DOM access (TRD §6), and this file
+// imports no other plugin (CLAUDE.md 1-feature-1-file invariant).
+import { type EditorState, type TransactionSpec } from "@codemirror/state";
+import { ListTodo } from "lucide-react";
+import type { EditorPlugin } from "./types";
+
+const PREFIX = "- [ ] ";
+const OWN_RE = /^- \[ \] /;
+const ANY_LIST_PREFIX_RE = /^(?:- \[ \] |- |\d+\. |> )/;
+
+function run(state: EditorState): TransactionSpec {
+  return state.changeByRange((range) => {
+    const startLine = state.doc.lineAt(range.from);
+    const endLine = state.doc.lineAt(range.to);
+    const lines = [];
+    for (let n = startLine.number; n <= endLine.number; n++) {
+      lines.push(state.doc.line(n));
+    }
+
+    const allOwn = lines.every((line) => OWN_RE.test(line.text));
+
+    const changes = lines.map((line) => {
+      const match = ANY_LIST_PREFIX_RE.exec(line.text);
+      const stripLen = match ? match[0].length : 0;
+      const insert = allOwn ? "" : PREFIX;
+      return { from: line.from, to: line.from + stripLen, insert };
+    });
+
+    return { changes, range: range.map(state.changes(changes)) };
+  });
+}
+
+export const taskList: EditorPlugin = {
+  id: "task-list",
+  icon: ListTodo,
+  tooltip: "할 일 목록",
+  run,
+};
