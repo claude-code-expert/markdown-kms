@@ -1,0 +1,62 @@
+/* Toolbar Contract (UI-SPEC) 헤딩 드롭다운: ui-kit dropdown-trigger/dropdown-menu
+   ported 1:1 (border/radius/shadow), trigger sized to the 32px toolbar button row. */
+.dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.trigger {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background: var(--surface-2);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.caret {
+  color: var(--muted);
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  min-width: 96px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.item {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) 12px;
+  font-size: 13px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
