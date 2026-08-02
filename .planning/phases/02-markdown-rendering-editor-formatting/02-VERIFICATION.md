@@ -1,10 +1,13 @@
 ---
 phase: 02-markdown-rendering-editor-formatting
 verified: 2026-08-02T14:10:00Z
-status: human_needed
+status: gaps_found
 score: 4/5 truths verified
 behavior_unverified: 1
 overrides_applied: 0
+gaps_source: 02-REVIEW.md
+gaps_amended: 2026-08-02T05:05:00Z
+gaps_amended_reason: "Code review (02-REVIEW.md) ran plugin output through the pipeline end-to-end — a check no unit test performed — and found 2 Critical + 3 Warning functional bugs where the 02-02 pinned fixtures encoded incorrect expected output. The plugins faithfully implement wrong contracts, so tests are GREEN but hr/table/code-block/heading produce broken markdown. Orchestrator amended status human_needed → gaps_found and recorded these as verification gaps for the gap-closure cycle."
 behavior_unverified_items:
   - truth: "Typing Korean text via IME composes correctly without corruption or dropped characters (ROADMAP Success Criteria 5)"
     test: "Type '한글 조합 테스트' via a real Korean IME (not paste) into the editor at /w/[wsId], letting each syllable block compose naturally, then click Bold on part of the composed text."
@@ -32,7 +35,7 @@ human_verification:
 
 **Phase Goal:** Users can format markdown through the toolbar or syntax and see an accurate, safe, fast live preview
 **Verified:** 2026-08-02T14:10:00Z
-**Status:** human_needed
+**Status:** gaps_found (amended post-verification from code review — see Gaps Summary)
 **Re-verification:** No — initial verification
 
 ## Goal Achievement
@@ -91,13 +94,13 @@ human_verification:
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|--------------|--------|----------|
-| EDIT-01 | 02-02, 02-04 | Heading H1-H4/P via toolbar/syntax | SATISFIED | `heading.ts` + `heading.test.ts` (5 cases) GREEN |
-| EDIT-02 | 02-02, 02-03, 02-04 | Bold/italic/strikethrough/inline-code | SATISFIED | 4 plugin files + tests GREEN |
+| EDIT-01 | 02-02, 02-04 | Heading H1-H4/P via toolbar/syntax | ⚠️ PARTIAL (GAP-4) | Core heading GREEN, but `heading.ts` does not strip a conflicting list prefix: `# - item` → `<h1>- item</h1>` (02-REVIEW.md WR). Fixture never rendered through pipeline. |
+| EDIT-02 | 02-02, 02-03, 02-04 | Bold/italic/strikethrough/inline-code | SATISFIED | 4 plugin files + tests GREEN; bold confirmed end-to-end through pipeline in tracer. |
 | EDIT-03 | 02-02, 02-04 | Bullet/ordered/task lists | SATISFIED | 3 plugin files + tests GREEN |
-| EDIT-04 | 02-02, 02-04 | Blockquote/code-block/hr | SATISFIED | 3 plugin files + tests GREEN |
-| EDIT-05 | 02-02, 02-04 | Link/image/table insert | SATISFIED | 3 plugin files + tests GREEN |
+| EDIT-04 | 02-02, 02-04 | Blockquote/code-block/hr | ❌ GAP (GAP-1, GAP-3, GAP-5) | `hr.ts` inserts `\n---\n` → renders as Setext `<h2>`, not `<hr>` (CRITICAL); `code-block.ts` unclosed fence swallows trailing doc (WARNING); `hr.ts` destroys non-empty selection (WARNING). Pinned fixtures encoded broken output. Blockquote OK. |
+| EDIT-05 | 02-02, 02-04 | Link/image/table insert | ❌ GAP (GAP-2) | `table.ts` mid-line insert glues trailing text to last row; GFM drops it in render (CRITICAL). Link/image OK. |
 | EDIT-06 | 02-02, 02-03, 02-05 | 60ms p95 preview budget | SATISFIED | Independently re-measured 13.30ms |
-| EDIT-08 | 02-01, 02-03 | Sanitize/XSS safety + GFM survives sanitize | SATISFIED | `sanitize.test.ts` (7 cases) GREEN |
+| EDIT-08 | 02-01, 02-03 | Sanitize/XSS safety + GFM survives sanitize | SATISFIED | `sanitize.test.ts` (7 cases) GREEN; sanitize + GFM-3 invariants independently re-run through the pipeline by code review — hold correctly. |
 
 No orphaned requirements: REQUIREMENTS.md maps exactly these 7 IDs to Phase 2, and all 7 appear in at least one plan's `requirements:` frontmatter field.
 
@@ -113,7 +116,20 @@ See `human_verification` in frontmatter — 5 items: Korean IME composition safe
 
 ### Gaps Summary
 
-No gaps. All must-have artifacts exist, are substantive, and are wired; both research-conflict deviations (granular GFM composition instead of the bundled plugin; unmodified sanitize schema instead of a merge) are documented, intentional, and proven correct by tests re-run independently in this verification. The only open items are the five human-verification checks above, which the phase's own plans already scoped as deferred to end-of-phase sign-off — none of them indicate missing or broken code.
+**AMENDED post-verification (source: `02-REVIEW.md`).** The initial verification found no gaps because it checked must-haves against the 02-02 pinned test contract, which is GREEN. Code review then ran each plugin's *actual output through `markdownProcessor.process`* end-to-end — a check no unit test performs — and found that several pinned fixtures encode **incorrect expected output**. The plugins faithfully implement wrong contracts, so tests pass while the rendered result is broken. The orchestrator independently re-confirmed the two Criticals by code analysis. These are real functional gaps to close in the gap-closure cycle:
+
+| Gap | Severity | File / lines | Defect | Fix required | Req |
+|-----|----------|--------------|--------|--------------|-----|
+| GAP-1 | 🔴 Critical | `src/components/editor/plugins/hr.ts:10-20` | Inserts `"\n---\n"`; after a text line this renders as a Setext `<h2>` heading, not `<hr>` — the button's core purpose is inverted. | Insert a blank line before `---` when the preceding line is non-empty (context-aware, like `table.ts`) so it renders as a thematic break. **Correct the pinned `hr.test.ts` fixture** to the rendered-correct string. | EDIT-04 |
+| GAP-2 | 🔴 Critical | `src/components/editor/plugins/table.ts:14-24` | Only a *leading* separator is added; any text after the cursor on the same line glues onto the last table row (`\| 내용 \| 내용 \|bc`) and GFM drops it in render. | Also split trailing same-line content onto its own line (trailing `\n\n`). **Correct `table.test.ts`** and add a mid-line-insert case. | EDIT-05 |
+| GAP-3 | 🟡 Warning | `src/components/editor/plugins/code-block.ts:22-41` | Wrapping a selection that has trailing same-line content yields an unclosed fence that swallows the rest of the document into `<pre><code>`. | Ensure the closing fence lands on its own line; guard trailing content. Fix fixture + add case. | EDIT-04 |
+| GAP-4 | 🟡 Warning | `src/components/editor/plugins/heading.ts:38-64` | Does not strip a conflicting list prefix (`# - item` → `<h1>- item</h1>`), unlike sibling list/blockquote plugins. | Strip an existing list/blockquote prefix before applying the heading marker. Fix fixture + add case. | EDIT-01 |
+| GAP-5 | 🟡 Warning | `src/components/editor/plugins/hr.ts:12-20` | A non-empty selection is destroyed with no wrap/preserve, unlike `link.ts`/`image.ts`. | Preserve or reposition the selected text around the inserted rule. | EDIT-04 |
+| GAP-6 | 🟡 Warning | `src/components/preview/PreviewPane.tsx:23-38` | Catch-all swallows render exceptions with no logging (silent failure surface). | Log the caught error (dev) while keeping the user-facing fallback. | NFR |
+
+**Structural root cause + required new test class:** no test fed plugin output through the pipeline, so wrong fixtures went undetected. The gap-closure plan MUST add a **plugin-output → `markdownProcessor` → HTML** assertion per affected plugin (the missing end-to-end gate), not just re-pin the string fixtures. Info-level findings (duplicated `ANY_LIST_PREFIX_RE` across 4 plugins, fragile `GROUP_SIZES` in `Toolbar.tsx`, an unsafe cast on a non-production path in `pipeline.ts`) are optional cleanups — see `02-REVIEW.md`.
+
+**Also still open (from the original verification, unchanged):** the 5 human-verification items above (Korean IME safety, toolbar visual walkthrough, preview overflow, non-persistent contract, heading/code-fence edge) — deferred to `/gsd-verify-work` after the code gaps are closed. And the non-blocking ROADMAP Success-Criteria-4 wording amendment (sanitize schema is intentionally unmodified).
 
 ---
 
