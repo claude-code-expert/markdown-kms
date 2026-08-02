@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -26,7 +27,9 @@ export function WorkspaceCard({ id, name, role }: WorkspaceCardProps) {
 
   return (
     <Card className={styles.card}>
-      <span className={styles.name}>{name}</span>
+      <Link href={`/w/${id}`} className={styles.name}>
+        {name}
+      </Link>
       {role === "OWNER" && (
         <>
           <button
