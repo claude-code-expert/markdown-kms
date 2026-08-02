@@ -14,7 +14,8 @@ findings:
   warning: 2
   info: 2
   total: 5
-status: issues_found
+status: resolved
+resolution: "CR-01 + WR-02 fixed inline (commits 20621dd/4a4590c); WR-01 + IN-01 + IN-02 deferred with rationale (see Resolution)."
 ---
 
 # Phase 02: Code Review Report (Re-review, post gap-closure plan 02-06)
@@ -205,6 +206,29 @@ routing through an error boundary instead of a local try/catch.
 
 ---
 
+## Resolution (post-review, inline fix)
+
+Fixed inline during the execute-phase code-review gate (TDD: RED cases → fix), each
+exercising the REAL path through `markdownProcessor` so the blind spot cannot recur:
+
+- **CR-01 (code-block caret) — FIXED** (`20621dd` RED, `4a4590c` fix). The line-boundary
+  guard now runs for both the caret (`from === to`) and wrap branches; caret still lands on
+  the empty language slot. New pipeline case: caret mid-line → trailing text renders outside
+  the block. Full suite 748 GREEN, `tsc` clean.
+- **WR-02 (heading h5/h6) — FIXED** (same commits). `ATX_RE` widened to `/^(#{1,6}) /` for
+  stripping; app still only writes 1-4; `allSameLevel` unaffected. New pipeline case:
+  `##### x` + level 2 → `<h2>x</h2>`.
+- **WR-01 (hr leading blank at doc-start) — DEFERRED (cosmetic).** Zero rendered-output
+  impact (a correct `<hr>` either way); the plan's own must_have sanctions one leading
+  newline for empty on-line content. Not worth churning a GREEN fixture.
+- **IN-01 (`- [x]` checked-task marker) — DEFERRED (pre-existing).** Shared across all 5
+  prefix plugins; the 02-06 plan explicitly deferred IN-01 (shared-regex extraction).
+- **IN-02 (`console.error` in render body) — DEFERRED (harmless).** The log was required by
+  the plan; StrictMode double-log is dev-only cosmetic.
+
+---
+
 _Reviewed: 2026-08-02T06:12:02Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
+_Resolution: 2026-08-02 (inline fix — CR-01/WR-02 closed, WR-01/IN deferred)_
