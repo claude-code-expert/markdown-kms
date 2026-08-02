@@ -40,3 +40,17 @@ export function recordLoginFailure(key: string): void {
     attempts.set(key, { count: 1, firstFailureAt: now });
   }
 }
+
+/**
+ * WR-06: reverts one optimistically-recorded failure. authorize() now calls
+ * recordLoginFailure() BEFORE the expensive bcrypt compare (not after), closing the TOCTOU
+ * window where concurrent requests for the same key could all observe "still under
+ * threshold" during that gap — then calls this to undo the count when the credentials turn
+ * out to be valid, so a successful login isn't counted against the caller.
+ */
+export function undoLoginFailure(key: string): void {
+  const record = attempts.get(key);
+  if (record && record.count > 0) {
+    record.count -= 1;
+  }
+}

@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { verifyPassword } from "@/lib/password";
-import { checkLoginRateLimit, recordLoginFailure } from "@/lib/rate-limit";
+import { checkLoginRateLimit, recordLoginFailure, undoLoginFailure } from "@/lib/rate-limit";
 
 // CR-02: fixed dummy hash so a nonexistent user still pays the same bcrypt cost as a real
 // one — the DB lookup hitting 0 vs 1 rows must not be observable via response timing (T-02-01).
@@ -31,15 +31,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const rateLimitKey = email;
         if (!checkLoginRateLimit(rateLimitKey)) return null;
 
+        // WR-06: record the attempt BEFORE the expensive bcrypt gap below (undone on success),
+        // closing the TOCTOU window where concurrent requests could all read "still allowed".
+        recordLoginFailure(rateLimitKey);
+
         const [found] = await db.select().from(user).where(eq(user.email, email));
         // CR-02 / T-02-01: always pay the bcrypt cost, even when no user was found, by
         // comparing against a fixed dummy hash — keeps both branches timing-indistinguishable.
         const valid = await verifyPassword(password, found?.passwordHash ?? DUMMY_HASH);
         if (!found?.passwordHash || !valid) {
-          recordLoginFailure(rateLimitKey);
           return null;
         }
 
+        undoLoginFailure(rateLimitKey);
         return { id: found.id, email: found.email, name: found.name };
       },
     }),
