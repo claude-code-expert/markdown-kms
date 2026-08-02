@@ -12,6 +12,8 @@ export type Role = keyof typeof ROLE_RANK;
 
 const FORBIDDEN_MESSAGE = "이 작업을 수행할 권한이 없습니다.";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export class ForbiddenError extends Error {
   constructor(message = FORBIDDEN_MESSAGE) {
     super(message);
@@ -31,6 +33,13 @@ export function forbiddenResponse() {
 export async function requireRole(workspaceId: string, minRole: Role) {
   const session = await auth();
   if (!session?.user?.id) throw new ForbiddenError();
+
+  // Fail-closed on a malformed workspace id. workspaceId comes from an untrusted URL param
+  // (/w/[wsId], DELETE /api/workspaces/[id]) and flows straight into a uuid column; a non-uuid
+  // value (e.g. "1") makes Postgres throw "invalid input syntax for type uuid" — a raw DB error
+  // that escapes the ForbiddenError contract as a 500. Rejecting here routes it to notFound()/403
+  // like any other non-membership.
+  if (!UUID_RE.test(workspaceId)) throw new ForbiddenError();
 
   const [member] = await db
     .select({ role: workspaceMember.role })

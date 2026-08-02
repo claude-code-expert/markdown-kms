@@ -127,4 +127,19 @@ describe("RBAC matrix — delete (DELETE /api/workspaces/:id, OWNER only)", () =
     const res = await deleteWorkspace(deleteRequest(ws.id), ctx(ws.id));
     expect(res.status).toBe(403);
   });
+
+});
+
+// requireRole is the shared gate; the /w/[wsId] page calls it with an unvalidated URL param,
+// so a malformed (non-uuid) workspaceId must fail-closed as ForbiddenError rather than crash the
+// uuid-typed membership query with a raw Postgres "invalid input syntax" 500.
+describe("requireRole — malformed workspace id fails closed", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("throws ForbiddenError for a non-uuid id before hitting the DB", async () => {
+    const { requireRole, ForbiddenError } = await import("@/lib/rbac");
+    mockSessionFor("00000000-0000-4000-8000-000000000000");
+
+    await expect(requireRole("1", "VIEWER")).rejects.toBeInstanceOf(ForbiddenError);
+  });
 });
