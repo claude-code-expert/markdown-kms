@@ -37,7 +37,11 @@ export async function requireRole(workspaceId: string, minRole: Role) {
     .from(workspaceMember)
     .where(and(eq(workspaceMember.workspaceId, workspaceId), eq(workspaceMember.userId, session.user.id)));
 
-  if (!member || ROLE_RANK[member.role as Role] < ROLE_RANK[minRole]) {
+  // WR-01: fail-closed on an unrecognized role value. `ROLE_RANK[unknownRole]` is `undefined`,
+  // and `undefined < n` is always `false` — without the `?? -1` fallback that would silently
+  // authorize an off-enum role instead of rejecting it.
+  const rank = member ? (ROLE_RANK[member.role as Role] ?? -1) : -1;
+  if (!member || rank < ROLE_RANK[minRole]) {
     throw new ForbiddenError();
   }
 
