@@ -28,4 +28,13 @@ describe("code-block plugin (D-P2-10)", () => {
     const { doc } = apply((state) => codeBlock.run(state), "a```b", { from: 0, to: 5 });
     expect(doc).toBe("````\na```b\n````");
   });
+
+  // [Rule 1 - WR-01/GAP-3] The closing fence must land on its own line when trailing
+  // same-line content follows the selection, otherwise the fence line isn't recognized as
+  // a closer and the rest of the document is swallowed into the code block.
+  // Pipeline-accurate: verified via tests/markdown/plugin-render.test.ts.
+  it("wraps a selection with trailing same-line content, closing fence on its own line", () => {
+    const { doc } = apply((state) => codeBlock.run(state), "x hello", { from: 0, to: 1 });
+    expect(doc).toBe("```\nx\n```\n hello");
+  });
 });

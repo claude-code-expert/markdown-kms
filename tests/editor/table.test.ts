@@ -22,4 +22,12 @@ describe("table plugin (D-P2-09 skeleton insert, RESEARCH Open Question #2)", ()
     });
     expect(second.doc).toBe(`${SKELETON}\n\n${SKELETON}`);
   });
+
+  // [Rule 1 - CR-01/GAP-2] Trailing same-line content must be split onto its own block
+  // with a blank-line separator, not glued onto the skeleton's last row (where GFM would
+  // silently drop it). Pipeline-accurate: verified via tests/markdown/plugin-render.test.ts.
+  it("inserting mid-line splits trailing content onto its own block", () => {
+    const { doc } = apply((state) => table.run(state), "hello", { from: 0, to: 0 });
+    expect(doc).toBe(`${SKELETON}\n\nhello`);
+  });
 });
