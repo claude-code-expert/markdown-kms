@@ -235,3 +235,7 @@ None - no external service configuration required.
 ---
 *Phase: 02-markdown-rendering-editor-formatting*
 *Completed: 2026-08-02*
+
+## Self-Check: PASSED
+
+All 6 created/modified files confirmed present on disk; all 6 task commits (`38d3cca`, `544cc38`, `dc9b314`, `08521c2`, `338414f`, `8586927`) confirmed in git log.
