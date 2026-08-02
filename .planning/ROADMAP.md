@@ -70,7 +70,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. GFM task-list checkboxes render correctly despite HTML sanitization (sanitize schema explicitly extended for input/del/table, not left at the sanitizer's stripped default).
   5. Typing Korean text via IME composes correctly without corruption or dropped characters — the editor runs uncontrolled (mounted once, mutated only via `dispatch()`) and never re-pushes external content mid-composition.
 
-**Plans**: 5/5 executed + 1 gap-closure planned (02-06)
+**Plans**: 6/6 plans executed
 
 **Wave 1**
 
@@ -91,7 +91,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Gap Closure (Wave 5)** *(from 02-REVIEW.md / 02-VERIFICATION.md — 6 defects where pinned fixtures encoded output never rendered through the real pipeline)*
 
-- [ ] 02-06-PLAN.md — Plugin-output→pipeline→HTML integration gate + hr/table/code-block/heading/PreviewPane fixes (GAP-1..6)
+- [x] 02-06-PLAN.md — Plugin-output→pipeline→HTML integration gate + hr/table/code-block/heading/PreviewPane fixes (GAP-1..6)
 
 **UI hint**: yes
 
@@ -189,7 +189,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Auth & Workspace Foundation | 5/5 | Complete    | 2026-08-02 |
-| 2. Markdown Rendering & Editor Formatting | 5/5 | In Progress|  |
+| 2. Markdown Rendering & Editor Formatting | 6/6 | In Progress|  |
 | 3. Folder Tree (Closure Table) | 0/TBD | Not started | - |
 | 4. Documents, Autosave & 3-Pane Workspace | 0/TBD | Not started | - |
 | 5. Editor Enhancements & Personalization | 0/TBD | Not started | - |
