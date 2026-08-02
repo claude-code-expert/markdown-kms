@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { verifyPassword } from "@/lib/password";
 import { checkLoginRateLimit, recordLoginFailure, undoLoginFailure } from "@/lib/rate-limit";
+import { normalizeEmail } from "@/lib/validation";
 
 // CR-02: fixed dummy hash so a nonexistent user still pays the same bcrypt cost as a real
 // one — the DB lookup hitting 0 vs 1 rows must not be observable via response timing (T-02-01).
@@ -20,9 +21,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Credentials({
       credentials: { email: {}, password: {} },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
+        const rawEmail = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
-        if (!email || !password) return null;
+        if (!rawEmail || !password) return null;
+        // WR-07: normalize the same way signup does, so login matches regardless of case/whitespace.
+        const email = normalizeEmail(rawEmail);
 
         // O1: 5 failed attempts / 10 min per email — never disclose the lockout itself, just
         // fail through the same generic path as a wrong password (T-02-01). CR-01: keyed on
