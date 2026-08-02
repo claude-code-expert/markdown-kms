@@ -35,4 +35,13 @@ describe("heading plugin (line-prefix replace, D-P2-06/07/08)", () => {
     const { doc } = apply((state) => heading(1).run(state), "a\nb", { from: 0, to: 3 });
     expect(doc).toBe("# a\n# b");
   });
+
+  // [Rule 1 - WR-02/GAP-4] Sibling list/blockquote plugins replace a conflicting prefix
+  // rather than nesting it; heading now strips a list marker too instead of prepending
+  // '#' in front of it. Pipeline-accurate: verified via tests/markdown/plugin-render.test.ts
+  // (renders '<h1>item</h1>', no stray list marker inside the heading).
+  it("heading(1) on a list-prefixed line '- item' strips the marker -> '# item'", () => {
+    const { doc } = apply((state) => heading(1).run(state), "- item", { from: 0, to: 0 });
+    expect(doc).toBe("# item");
+  });
 });

@@ -9,6 +9,14 @@
 // object like the other 13 plugins, because it needs a level parameter — this is the
 // pinned import contract tests/editor/heading.test.ts requires.
 //
+// [Rule 1 - WR-02] Sibling line-prefix plugins (bullet-list, ordered-list, task-list,
+// blockquote) all replace a CONFLICTING prefix rather than nesting it. heading.ts's ATX_RE
+// only recognized existing heading markers, so applying a heading to an existing list line
+// left the list marker as literal heading text. ANY_LIST_PREFIX_RE mirrors those sibling
+// plugins' shape (inlined here, not imported — CLAUDE.md 1-feature-1-file invariant
+// forbids cross-plugin imports) so a conflicting list/blockquote prefix is stripped first
+// when the line isn't already an ATX heading (GAP-4).
+//
 // Pure run(state): TransactionSpec — no EditorView/DOM access (TRD §6), and this file
 // imports no other plugin (CLAUDE.md 1-feature-1-file invariant).
 import { type EditorState, type TransactionSpec } from "@codemirror/state";
@@ -18,6 +26,7 @@ import type { EditorPlugin } from "./types";
 export type HeadingLevel = 0 | 1 | 2 | 3 | 4;
 
 const ATX_RE = /^(#{1,4}) /;
+const ANY_LIST_PREFIX_RE = /^(?:- \[ \] |- |\d+\. |> )/;
 
 const ICONS: Record<HeadingLevel, LucideIcon> = {
   0: Pilcrow,
@@ -54,7 +63,9 @@ function makeRun(level: HeadingLevel) {
 
       const changes = lines.map((line) => {
         const match = ATX_RE.exec(line.text);
-        const stripLen = match ? match[0].length : 0;
+        const stripLen = match
+          ? match[0].length
+          : (ANY_LIST_PREFIX_RE.exec(line.text)?.[0].length ?? 0);
         const insert = level === 0 || allSameLevel ? "" : `${"#".repeat(level)} `;
         return { from: line.from, to: line.from + stripLen, insert };
       });
