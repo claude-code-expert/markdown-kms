@@ -15,6 +15,7 @@
 // No memoization here (CLAUDE.md / TRD §5 — measure the 60ms budget first, in 02-05).
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import remarkBreaks from "remark-breaks";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
@@ -26,11 +27,16 @@ import type { Root, Nodes } from "hast";
 import { remarkGfmSubset } from "./remark-gfm-subset";
 import { schema } from "./schema";
 
-function baseProcessor() {
-  return unified()
-    .use(remarkParse)
-    .use(remarkGfmSubset)
-    .use(remarkRehype, { allowDangerousHtml: true });
+// `breaks: true` inserts remark-breaks (soft line ending -> hard <br>) BEFORE remark-rehype,
+// so the RENDERING forks (preview + HTML string) treat a single Enter as a visible line break.
+// This is a deliberate product deviation from strict CommonMark 0.31.2 soft-break semantics
+// (TRD §5, decided during Phase 2 UAT) and is scoped to the rendering forks ONLY — the
+// preSanitize/CommonMark-conformance fork stays pure so the spec suite still compares against
+// the reference renderer.
+function baseProcessor({ breaks = false }: { breaks?: boolean } = {}) {
+  const processor = unified().use(remarkParse).use(remarkGfmSubset);
+  if (breaks) processor.use(remarkBreaks);
+  return processor.use(remarkRehype, { allowDangerousHtml: true });
 }
 
 // [Rule 1 - bug] hast-util-to-html's text handler only escapes `<` and `&`
@@ -101,12 +107,12 @@ export const markdownProcessorPreSanitize = {
   },
 };
 
-export const markdownProcessor = baseProcessor()
+export const markdownProcessor = baseProcessor({ breaks: true })
   .use(rehypeRaw)
   .use(rehypeSanitize, schema)
   .use(rehypeStringify);
 
-const markdownProcessorReact = baseProcessor()
+const markdownProcessorReact = baseProcessor({ breaks: true })
   .use(rehypeRaw)
   .use(rehypeSanitize, schema)
   .use(rehypeReact, { Fragment, jsx, jsxs });

@@ -1,5 +1,11 @@
 # Changelog — 결정 기록 (append-only, 최신이 위)
 
+## 2026-08-02 — 미리보기 줄바꿈: 단일 엔터 → `<br>` (CommonMark 0.31.2 이탈, remark-breaks 추가)
+- **결정**: 렌더 파이프라인에 `remark-breaks`를 추가해 단일 `\n`(엔터 1번)을 hard break `<br>`로 렌더. Phase 2 UAT 중 제품 오너 지시로 잠긴 CommonMark 0.31.2 soft-break 불변식(TRD §5)을 명시적으로 override. 적용 범위는 렌더 fork(`markdownProcessor`·`markdownProcessorReact`)뿐 — CommonMark 정합성 fork(`markdownProcessorPreSanitize`)는 순수 유지.
+- **이유**: 에디터 사용자는 엔터=줄바꿈을 기대하나 순수 CommonMark은 단일 soft break를 공백 처리해 "엔터가 미리보기에 반영 안 됨"으로 보였다(UAT 리포트).
+- **대안**: (1) 순수 CommonMark 유지 — 스펙 정합·불변식 보존이나 사용자 기대와 어긋남(오너 기각). (2) 전역 적용 — CommonMark conformance suite 651/652가 깨져 스펙 참조 fork의 존재 의미 상실. 렌더 fork 한정으로 둘 다 회피.
+- **영향**: `remark-breaks@4` 의존성 신규 추가. `src/lib/markdown/pipeline.ts` `baseProcessor({breaks})` 분기. TRD §1 스택 행·§5 다이어그램+이탈 불릿 개정. 잠금 테스트 `tests/markdown/line-breaks.test.ts` 신규(렌더=`<br>`, conformance fork=순수). 기존 markdown/spec/editor 스위트 734건 회귀 없음(단일 `\n` 픽스처 부재). export 원문(NFR-5.2)은 파이프라인 역변환 안 하므로 무영향.
+
 ## 2026-08-02 — 워크스페이스 삭제: 하드 cascade → 소프트 삭제 (D-15 override)
 - **결정**: `DELETE /api/workspaces/:id`를 하드 cascade가 아니라 소프트 삭제(`workspace.is_deleted=true`)로 확정. 행·멤버십 보존, 활성 조회에서 제외, OWNER 전용·기본 워크스페이스 삭제 불가는 유지. Phase 1 실행 중(Plan 01-04 Task 3 decision checkpoint)에 제품 오너 지시로 잠긴 결정 D-15를 명시적으로 override.
 - **이유**: 워크스페이스 삭제를 복구 가능하게 하려는 오너 요구. 문서·폴더 소프트 삭제(Phase 4)와 삭제 의미를 일관되게.

@@ -20,7 +20,7 @@ REQUIREMENT는 스택을 지정하지 않았다. 아래로 확정한다. 선정 
 | 패키지 매니저 | pnpm | 전 명령 pnpm 경유. npm/yarn 혼용 금지 |
 | 인증 | Auth.js v5 (NextAuth) | FR-A2 "OAuth 확장 가능한 구조"를 credentials provider → Google provider 추가로 정확히 충족. 비밀번호는 bcrypt |
 | 에디터 | CodeMirror 6 | 커서 위치 삽입(FR-E6)·선택 영역 감싸기(US-1)·10k자 성능이 표준 API. textarea는 이 셋이 전부 수제, Monaco는 IDE급 무게 |
-| 마크다운 | unified: remark-parse + remark-gfm + remark-rehype + rehype-raw + rehype-sanitize + rehype-react | micromark 코어가 CommonMark 0.31.2 spec 테스트를 통과. remark-gfm에서 취소선·태스크·표만 활성, footnote 등은 비활성 (§1 범위) |
+| 마크다운 | unified: remark-parse + remark-gfm + remark-breaks + remark-rehype + rehype-raw + rehype-sanitize + rehype-react | micromark 코어가 CommonMark 0.31.2 spec 테스트를 통과. remark-gfm에서 취소선·태스크·표만 활성, footnote 등은 비활성 (§1 범위). remark-breaks는 렌더 fork에만(단일 엔터→`<br>`, §5 이탈 결정) |
 | 아이콘 | lucide-react | FR-E7 명시 |
 | zip | archiver | FR-X2 스트리밍 압축 |
 | 테스트 | Vitest + Playwright | spec_tests 러너는 Vitest, 60ms 측정·E2E는 Playwright |
@@ -166,13 +166,14 @@ NFR-1.3이 금지하는 것은 깊이 비례 재귀 쿼리다. 네 연산 모두
 ## 5. 마크다운 파이프라인
 
 ```
-content ─ remark-parse ─ remark-gfm(strikethrough·tasklist·table만) ─ remark-rehype(allowDangerousHtml)
+content ─ remark-parse ─ remark-gfm(strikethrough·tasklist·table만) ─ remark-breaks ─ remark-rehype(allowDangerousHtml)
         ─ rehype-raw ─ rehype-sanitize(허용 스키마) ─ rehype-react ─ 미리보기 DOM
 ```
 
 - **NFR-3.1 충족 방식**: raw HTML은 rehype-raw로 일단 파싱하되 rehype-sanitize 허용 목록을 통과한 요소만 남는다. `<script>`, 이벤트 핸들러 속성, `javascript:` URL은 목록에 없으므로 제거 = "미통과 시 렌더링하지 않음". sanitize 스키마에 GFM 산출물(`del`, `input[type=checkbox][disabled]`, `table` 계열)을 추가한다.
 - **NFR-5.2 (export 무손실)**: export는 `document.content` 원문을 그대로 내보낸다. 파이프라인을 역변환하지 않으므로 손실이 원리적으로 없다.
 - 같은 파이프라인 함수를 미리보기·프레젠테이션(R3)이 공유한다. 렌더러가 둘이 되는 순간 정합성 테스트도 둘이 된다.
+- **remark-breaks (Phase 2 UAT 결정, CommonMark 0.31.2 이탈)**: 단일 `\n`(엔터 1번)을 hard break `<br>`로 렌더한다. 순수 CommonMark은 단일 soft break를 공백으로 처리하지만, 에디터 사용자는 엔터=줄바꿈을 기대하므로 이탈을 채택했다. **적용 범위는 렌더 fork(`markdownProcessor`·`markdownProcessorReact`)뿐** — CommonMark 정합성 fork(`markdownProcessorPreSanitize`)는 순수하게 유지해 spec 테스트가 레퍼런스 렌더러와 계속 바이트 비교되게 한다. 잠금 테스트: `tests/markdown/line-breaks.test.ts`.
 
 ### 60ms 예산 (NFR-1.1)
 
