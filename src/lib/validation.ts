@@ -12,7 +12,12 @@ export function normalizeEmail(email: string): string {
 // Shared client+server so there is exactly one source of truth (Pitfall 5).
 export const signupSchema = z.object({
   email: z.string().trim().toLowerCase().pipe(z.email("올바른 이메일 형식이 아닙니다.")),
-  password: z.string().min(8, "비밀번호는 8자 이상이어야 합니다."),
+  // WR-08: bcrypt silently truncates beyond 72 bytes — cap so two different passwords
+  // sharing a 72-byte prefix can't collide into the same hash.
+  password: z
+    .string()
+    .min(8, "비밀번호는 8자 이상이어야 합니다.")
+    .max(72, "비밀번호는 72자를 넘을 수 없습니다."),
   name: z.string().min(1, "이름을 입력해 주세요."),
 });
 
