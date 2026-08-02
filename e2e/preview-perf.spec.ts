@@ -153,6 +153,10 @@ test.describe("preview p95 latency (EDIT-06)", () => {
     deltas.sort((a, b) => a - b);
     const observedP95 = p95(deltas);
 
+    // Recorded for the 02-05 SUMMARY / future regression comparison -- not an
+    // assertion, just a visible measurement in the test log (EDIT-06 / TRD §5).
+    console.log(`EDIT-06 keystroke->preview p95: ${observedP95.toFixed(2)}ms (n=${deltas.length})`);
+
     // Guard against n=0/single-keystroke division edge (EDIT-06/empty spec-less edge).
     expect(deltas.length).toBeGreaterThan(0);
     expect(observedP95).toBeLessThanOrEqual(60);
