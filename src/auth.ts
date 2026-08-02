@@ -6,6 +6,10 @@ import { user } from "@/db/schema";
 import { verifyPassword } from "@/lib/password";
 import { checkLoginRateLimit, recordLoginFailure } from "@/lib/rate-limit";
 
+// CR-02: fixed dummy hash so a nonexistent user still pays the same bcrypt cost as a real
+// one — the DB lookup hitting 0 vs 1 rows must not be observable via response timing (T-02-01).
+const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8G7VpTNK6H7oXBCa/6dKQvV5cD5cGO";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt", // D-07: Credentials providers cannot use DB sessions
@@ -28,14 +32,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!checkLoginRateLimit(rateLimitKey)) return null;
 
         const [found] = await db.select().from(user).where(eq(user.email, email));
-        // One indistinguishable failure path for both "no such user" and "wrong password" (T-02-01).
-        if (!found?.passwordHash) {
-          recordLoginFailure(rateLimitKey);
-          return null;
-        }
-
-        const valid = await verifyPassword(password, found.passwordHash);
-        if (!valid) {
+        // CR-02 / T-02-01: always pay the bcrypt cost, even when no user was found, by
+        // comparing against a fixed dummy hash — keeps both branches timing-indistinguishable.
+        const valid = await verifyPassword(password, found?.passwordHash ?? DUMMY_HASH);
+        if (!found?.passwordHash || !valid) {
           recordLoginFailure(rateLimitKey);
           return null;
         }
