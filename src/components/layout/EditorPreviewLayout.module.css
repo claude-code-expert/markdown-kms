@@ -1,0 +1,21 @@
+/* D-P2-01/03: height:100% only — 100vh is declared ONLY at the host route
+   (app/(main)/w/[wsId]/page.tsx), never inside this assemblable component. */
+.grid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "editor preview";
+}
+
+.editorPane {
+  grid-area: editor;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--border);
+}
+
+.previewPane {
+  grid-area: preview;
+  min-height: 0;
+}
