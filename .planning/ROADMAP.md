@@ -70,7 +70,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. GFM task-list checkboxes render correctly despite HTML sanitization (sanitize schema explicitly extended for input/del/table, not left at the sanitizer's stripped default).
   5. Typing Korean text via IME composes correctly without corruption or dropped characters — the editor runs uncontrolled (mounted once, mutated only via `dispatch()`) and never re-pushes external content mid-composition.
 
-**Plans**: 5/5 plans executed
+**Plans**: 5/5 executed + 1 gap-closure planned (02-06)
 
 **Wave 1**
 
@@ -88,6 +88,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] 02-04-PLAN.md — Plugin expansion: remaining 13 plugins + full lucide toolbar + heading dropdown
 - [x] 02-05-PLAN.md — EDIT-06 60ms p95 measurement (measure-first) + consolidated end-of-phase verification
+
+**Gap Closure (Wave 5)** *(from 02-REVIEW.md / 02-VERIFICATION.md — 6 defects where pinned fixtures encoded output never rendered through the real pipeline)*
+
+- [ ] 02-06-PLAN.md — Plugin-output→pipeline→HTML integration gate + hr/table/code-block/heading/PreviewPane fixes (GAP-1..6)
 
 **UI hint**: yes
 
