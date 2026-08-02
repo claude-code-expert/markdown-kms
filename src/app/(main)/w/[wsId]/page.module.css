@@ -1,5 +1,10 @@
+/* 100vh is declared here at the host route level only (UI-SPEC Layout & Composition
+   Contract) — EditorPreviewLayout itself uses height:100% exclusively. */
 .page {
+  height: 100vh;
   padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
@@ -7,9 +12,10 @@
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 var(--space-md);
+  flex-shrink: 0;
 }
 
-.empty {
-  font-size: 13px;
-  color: var(--muted);
+.layoutWrap {
+  flex: 1;
+  min-height: 0;
 }

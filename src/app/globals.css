@@ -12,6 +12,7 @@
   --accent-strong: #1d4ed8;
   --accent-weak: #eff6ff;
   --destructive: #dc2626;
+  --code-bg: #0f172a; /* Preview Pane Prose Contract (UI-SPEC) — fenced code block background */
 
   /* UI-SPEC Spacing Scale — 4-multiple, xs..3xl */
   --space-xs: 4px;
