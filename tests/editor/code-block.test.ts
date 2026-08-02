@@ -37,4 +37,15 @@ describe("code-block plugin (D-P2-10)", () => {
     const { doc } = apply((state) => codeBlock.run(state), "x hello", { from: 0, to: 1 });
     expect(doc).toBe("```\nx\n```\n hello");
   });
+
+  // [Rule 1 - CR-01/GAP-3] The caret path (from === to) must apply the same line-boundary
+  // guard: a caret mid-line puts the opening fence on its own line and the closing fence on
+  // its own line, so neighbouring same-line text is not glued onto a fence (which produced
+  // an unterminated block swallowing the rest of the doc). Caret lands on the language slot.
+  // Pipeline-accurate: verified via tests/markdown/plugin-render.test.ts.
+  it("caret with same-line content on both sides puts both fences on their own lines", () => {
+    const { doc, selection } = apply((state) => codeBlock.run(state), "abc hello", { from: 3, to: 3 });
+    expect(doc).toBe("abc\n```\n\n```\n hello");
+    expect(selection).toEqual({ from: 7, to: 7 });
+  });
 });

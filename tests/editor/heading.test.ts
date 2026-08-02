@@ -44,4 +44,13 @@ describe("heading plugin (line-prefix replace, D-P2-06/07/08)", () => {
     const { doc } = apply((state) => heading(1).run(state), "- item", { from: 0, to: 0 });
     expect(doc).toBe("# item");
   });
+
+  // [Rule 1 - WR-02/GAP-4] An existing level-5/6 ATX heading is valid CommonMark (typed by
+  // hand — this app only writes 1-4). The strip must recognize it and REPLACE the marker,
+  // not prepend in front of it (which would render '<h2>##### x</h2>' — nesting again).
+  // Pipeline-accurate: verified via tests/markdown/plugin-render.test.ts.
+  it("heading(2) on an existing level-5 heading '##### x' replaces the marker -> '## x'", () => {
+    const { doc } = apply((state) => heading(2).run(state), "##### x", { from: 0, to: 0 });
+    expect(doc).toBe("## x");
+  });
 });
