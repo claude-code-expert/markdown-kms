@@ -15,15 +15,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
-      async authorize(credentials, request) {
+      async authorize(credentials) {
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
         if (!email || !password) return null;
 
-        // O1: 5 failed attempts / 10 min per email+IP — never disclose the lockout itself,
-        // just fail through the same generic path as a wrong password (T-02-01).
-        const ip = request.headers.get("x-forwarded-for") ?? "unknown";
-        const rateLimitKey = `${email}:${ip}`;
+        // O1: 5 failed attempts / 10 min per email — never disclose the lockout itself, just
+        // fail through the same generic path as a wrong password (T-02-01). CR-01: keyed on
+        // email only, not a client-suppliable header — this app has no trusted reverse proxy
+        // in front of it, so `x-forwarded-for` can be spoofed per-request to dodge the limiter.
+        const rateLimitKey = email;
         if (!checkLoginRateLimit(rateLimitKey)) return null;
 
         const [found] = await db.select().from(user).where(eq(user.email, email));
