@@ -25,8 +25,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // suppressHydrationWarning: 브라우저 확장(Trancy·Grammarly·Dark Reader 등)이 <html>에 속성을
+  // 주입해 생기는 hydration 불일치를 억제. 이 요소 한 레벨만 적용, 자식 트리 실제 mismatch는 그대로 잡힘.
   return (
-    <html lang="ko" className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>
+    <html
+      lang="ko"
+      className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>{children}</body>
     </html>
   );
