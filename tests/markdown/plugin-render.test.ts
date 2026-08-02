@@ -10,6 +10,8 @@ import { describe, expect, it } from "vitest";
 import { apply } from "../editor/test-utils";
 import { markdownProcessor } from "@/lib/markdown/pipeline";
 import { hr } from "@/components/editor/plugins/hr";
+import { table } from "@/components/editor/plugins/table";
+import { codeBlock } from "@/components/editor/plugins/code-block";
 
 describe("plugin output -> markdownProcessor integration gate", () => {
   describe("hr (GAP-1, CR-02)", () => {
@@ -18,6 +20,27 @@ describe("plugin output -> markdownProcessor integration gate", () => {
       const html = String(await markdownProcessor.process(doc));
       expect(html).toContain("<hr");
       expect(html).not.toContain("<h2");
+    });
+  });
+
+  describe("table (GAP-2, CR-01)", () => {
+    it("splits trailing same-line content onto its own block instead of dropping it", async () => {
+      const { doc } = apply((state) => table.run(state), "hello", { from: 0, to: 0 });
+      const html = String(await markdownProcessor.process(doc));
+      expect(html).toContain("<table");
+      expect(html).toContain("hello");
+    });
+  });
+
+  describe("code-block (GAP-3, WR-01)", () => {
+    it("keeps the closing fence on its own line so trailing same-line content renders outside the code block", async () => {
+      const { doc } = apply((state) => codeBlock.run(state), "x hello", { from: 0, to: 1 });
+      const html = String(await markdownProcessor.process(doc));
+      expect(html).toContain("<pre>");
+      const preCloseIdx = html.indexOf("</pre>");
+      expect(preCloseIdx).toBeGreaterThan(-1);
+      const trailingIdx = html.indexOf("hello");
+      expect(trailingIdx).toBeGreaterThan(preCloseIdx);
     });
   });
 });
