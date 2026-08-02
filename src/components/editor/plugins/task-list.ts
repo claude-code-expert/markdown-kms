@@ -29,7 +29,9 @@ function run(state: EditorState): TransactionSpec {
       return { from: line.from, to: line.from + stripLen, insert };
     });
 
-    return { changes, range: range.map(state.changes(changes)) };
+    // assoc +1: keep a line-start / empty-line caret AFTER the inserted '- [ ] ' prefix rather
+    // than in front of it (default assoc -1 leaves it before the marker — Phase 2 UAT caret bug).
+    return { changes, range: range.map(state.changes(changes), 1) };
   });
 }
 

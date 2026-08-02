@@ -74,7 +74,11 @@ function makeRun(level: HeadingLevel) {
         return { from: line.from, to: line.from + stripLen, insert };
       });
 
-      return { changes, range: range.map(state.changes(changes)) };
+      // assoc +1: a caret sitting AT line.from (line start / empty line — the common toolbar
+      // case) must map to AFTER the inserted prefix, not in front of it. The default assoc (-1)
+      // leaves the caret before '# ', so the user types ahead of the marker and the heading
+      // never applies (Phase 2 UAT caret bug).
+      return { changes, range: range.map(state.changes(changes), 1) };
     });
   };
 }
