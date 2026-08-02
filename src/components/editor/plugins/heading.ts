@@ -25,7 +25,11 @@ import type { EditorPlugin } from "./types";
 
 export type HeadingLevel = 0 | 1 | 2 | 3 | 4;
 
-const ATX_RE = /^(#{1,4}) /;
+// [WR-02] Recognizes 1-6 hashes for STRIPPING even though this app only ever writes 1-4:
+// a level-5/6 heading is valid CommonMark (typed by hand), and must be REPLACED, not nested
+// (`##### x` + level 2 -> `## x`, never `## ##### x`). `allSameLevel` stays correct because
+// a 5/6 match length never equals the 1-4 target level, so it never toggles those off.
+const ATX_RE = /^(#{1,6}) /;
 const ANY_LIST_PREFIX_RE = /^(?:- \[ \] |- |\d+\. |> )/;
 
 const ICONS: Record<HeadingLevel, LucideIcon> = {
