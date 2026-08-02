@@ -1,0 +1,74 @@
+// D-P2-06/07/08 contract: heading is a line-prefix REPLACE (not a wrap) — level 1-4
+// map to '#'..'####', level 0 maps to paragraph (prefix stripped, no marker). Applying
+// the SAME level a selected line already has toggles it back to paragraph; applying a
+// DIFFERENT level replaces the existing prefix (no nesting, e.g. '# x' -> heading(2) ->
+// '## x', never '## # x'). Multi-line selections re-prefix each selected line
+// independently (RESEARCH Open Question #1, pinned by tests/editor/heading.test.ts).
+//
+// `heading` is a factory (`heading(level): EditorPlugin`), not a single exported plugin
+// object like the other 13 plugins, because it needs a level parameter — this is the
+// pinned import contract tests/editor/heading.test.ts requires.
+//
+// Pure run(state): TransactionSpec — no EditorView/DOM access (TRD §6), and this file
+// imports no other plugin (CLAUDE.md 1-feature-1-file invariant).
+import { type EditorState, type TransactionSpec } from "@codemirror/state";
+import { Heading1, Heading2, Heading3, Heading4, Pilcrow, type LucideIcon } from "lucide-react";
+import type { EditorPlugin } from "./types";
+
+export type HeadingLevel = 0 | 1 | 2 | 3 | 4;
+
+const ATX_RE = /^(#{1,4}) /;
+
+const ICONS: Record<HeadingLevel, LucideIcon> = {
+  0: Pilcrow,
+  1: Heading1,
+  2: Heading2,
+  3: Heading3,
+  4: Heading4,
+};
+
+const LABELS: Record<HeadingLevel, string> = {
+  0: "본문",
+  1: "제목 1",
+  2: "제목 2",
+  3: "제목 3",
+  4: "제목 4",
+};
+
+function makeRun(level: HeadingLevel) {
+  return function run(state: EditorState): TransactionSpec {
+    return state.changeByRange((range) => {
+      const startLine = state.doc.lineAt(range.from);
+      const endLine = state.doc.lineAt(range.to);
+      const lines = [];
+      for (let n = startLine.number; n <= endLine.number; n++) {
+        lines.push(state.doc.line(n));
+      }
+
+      const allSameLevel =
+        level > 0 &&
+        lines.every((line) => {
+          const match = ATX_RE.exec(line.text);
+          return (match ? match[1].length : 0) === level;
+        });
+
+      const changes = lines.map((line) => {
+        const match = ATX_RE.exec(line.text);
+        const stripLen = match ? match[0].length : 0;
+        const insert = level === 0 || allSameLevel ? "" : `${"#".repeat(level)} `;
+        return { from: line.from, to: line.from + stripLen, insert };
+      });
+
+      return { changes, range: range.map(state.changes(changes)) };
+    });
+  };
+}
+
+export function heading(level: HeadingLevel): EditorPlugin {
+  return {
+    id: level === 0 ? "heading-p" : `heading-${level}`,
+    icon: ICONS[level],
+    tooltip: LABELS[level],
+    run: makeRun(level),
+  };
+}
