@@ -222,7 +222,9 @@ Phase 1이 이미 `src/app/globals.css`에 이식한 토큰을 그대로 재사�
 > Empty-state and error-state COPY live in `## Copywriting Contract` above — this section covers
 > state coverage and REFERENCES those rows rather than restating the copy (de-dup).
 
-Applicable state considerations resolved: 8 covered, 1 backstop, 0 unresolved.
+Applicable state considerations resolved: 7 covered, 1 backstop, 0 unresolved.
+
+> **Probe confirmation (Step 9.5, 2026-08-02):** the UI-consideration probe engine flagged 8 distinct state categories — empty / loading / error / populated / partial / overflow / zero-one-many / long-text — applicable across the 5 surfaces (host layout, toolbar, preview prose, insert UX, editor pane) = 37 element-level considerations. No category surfaced that this section had missed. Resolved at the category level because each resolution is driven by an element-agnostic locked decision (e.g. D-P2-02 non-persistent ⇒ `loading` structurally absent on every surface), not 37 redundant per-element resolutions.
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -250,11 +252,11 @@ Applicable state considerations resolved: 8 covered, 1 backstop, 0 unresolved.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved — gsd-ui-checker, 6/6 dimensions PASS, 2026-08-02. UI-consideration probe (Step 9.5) run and reconciled: 8/8 state categories resolved, 0 unresolved.
