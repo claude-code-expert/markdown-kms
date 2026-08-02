@@ -1,0 +1,29 @@
+/* Editor Pane Contract (UI-SPEC): IBM Plex Mono, no gutter (line numbers off by
+   default — omitted entirely, not a hidden CM6 extension), accent caret/selection. */
+.host {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.host :global(.cm-editor) {
+  height: 100%;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.host :global(.cm-scroller) {
+  overflow: auto;
+  padding: var(--space-md);
+}
+
+.host :global(.cm-content) {
+  caret-color: var(--accent);
+}
+
+.host :global(.cm-content)::selection,
+.host :global(.cm-line)::selection {
+  background: var(--accent-weak);
+}
