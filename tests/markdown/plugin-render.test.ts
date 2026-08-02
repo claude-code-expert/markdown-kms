@@ -12,6 +12,7 @@ import { markdownProcessor } from "@/lib/markdown/pipeline";
 import { hr } from "@/components/editor/plugins/hr";
 import { table } from "@/components/editor/plugins/table";
 import { codeBlock } from "@/components/editor/plugins/code-block";
+import { heading } from "@/components/editor/plugins/heading";
 
 describe("plugin output -> markdownProcessor integration gate", () => {
   describe("hr (GAP-1, CR-02)", () => {
@@ -41,6 +42,14 @@ describe("plugin output -> markdownProcessor integration gate", () => {
       expect(preCloseIdx).toBeGreaterThan(-1);
       const trailingIdx = html.indexOf("hello");
       expect(trailingIdx).toBeGreaterThan(preCloseIdx);
+    });
+  });
+
+  describe("heading (GAP-4, WR-02)", () => {
+    it("applying a heading to a list-prefixed line strips the list marker instead of nesting it", async () => {
+      const { doc } = apply((state) => heading(1).run(state), "- item", { from: 0, to: 0 });
+      const html = String(await markdownProcessor.process(doc));
+      expect(html).toContain("<h1>item</h1>");
     });
   });
 });
