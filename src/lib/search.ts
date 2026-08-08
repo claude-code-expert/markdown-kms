@@ -37,7 +37,11 @@ export async function searchWorkspace(
   client: DbClient = db,
 ): Promise<SearchResult[]> {
   if (!q) return [];
-  const pattern = `%${q}%`;
+  // IN-02: `%`/`_` are ILIKE wildcards -- escape them (and the escape char itself) to literal
+  // characters so a query like "50%" only matches text that literally contains "50%", not any
+  // text containing "50". Explicit ESCAPE clause below since it's not ILIKE's default.
+  const escaped = q.replace(/[\\%_]/g, "\\$&");
+  const pattern = `%${escaped}%`;
 
   const rows = await client.execute<SearchRow>(sql`
     SELECT d.id AS id, d.title AS title, LEFT(d.content, 200) AS snippet,
@@ -49,9 +53,9 @@ export async function searchWorkspace(
     WHERE d.workspace_id = ${workspaceId}
       AND d.is_deleted = false
       AND (
-        d.title ILIKE ${pattern}
-        OR d.content ILIKE ${pattern}
-        OR EXISTS (SELECT 1 FROM document_tag dt WHERE dt.document_id = d.id AND dt.tag ILIKE ${pattern})
+        d.title ILIKE ${pattern} ESCAPE '\\'
+        OR d.content ILIKE ${pattern} ESCAPE '\\'
+        OR EXISTS (SELECT 1 FROM document_tag dt WHERE dt.document_id = d.id AND dt.tag ILIKE ${pattern} ESCAPE '\\')
       )
     ORDER BY d.title
   `);
