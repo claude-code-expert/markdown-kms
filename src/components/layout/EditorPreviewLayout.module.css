@@ -20,3 +20,30 @@
   grid-area: preview;
   min-height: 0;
 }
+
+/* Split-Pane Resize Contract: 6px hit area straddling .editorPane's existing
+   1px border-right (right:-3px centers it on that border). idle = invisible
+   (border alone shows); hover/drag reveals a 2px accent bar over the border.
+   :active (not a JS "isDragging" state) covers the drag duration natively —
+   it stays true from mousedown until mouseup regardless of pointer position,
+   which is exactly the resize gesture's lifetime. */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 2;
+}
+
+.resizeHandle:hover::after,
+.resizeHandle:active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2px;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+}
