@@ -107,7 +107,27 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Creating, renaming, moving, and soft-deleting a folder all work correctly.
   4. Moving a folder into one of its own descendants is rejected by a same-transaction ancestor/cycle check before any rewiring happens.
 
-**Plans**: TBD
+**Plans**: 5 plans (5 waves)
+
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — folder/folder_closure 스키마 + 마이그레이션 (one-way 게이트)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 03-02-PLAN.md — TRACER: 새 폴더 생성 end-to-end (closure create + getWorkspaceFolders + POST route + 사이드바 트리 + 생성 입력)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 03-03-PLAN.md — closure 연산 확장: getSubtree / moveFolder(사이클·크로스ws) / softDeleteFolder cascade
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 03-04-PLAN.md — 폴더 변경 라우트 + RBAC/IDOR: 이름변경·소프트삭제·이동 (EDITOR+, workspace_id 서버 재조회)
+
+**Wave 5** *(blocked on Wave 4)*
+
+- [ ] 03-05-PLAN.md — 트리 UI: 컨텍스트 메뉴 + 인라인 이름변경 + 네이티브 DnD + 이동 모달 + 삭제 확인 + e2e
 **UI hint**: yes
 
 ### Phase 4: Documents, Autosave & 3-Pane Workspace
@@ -190,7 +210,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Auth & Workspace Foundation | 5/5 | Complete    | 2026-08-02 |
 | 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
-| 3. Folder Tree (Closure Table) | 0/TBD | Not started | - |
+| 3. Folder Tree (Closure Table) | 0/5 | Not started | - |
 | 4. Documents, Autosave & 3-Pane Workspace | 0/TBD | Not started | - |
 | 5. Editor Enhancements & Personalization | 0/TBD | Not started | - |
 | 6. Tags, Search & Export | 0/TBD | Not started | - |
