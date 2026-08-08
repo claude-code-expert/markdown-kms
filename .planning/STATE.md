@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 3
 current_phase_name: Folder Tree (Closure Table)
-status: planning
-stopped_at: "Completed 03-04-PLAN.md (folder mutation API routes: PATCH/DELETE/move, IDOR-safe)"
-last_updated: "2026-08-08T03:35:01.511Z"
+status: verifying
+stopped_at: "Completed 03-05-PLAN.md (folder tree interaction UI: context menu, hover actions, inline rename, native DnD move, move modal fallback, delete confirm) — Phase 3 complete (5/5 plans)"
+last_updated: "2026-08-08T03:57:34.912Z"
 last_activity: 2026-08-08
 last_activity_desc: "Phase 3 Plan 1 complete: folder/folder_closure schema + migration"
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 
 Phase: 3 — Folder Tree (Closure Table)
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-08 — Phase 3 Plan 1 complete: folder/folder_closure schema + migration
 
-Progress: [█████████░] 94%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Progress: [█████████░] 94%
 | Phase 3 P2 | 40min | 2 tasks | 11 files |
 | Phase 03 P03 | 35min | 3 tasks | 3 files |
 | Phase 03 P04 | 25min | 3 tasks | 4 files |
+| Phase 03 P05 | 55min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 03-03: DbClient type widened to typeof db | tx-callback-param union so cascade ops (softDeleteFolder) can pass their own tx into getSubtree without a TS2345 error
 - [Phase ?]: 03-04: 폴더 mutation 라우트(PATCH/DELETE/move)는 존재하지 않는 folder id도 403으로 응답한다(404 아님) — DELETE /api/workspaces/[id]의 forbiddenResponse() 관례와 일치, 존재/미존재를 상태코드로 구분 못하게 해 IDOR 정보 유출을 막는다
 - [Phase ?]: 03-04: closure.ts의 CycleError/CrossWorkspaceError는 라우트 경계에서 instanceof로 잡아 409/400에 매핑한다 — lib 자체는 HTTP를 모른다
+- [Phase ?]: 03-05: No literal workspace-root tree row added (out of this plan's declared file scope — page.tsx/FolderTree.module.css untouched); root-level create stays on the header button, move-to-root fully covered by MoveFolderModal's explicit '워크스페이스 루트' entry
+- [Phase ?]: 03-05: MoveFolderModal does its own fetch/submitting/error independent of FolderTree's DnD moveFolderTo — two entry points to the same POST /api/folders/[id]/move route, matching PATTERNS analog
 
 ### Pending Todos
 
@@ -125,6 +128,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T03:35:01.503Z
-Stopped at: Completed 03-04-PLAN.md (folder mutation API routes: PATCH/DELETE/move, IDOR-safe)
+Last session: 2026-08-08T03:57:34.905Z
+Stopped at: Completed 03-05-PLAN.md (folder tree interaction UI: context menu, hover actions, inline rename, native DnD move, move modal fallback, delete confirm) — Phase 3 complete (5/5 plans)
 Resume file: None
