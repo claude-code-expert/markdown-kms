@@ -34,3 +34,15 @@ export const workspaceSchema = z.object({
 });
 
 export type WorkspaceInput = z.infer<typeof workspaceSchema>;
+
+// TREE-03 / CONTEXT.md lock: not empty, trimmed, max 255 chars. No sibling-name-uniqueness
+// constraint (deliberately absent — see src/db/schema.ts folder table comment).
+export const folderSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "폴더 이름을 입력해 주세요.")
+    .max(255, "폴더 이름은 255자를 넘을 수 없습니다."),
+});
+
+export type FolderInput = z.infer<typeof folderSchema>;

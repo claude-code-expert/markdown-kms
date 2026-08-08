@@ -3,7 +3,7 @@
 // single-query load, RESEARCH Pattern 1). Uses a separate debug-hooked postgres client on
 // DATABASE_URL_TEST (RESEARCH Code Examples §"쿼리 개수 단언") — production src/db/index.ts is
 // untouched, so the debug hook never runs against dev data.
-import { afterAll, afterEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, sql } from "drizzle-orm";
 import postgres from "postgres";
@@ -11,6 +11,10 @@ import { db } from "@/db";
 import { workspace } from "@/db/schema";
 import { createFolder, getWorkspaceFolders } from "@/lib/closure";
 import { createTestWorkspace } from "../rbac/helpers";
+
+// tests/rbac/helpers.ts imports "@/auth" (next-auth) at module scope — mocked here even though
+// this file never calls mockSessionFor, so the real next-auth import chain never loads.
+vi.mock("@/auth", () => ({ auth: vi.fn() }));
 
 let queryCount = 0;
 const debugClient = postgres(process.env.DATABASE_URL_TEST!, {
