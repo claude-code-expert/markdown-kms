@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Folder, FileText } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { ROLE_RANK, type Role } from "@/lib/rbac";
 import { RestoreRootBanner } from "./RestoreRootBanner";
 import styles from "./TrashList.module.css";
 
@@ -21,7 +20,13 @@ export interface TrashItemRow {
 
 interface TrashListProps {
   items: TrashItemRow[];
-  role: Role;
+  // 04-05 Rule 1 bug fix: the rank check is done server-side (trash/page.tsx) and only the
+  // resulting booleans cross the client boundary. Importing @/lib/rbac's ROLE_RANK/Role directly
+  // into this "use client" component pulled the whole rbac.ts module graph — including @/auth's
+  // bcrypt native binding (`require('fs')`) — into the browser bundle, breaking the build
+  // (RBAC stays server-only, CLAUDE.md invariant; the client just renders a decision already made).
+  canRestore: boolean;
+  canPermanentDelete: boolean;
   wsId: string;
 }
 
@@ -43,10 +48,8 @@ function formatDeletedAt(date: Date): string {
   return rtf.format(-diffDays, "day");
 }
 
-export function TrashList({ items, role }: TrashListProps) {
+export function TrashList({ items, canRestore, canPermanentDelete }: TrashListProps) {
   const router = useRouter();
-  const canRestore = ROLE_RANK[role] >= ROLE_RANK.EDITOR;
-  const canPermanentDelete = ROLE_RANK[role] >= ROLE_RANK.ADMIN;
 
   const [restoringId, setRestoringId] = useState<string | null>(null);
   const [restoreError, setRestoreError] = useState<{ id: string; message: string } | null>(null);

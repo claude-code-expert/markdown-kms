@@ -5,7 +5,7 @@
 // self-fetch (Anti-pattern warning, same as every other RSC in this phase).
 import { notFound } from "next/navigation";
 import { getTrashItems } from "@/lib/closure";
-import { ForbiddenError, requireRole } from "@/lib/rbac";
+import { ForbiddenError, requireRole, ROLE_RANK } from "@/lib/rbac";
 import { TrashList } from "@/components/trash/TrashList";
 
 interface TrashPageProps {
@@ -24,6 +24,10 @@ export default async function TrashPage({ params }: TrashPageProps) {
   }
 
   const items = await getTrashItems(wsId);
+  // Rank check happens here (server), not in the client component — TrashList only ever
+  // receives the resulting booleans (see TrashList.tsx's comment on why).
+  const canRestore = ROLE_RANK[role] >= ROLE_RANK.EDITOR;
+  const canPermanentDelete = ROLE_RANK[role] >= ROLE_RANK.ADMIN;
 
-  return <TrashList items={items} role={role} wsId={wsId} />;
+  return <TrashList items={items} canRestore={canRestore} canPermanentDelete={canPermanentDelete} wsId={wsId} />;
 }
