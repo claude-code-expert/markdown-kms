@@ -1,7 +1,12 @@
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
-import { saveUpload } from "@/lib/storage";
+import { MAX_UPLOAD_BYTES, saveUpload } from "@/lib/storage";
 
 export const runtime = "nodejs"; // Pitfall 4: fs access requires the Node runtime, not Edge
+
+// CR-02 (05-REVIEW): multipart bodies carry a little overhead beyond the raw file bytes
+// (boundary markers, per-part headers) — this buffer keeps the pre-parse Content-Length
+// check from false-rejecting a file that's just under MAX_UPLOAD_BYTES.
+const MULTIPART_OVERHEAD_BYTES = 64 * 1024;
 
 // EDIT-09: uploads are workspace-scoped but not document-scoped (a document isn't created
 // yet the first time a user drags an image in) — wsId comes in as a query param rather than
@@ -19,6 +24,14 @@ export async function POST(req: Request) {
   } catch (err) {
     if (err instanceof ForbiddenError) return forbiddenResponse();
     throw err;
+  }
+
+  // CR-02: reject an obviously oversized body via Content-Length BEFORE req.formData() buffers
+  // the entire multipart body into memory. The post-parse file.size check in saveUpload stays
+  // as defense in depth — Content-Length can be absent or spoofed.
+  const contentLength = Number(req.headers.get("content-length"));
+  if (Number.isFinite(contentLength) && contentLength > MAX_UPLOAD_BYTES + MULTIPART_OVERHEAD_BYTES) {
+    return Response.json({ error: "이미지 크기는 5MB를 넘을 수 없어요." }, { status: 413 });
   }
 
   const formData = await req.formData();

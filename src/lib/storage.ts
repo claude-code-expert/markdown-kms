@@ -11,7 +11,10 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
-const MAX_BYTES = 5 * 1024 * 1024; // CONTEXT: 최대 5MB
+// Exported so the route handler can reject an oversized Content-Length before req.formData()
+// ever buffers the body (CR-02, 05-REVIEW) — single source of truth for the 5MB cap.
+export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // CONTEXT: 최대 5MB
+const MAX_BYTES = MAX_UPLOAD_BYTES;
 
 // Magic-byte signatures, offset 0. [CITED: 웹서치 cross-check, PNG Wikipedia + file-signature 레퍼런스]
 function sniffImageType(buf: Buffer): { ext: string } | null {

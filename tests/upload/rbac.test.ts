@@ -73,3 +73,61 @@ describe("POST /api/uploads — RBAC gate (EDITOR+)", () => {
     expect(res.status).toBe(400);
   });
 });
+
+// CR-02 (05-REVIEW): req.formData() buffers the ENTIRE multipart body into memory before
+// saveUpload's file.size check ever runs — a Content-Length pre-check must reject an
+// obviously oversized body before formData() is called at all, or the size cap does nothing
+// to stop a memory-exhaustion DoS.
+describe("POST /api/uploads — Content-Length size guard (CR-02)", () => {
+  let POST: typeof import("@/app/api/uploads/route").POST;
+  const createdUsers: string[] = [];
+  const createdWorkspaces: string[] = [];
+
+  beforeAll(async () => {
+    ({ POST } = await import("@/app/api/uploads/route"));
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+    await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
+  });
+
+  it("rejects an oversized Content-Length with 413 BEFORE req.formData() is called", async () => {
+    const caller = await createTestUser("upload-size-editor");
+    createdUsers.push(caller.id);
+    const ws = await createTestWorkspace("upload-size-editor-ws");
+    createdWorkspaces.push(ws.id);
+    await addMember(ws.id, caller.id, "EDITOR");
+    mockSessionFor(caller.id);
+
+    const form = new FormData();
+    form.set("file", new File([PNG_BYTES], "photo.png", { type: "image/png" }));
+    const req = new Request(`http://localhost/api/uploads?wsId=${ws.id}`, {
+      method: "POST",
+      body: form,
+      // The real body is tiny — only the header is oversized, proving the route trusts
+      // (and pre-checks) Content-Length rather than actually reading the body first.
+      headers: { "content-length": String(6 * 1024 * 1024) },
+    });
+    const formDataSpy = vi.spyOn(req, "formData");
+
+    const res = await POST(req);
+
+    expect(res.status).toBe(413);
+    expect(formDataSpy).not.toHaveBeenCalled();
+  });
+
+  it("still accepts a normal-size upload (Content-Length under the cap)", async () => {
+    const caller = await createTestUser("upload-size-ok");
+    createdUsers.push(caller.id);
+    const ws = await createTestWorkspace("upload-size-ok-ws");
+    createdWorkspaces.push(ws.id);
+    await addMember(ws.id, caller.id, "EDITOR");
+    mockSessionFor(caller.id);
+
+    const res = await POST(uploadRequest(ws.id));
+
+    expect(res.status).toBe(200);
+  });
+});
