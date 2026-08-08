@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 3
-current_phase_name: Folder Tree (Closure Table)
-status: verifying
-stopped_at: "Completed 03-05-PLAN.md (folder tree interaction UI: context menu, hover actions, inline rename, native DnD move, move modal fallback, delete confirm) — Phase 3 complete (5/5 plans)"
-last_updated: "2026-08-08T03:57:34.912Z"
+current_phase: 4
+current_phase_name: Documents, Autosave & 3-Pane Workspace
+status: executing
+stopped_at: Completed 04-01-PLAN.md (document schema + migration + lib/documents.ts service + server autosave seq guard, TDD)
+last_updated: "2026-08-08T05:18:09.509Z"
 last_activity: 2026-08-08
-last_activity_desc: "Phase 3 Plan 1 complete: folder/folder_closure schema + migration"
+last_activity_desc: Phase 4 execution started
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 3
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 21
+  completed_plans: 17
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-01)
 
 **Core value:** 에디터에 입력하면 60ms 안에 미리보기에 정확히(CommonMark 0.31.2 + GFM 3종) 렌더링되는 문서 작성 경험.
-**Current focus:** Phase 02 — markdown-rendering-editor-formatting
+**Current focus:** Phase 4 — Documents, Autosave & 3-Pane Workspace
 
 ## Current Position
 
-Phase: 3 — Folder Tree (Closure Table)
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-08-08 — Phase 3 Plan 1 complete: folder/folder_closure schema + migration
+Phase: 4 (Documents, Autosave & 3-Pane Workspace) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-08 — Phase 4 execution started
 
-Progress: [██████████] 100%
+Progress: [████████░░] 81%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [██████████] 100%
 | Phase 03 P03 | 35min | 3 tasks | 3 files |
 | Phase 03 P04 | 25min | 3 tasks | 4 files |
 | Phase 03 P05 | 55min | 3 tasks | 9 files |
+| Phase 04 P01 | 25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 03-04: closure.ts의 CycleError/CrossWorkspaceError는 라우트 경계에서 instanceof로 잡아 409/400에 매핑한다 — lib 자체는 HTTP를 모른다
 - [Phase ?]: 03-05: No literal workspace-root tree row added (out of this plan's declared file scope — page.tsx/FolderTree.module.css untouched); root-level create stays on the header button, move-to-root fully covered by MoveFolderModal's explicit '워크스페이스 루트' entry
 - [Phase ?]: 03-05: MoveFolderModal does its own fetch/submitting/error independent of FolderTree's DnD moveFolderTo — two entry points to the same POST /api/folders/[id]/move route, matching PATTERNS analog
+- [Phase ?]: 04-01: Task 1 checkpoint:decision (one-way document migration) pre-approved by user via orchestrator (2026-08-08) — recorded apply-now without re-prompting, same as Phase 3's folder migration gate
+- [Phase ?]: 04-01: document.folder_id has no ON DELETE CASCADE per TRD §3 literal DDL — permanent-delete ordering (document before folder) deferred to 04-04
+- [Phase ?]: 04-01: document_tag/document_draft/trigram(gin) indexes deliberately omitted from this migration — Phase 6/5 scope
+- [Phase ?]: 04-01: DOC-01/EDIT-07 left unchecked in REQUIREMENTS.md from 04-01 alone — schema+service substrate only (no API routes/client autosave hook/UI yet); functional completion lands across 04-02/04-03/04-04, matching the 01-01 AUTH-03/WS-01 precedent
 
 ### Pending Todos
 
@@ -136,6 +141,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08
-Stopped at: Phase 3 빌드 완료(5/5 waves)·자동 verify human_needed(4/4 must-haves)·code-review 0C/3W 수정(811 tests green). 검증 defer 기록. 다음 = Phase 4 discuss (build-all-then-test).
+Last session: 2026-08-08T05:17:46.424Z
+Stopped at: Completed 04-01-PLAN.md (document schema + migration + lib/documents.ts service + server autosave seq guard, TDD)
 Resume file: None
