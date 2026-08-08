@@ -34,7 +34,11 @@ export default async function RootLayout({
   // route into dynamic rendering, an accepted trade-off — requireRole's DB
   // reads already make authenticated routes dynamic).
   const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value;
+  // WR-04 (05-REVIEW): allow-list the cookie the same way layoutMode/splitRatio are validated
+  // (d/[docId]/page.tsx) — an invalid/tampered value falls back to undefined (same as absent),
+  // not a forced "light", so the @media prefers-color-scheme fallback still applies.
+  const themeCookie = cookieStore.get("theme")?.value;
+  const theme = themeCookie === "dark" || themeCookie === "light" ? themeCookie : undefined;
 
   // suppressHydrationWarning: 브라우저 확장(Trancy·Grammarly·Dark Reader 등)이 <html>에 속성을
   // 주입해 생기는 hydration 불일치를 억제. 이 요소 한 레벨만 적용, 자식 트리 실제 mismatch는 그대로 잡힘.

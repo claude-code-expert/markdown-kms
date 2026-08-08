@@ -40,4 +40,15 @@ describe("RootLayout theme cookie -> data-theme", () => {
     const element = await RootLayout({ children: null });
     expect(element.props["data-theme"]).toBe("dark");
   });
+
+  // WR-04 (05-REVIEW): unlike layoutMode/splitRatio, the theme cookie was read without an
+  // allow-list — a tampered/typo'd value (e.g. "Dark") silently matched neither CSS rule and
+  // fell through to the light theme with no signal to the user. Treat it the same as an
+  // absent cookie (undefined -> @media prefers-color-scheme fallback), not a forced "light".
+  it('renders no data-theme attribute when the theme cookie is an invalid value (e.g. "Dark")', async () => {
+    mockCookieValue.value = "Dark";
+    const { default: RootLayout } = await import("@/app/layout");
+    const element = await RootLayout({ children: null });
+    expect(element.props["data-theme"]).toBeUndefined();
+  });
 });
