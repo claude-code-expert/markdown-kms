@@ -3,7 +3,7 @@
 // Covers the plan's <behavior> block: autosaveDocument seq guard (T-04-01-SEQ), getDocument IDOR
 // scope (T-04-01-IDOR), softDeleteDocument idempotency (WR-01 analog), resolveWorkspaceIdForDocument
 // active-only scope, getWorkspaceDocuments flat listing.
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { document, workspace } from "@/db/schema";
@@ -17,6 +17,11 @@ import {
 } from "@/lib/documents";
 import { createTestWorkspace } from "../rbac/helpers";
 import { createTestDocument } from "./helpers";
+
+// tests/rbac/helpers.ts imports "@/auth" (next-auth) at module scope — mocked here even though
+// this file never calls mockSessionFor, so the real next-auth import chain never loads
+// (tests/folder/query-count.test.ts established this pattern for the same reason).
+vi.mock("@/auth", () => ({ auth: vi.fn() }));
 
 describe("documents.autosaveDocument — server seq guard (TRD §7 / T-04-01-SEQ)", () => {
   const createdWorkspaces: string[] = [];
