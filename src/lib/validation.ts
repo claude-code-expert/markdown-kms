@@ -47,11 +47,13 @@ export const folderSchema = z.object({
 
 export type FolderInput = z.infer<typeof folderSchema>;
 
-// TRD §3 title 컬럼 기본값과 동형('제목 없음' — DB 기본값, 여기선 zod가 강제하지 않고
-// catch("")로 빈 값을 허용해 UI-SPEC의 placeholder 동작에 맡긴다). content는 trim 없음 —
-// CodeMirror 원문 그대로(개행/공백이 마크다운 의미를 가짐, NFR-5.2).
+// TRD §3 title 컬럼 기본값과 동형('제목 없음' — DB 기본값, 빈 문자열은 여전히 허용해 UI-SPEC의
+// placeholder 동작에 맡긴다). WR-01: 길이 초과는 더 이상 catch("")로 조용히 삼키지 않는다 —
+// .max()가 그대로 검증 에러를 던져 safeParse가 실패하고 라우트가 400을 낸다(folderSchema와 동형).
+// "빈 값 허용"과 "초과 값을 빈 값으로 뭉개기"는 다른 요구사항이므로 분리한다. content는 trim
+// 없음 — CodeMirror 원문 그대로(개행/공백이 마크다운 의미를 가짐, NFR-5.2).
 export const documentSchema = z.object({
-  title: z.string().trim().max(255, "제목은 255자를 넘을 수 없습니다.").catch(""),
+  title: z.string().trim().max(255, "제목은 255자를 넘을 수 없습니다."),
   content: z.string(),
 });
 

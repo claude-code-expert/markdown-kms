@@ -105,6 +105,21 @@ describe("POST /api/documents (create, EDITOR+)", () => {
     const res = await createDocumentRoute(postRequest({ title: "새 문서", folderId: null, workspaceId: ws.id }));
     expect(res.status).toBe(403);
   });
+
+  // WR-01: an over-length title must surface as a 400, not get silently swallowed to "".
+  it("rejects a title over 255 chars with 400 (not a silent empty title)", async () => {
+    const ws = await createTestWorkspace("doc-create-longtitle-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("doc-create-longtitle-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+
+    const res = await createDocumentRoute(
+      postRequest({ title: "a".repeat(256), folderId: null, workspaceId: ws.id }),
+    );
+    expect(res.status).toBe(400);
+  });
 });
 
 describe("PUT /api/documents/[id] (autosave, seq-guarded, EDITOR+)", () => {
@@ -194,6 +209,27 @@ describe("PUT /api/documents/[id] (autosave, seq-guarded, EDITOR+)", () => {
 
     const res = await autosaveRoute(putRequest(doc.id, { content: "x", title: "t" }), ctx(doc.id));
     expect(res.status).toBe(400);
+  });
+
+  // WR-01: same guard on the autosave path — a pasted over-length title must 400, not get
+  // silently saved as "" (previously `.catch("")` swallowed the .max(255) failure).
+  it("returns 400 for a title over 255 chars and does not overwrite the stored title", async () => {
+    const ws = await createTestWorkspace("doc-put-longtitle-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("doc-put-longtitle-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+    const doc = await createTestDocument(ws.id, null, { title: "원래 제목", content: "" });
+
+    const res = await autosaveRoute(
+      putRequest(doc.id, { content: "본문", title: "a".repeat(256), seq: 1 }),
+      ctx(doc.id),
+    );
+    expect(res.status).toBe(400);
+
+    const [row] = await db.select().from(document).where(eq(document.id, doc.id));
+    expect(row.title).toBe("원래 제목");
   });
 });
 
