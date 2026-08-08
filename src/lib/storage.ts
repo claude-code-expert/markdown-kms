@@ -74,5 +74,17 @@ export async function saveUpload(
   const filename = `${randomUUID()}.${sniffed.ext}`; // CONTEXT: uuid 파일명, 클라 경로 미신뢰
   await writeFile(path.join(UPLOAD_DIR, filename), buf);
 
+  // WR-02 (05-REVIEW, accepted risk — do NOT fix without a TRD/PRD update): this URL is served
+  // by Next.js's default static file serving with NO server-side authz check. requireRole gates
+  // the POST (write) above, but the GET of `/uploads/<uuid>.ext` is wide open — anyone who has
+  // (or guesses) the UUID can fetch the image regardless of workspace membership, even after
+  // the owning document is deleted. TRD scopes storage as "dev local disk to start", and the
+  // UUID filename is unguessable, so this is treated as an acceptable trade-off for now rather
+  // than a bug to patch here.
+  // Upgrade path when this needs closing: move serving behind an
+  // `/api/uploads/[filename]` route that resolves the file's owning document/workspace and
+  // calls `requireRole(workspaceId, "VIEWER")` before streaming it — or, when moving off local
+  // disk (S3/object storage), serve via short-lived presigned/signed GET URLs instead of a
+  // permanent public path.
   return { url: `/uploads/${filename}` }; // public/uploads/ → Next.js 기본 정적 서빙
 }
