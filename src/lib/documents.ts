@@ -143,3 +143,16 @@ export async function getDraft(documentId: string, client: DbClient = db) {
 export async function deleteDraft(documentId: string, client: DbClient = db) {
   await client.delete(documentDraft).where(eq(documentDraft.documentId, documentId));
 }
+
+// 05-05 Pitfall 7: the ONLY place draft-vs-document recency is decided. Pure (no DB, no client
+// clock) — callers (d/[docId]/page.tsx, RSC) must feed it two timestamps read in the SAME
+// request context so no network-induced clock skew can leak into the comparison. A tie is NOT
+// newer (strict >) — a draft saved at the exact instant of a successful autosave isn't a crash
+// artifact worth recovering.
+export function isDraftNewer(
+  draft: { updatedAt: Date } | null,
+  doc: { updatedAt: Date },
+): boolean {
+  if (!draft) return false;
+  return draft.updatedAt > doc.updatedAt;
+}

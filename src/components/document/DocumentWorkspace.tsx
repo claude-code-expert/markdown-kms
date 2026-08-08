@@ -21,6 +21,10 @@ interface DocumentWorkspaceProps {
   // (05-08 Task 3) — default here covers any other/older caller.
   initialLayoutMode?: LayoutMode;
   initialSplitRatio?: number;
+  // RSC (d/[docId]/page.tsx, 05-05 Task 1) computes these server-side (Pitfall 7 — no client
+  // clock comparison) and passes them down; full recovery-dialog wiring lands in Task 3.
+  hasNewerDraft?: boolean;
+  draftContent?: string | null;
 }
 
 export function DocumentWorkspace({
