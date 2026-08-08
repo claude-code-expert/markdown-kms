@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { autosaveDocument, resolveWorkspaceIdForDocument, softDeleteDocument } from "@/lib/documents";
+import { autosaveDocument, deleteDraft, resolveWorkspaceIdForDocument, softDeleteDocument } from "@/lib/documents";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 import { autosaveBodySchema } from "@/lib/validation";
 
@@ -44,7 +44,14 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
   }
   const { content, title, seq } = parsed.data;
 
-  await autosaveDocument(id, content, title, seq);
+  // Pitfall 5 / T-05-04-DATALOSS: gate the draft delete on the boolean return value, not on the
+  // route returning 200 — a stale/tied seq affects 0 rows (returns false) but the route still
+  // returns 200 above the seq guard's comment. Deleting the draft in that case would destroy the
+  // user's only recovery copy for content that was never actually saved.
+  const saved = await autosaveDocument(id, content, title, seq);
+  if (saved) {
+    await deleteDraft(id);
+  }
   return Response.json({ seq }, { status: 200 });
 }
 
