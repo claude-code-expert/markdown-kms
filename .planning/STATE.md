@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 4
 current_phase_name: Documents, Autosave & 3-Pane Workspace
-status: executing
-stopped_at: Completed 04-04-PLAN.md
-last_updated: "2026-08-08T06:19:40.276Z"
+status: verifying
+stopped_at: Completed 04-05-PLAN.md
+last_updated: "2026-08-08T06:44:45.440Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 4 execution started
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 21
-  completed_plans: 20
+  completed_plans: 21
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 
 Phase: 4 (Documents, Autosave & 3-Pane Workspace) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-08 — Phase 4 execution started
 
-Progress: [██████████] 95%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Progress: [██████████] 95%
 | Phase 04 P02 | 35min | 3 tasks | 26 files |
 | Phase 04 P03 | 35min | 2 tasks | 7 files |
 | Phase 04 P04 | 15min | 3 tasks | 8 files |
+| Phase 04 P05 | 70min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase ?]: 04-03: confirmDeleteDocument calls router.push() before router.refresh() (opposite of submitCreateDocument's existing order in FolderTree.tsx) — the reverse order raced the refresh against the navigation and left the deleted tree node visible; caught by e2e, not left unfixed for consistency with the untouched create-flow ordering
 - [Phase ?]: 04-04: getTrashItems merges two typed SELECTs (folder, document) in application code instead of a SQL UNION — different column shapes (name vs title), app-level merge stays type-safe
 - [Phase ?]: 04-04: restoreDocument/restoreFolder encode 'only a trash root is restorable' as a WHERE is_trash_root=true guard on the UPDATE itself, matching softDeleteDocument's WR-01 no-op-via-WHERE convention
+- [Phase ?]: 04-05: restoreDocument now mirrors restoreFolder's root-relocation (Open Q #2 parity) — a document independently trashed while its folder was still active, then left behind when that folder was later deleted, is relocated to workspace root on restore instead of resurfacing under a still-deleted folderId
+- [Phase ?]: 04-05: trash restore route now returns 200 JSON with { relocatedToRoot } for documents too (was 204) so the client can drive RestoreRootBanner uniformly for both item types
+- [Phase ?]: 04-05: TrashList (client component) receives canRestore/canPermanentDelete as booleans computed server-side in trash/page.tsx, not the raw role + ROLE_RANK — importing @/lib/rbac into a 'use client' file pulled bcrypt's native fs binding into the browser bundle and broke the build
 
 ### Pending Todos
 
@@ -150,6 +154,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T06:19:40.268Z
-Stopped at: Completed 04-04-PLAN.md
+Last session: 2026-08-08T06:42:52.251Z
+Stopped at: Completed 04-05-PLAN.md
 Resume file: None
