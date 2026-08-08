@@ -3,7 +3,7 @@
 // typeof db, so the alias unions both).
 import { and, eq, lt } from "drizzle-orm";
 import { db } from "@/db";
-import { document, folder } from "@/db/schema";
+import { document, documentDraft, folder } from "@/db/schema";
 
 type DbClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -120,4 +120,26 @@ export async function autosaveDocument(
     .where(and(eq(document.id, documentId), lt(document.savedSeq, seq)))
     .returning({ id: document.id });
   return rows.length === 1;
+}
+
+// TRD §3 / §7 (FR-E10, NFR-2.1): document_id is the PK — onConflictDoUpdate is the DB-level
+// enforcement of "exactly 1 draft row per document" (T-05-03-MULTIROW). No seq guard (unlike
+// autosaveDocument) — draft has no ordering concept, it's a 1-minute-interval upsert.
+export async function upsertDraft(documentId: string, content: string, client: DbClient = db) {
+  await client
+    .insert(documentDraft)
+    .values({ documentId, content, updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: documentDraft.documentId,
+      set: { content, updatedAt: new Date() },
+    });
+}
+
+export async function getDraft(documentId: string, client: DbClient = db) {
+  const [row] = await client.select().from(documentDraft).where(eq(documentDraft.documentId, documentId));
+  return row ?? null;
+}
+
+export async function deleteDraft(documentId: string, client: DbClient = db) {
+  await client.delete(documentDraft).where(eq(documentDraft.documentId, documentId));
 }
