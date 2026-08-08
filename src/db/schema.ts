@@ -1,5 +1,6 @@
 import {
   AnyPgColumn,
+  bigint,
   boolean,
   check,
   index,
@@ -87,5 +88,33 @@ export const folderClosure = pgTable(
   (table) => [
     primaryKey({ columns: [table.ancestorId, table.descendantId] }),
     index("folder_closure_descendant_idx").on(table.descendantId),
+  ],
+);
+
+// TRD §3: 문서. folder_id는 ON DELETE CASCADE가 없다(NO ACTION) — 완전삭제는 document 행을
+// 먼저 지운 뒤 folder 행을 지워야 한다(Phase 4 RESEARCH Pitfall 4). document_tag/document_draft/
+// trigram(gin) 인덱스는 각각 Phase 6/5 — 이 phase는 의도적으로 만들지 않는다(CLAUDE.md 불변식).
+export const document = pgTable(
+  "document",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+    folderId: uuid("folder_id").references(() => folder.id),
+    title: text("title").notNull().default("제목 없음"),
+    content: text("content").notNull().default(""),
+    savedSeq: bigint("saved_seq", { mode: "number" }).notNull().default(0), // TRD §7 자동 저장 순서 가드
+    isDeleted: boolean("is_deleted").notNull().default(false),
+    isTrashRoot: boolean("is_trash_root").notNull().default(false),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    // NFR-2.2: 활성 조회 부분 인덱스 (TRD §3)
+    index("document_active_idx")
+      .on(table.workspaceId, table.folderId)
+      .where(sql`${table.isDeleted} = false`),
   ],
 );
