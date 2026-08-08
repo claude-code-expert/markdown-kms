@@ -11,6 +11,7 @@ import { buildTree, type DocumentRow, type FolderRow } from "./tree-utils";
 import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
+import { SearchBox, SearchResultsList, useSearchResults } from "./SearchBox";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import nodeStyles from "./FolderTreeNode.module.css";
 import styles from "./FolderTree.module.css";
@@ -83,6 +84,8 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
   const [docDeleteTarget, setDocDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [docDeleteSubmitting, setDocDeleteSubmitting] = useState(false);
   const [docDeleteError, setDocDeleteError] = useState<string | null>(null);
+  const search = useSearchResults(workspaceId);
+  const searchActive = search.status !== "idle";
 
   function toggle(id: string) {
     setExpanded((prev) => {
@@ -281,6 +284,12 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
 
   return (
     <nav className={styles.sidebar} aria-label="폴더 트리">
+      <SearchBox
+        query={search.query}
+        onQueryChange={search.setQuery}
+        onClear={search.clear}
+        loading={search.status === "loading"}
+      />
       <div className={styles.header}>
         <span className={styles.headerLabel}>폴더</span>
         <div className={styles.headerActions}>
@@ -302,41 +311,51 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           </button>
         </div>
       </div>
-      <div className={styles.tree}>
-        {creatingRoot && (
-          <CreateRootInput
-            onSubmit={(name) => submitCreate(null, name)}
-            onCancel={() => {
-              setCreatingRoot(false);
-              setActionError(null);
-            }}
-            error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
-          />
-        )}
-        {creatingDocumentRoot && (
-          <CreateDocumentRootInput
-            onSubmit={submitCreateDocument}
-            onCancel={() => {
-              setCreatingDocumentRoot(false);
-              setActionError(null);
-            }}
-            error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
-          />
-        )}
-        {tree.length === 0 && rootDocuments.length === 0 && !creatingRoot && !creatingDocumentRoot && (
-          <p className={styles.empty}>
-            폴더가 없어요
-            <br />
-            새 폴더를 만들어 문서를 정리해 보세요.
-          </p>
-        )}
-        {tree.map((node) => (
-          <FolderTreeNode key={node.id} node={node} depth={0} ctx={ctx} />
-        ))}
-        {rootDocuments.map((doc) => (
-          <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} onOpenMenu={openDocMenu} />
-        ))}
-      </div>
+      {searchActive ? (
+        <SearchResultsList
+          workspaceId={workspaceId}
+          status={search.status}
+          query={search.query}
+          results={search.results}
+          onRetry={search.retry}
+        />
+      ) : (
+        <div className={styles.tree}>
+          {creatingRoot && (
+            <CreateRootInput
+              onSubmit={(name) => submitCreate(null, name)}
+              onCancel={() => {
+                setCreatingRoot(false);
+                setActionError(null);
+              }}
+              error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
+            />
+          )}
+          {creatingDocumentRoot && (
+            <CreateDocumentRootInput
+              onSubmit={submitCreateDocument}
+              onCancel={() => {
+                setCreatingDocumentRoot(false);
+                setActionError(null);
+              }}
+              error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
+            />
+          )}
+          {tree.length === 0 && rootDocuments.length === 0 && !creatingRoot && !creatingDocumentRoot && (
+            <p className={styles.empty}>
+              폴더가 없어요
+              <br />
+              새 폴더를 만들어 문서를 정리해 보세요.
+            </p>
+          )}
+          {tree.map((node) => (
+            <FolderTreeNode key={node.id} node={node} depth={0} ctx={ctx} />
+          ))}
+          {rootDocuments.map((doc) => (
+            <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} onOpenMenu={openDocMenu} />
+          ))}
+        </div>
+      )}
       {/* UI-SPEC Trash Contract "진입" — flex-shrink:0 bottom row below the flex:1 tree, same
           "current location" accent treatment as a selected tree node. */}
       <Link
