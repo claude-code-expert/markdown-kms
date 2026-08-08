@@ -258,10 +258,14 @@ describe("DELETE /api/documents/[id] (soft-delete, EDITOR+, IDOR)", () => {
     expect(res.status).toBe(403);
   });
 
-  it("is idempotent — deleting an already-deleted document still returns 204 (WR-01 analog)", async () => {
-    const ws = await createTestWorkspace("doc-delete-idempotent-ws");
+  // Route-level re-delete of an already-trashed doc 403s (resolveWorkspaceIdForDocument
+  // excludes it, same as a nonexistent id — 03-04 IDOR convention: never leak existence via
+  // status code). The DB-level idempotency guarantee (WR-01 analog, concurrent double-click
+  // race) is already covered at the lib level in autosave-seq-guard.test.ts.
+  it("returns 403 (not 404) for a document that's already been soft-deleted", async () => {
+    const ws = await createTestWorkspace("doc-delete-already-ws");
     createdWorkspaces.push(ws.id);
-    const editor = await createTestUser("doc-delete-idempotent-editor");
+    const editor = await createTestUser("doc-delete-already-editor");
     createdUsers.push(editor.id);
     await addMember(ws.id, editor.id, "EDITOR");
     mockSessionFor(editor.id);
@@ -270,7 +274,7 @@ describe("DELETE /api/documents/[id] (soft-delete, EDITOR+, IDOR)", () => {
     const first = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
     expect(first.status).toBe(204);
     const second = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
-    expect(second.status).toBe(204);
+    expect(second.status).toBe(403);
   });
 
   it("returns 400 for a malformed uuid path param", async () => {
