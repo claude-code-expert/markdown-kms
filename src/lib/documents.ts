@@ -56,6 +56,16 @@ export async function softDeleteDocument(documentId: string, client: DbClient = 
     .where(and(eq(document.id, documentId), eq(document.isDeleted, false)));
 }
 
+// closure.ts restoreFolder's single-document analog — only a directly-trashed document
+// (is_trash_root=true) is restorable; a document still cascaded under a trashed folder is
+// restored via restoreFolder, not this function.
+export async function restoreDocument(documentId: string, client: DbClient = db) {
+  await client
+    .update(document)
+    .set({ isDeleted: false, deletedAt: null, isTrashRoot: false })
+    .where(and(eq(document.id, documentId), eq(document.isTrashRoot, true)));
+}
+
 // TRD §7 / T-04-01-SEQ: the WHERE clause is the concurrency judge, not this function — a stale
 // (lower-or-equal) seq matches 0 rows and is silently ignored (not an error). Mass-assignment
 // guard (T-04-01-MASS): only content/title/savedSeq/updatedAt are ever set, never arbitrary

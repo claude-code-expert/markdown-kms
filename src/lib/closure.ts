@@ -1,6 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { folder, folderClosure } from "@/db/schema";
+import { document, folder, folderClosure } from "@/db/schema";
 
 // TRD §4 "폴더 이동" — moving into a cycle (self or a descendant). Rejected before any rewiring
 // happens (RESEARCH Pitfall 1, TOCTOU: check + rewiring share one transaction).
@@ -151,5 +151,90 @@ export async function softDeleteFolder(folderId: string, client: DbClient = db) 
 
     await tx.update(folder).set({ isDeleted: true, deletedAt: new Date() }).where(inArray(folder.id, ids));
     await tx.update(folder).set({ isTrashRoot: true }).where(eq(folder.id, folderId));
+
+    // TRD §4 폴더 삭제 cascade / RESEARCH Pattern 4: subtree 소속 문서도 함께 소프트삭제.
+    // `AND is_deleted=false` (WR-01 대칭): 하위 폴더가 삭제되기 전에 이미 독립적으로 트래시된
+    // 문서는 건드리지 않는다 — 그 문서의 is_trash_root/deleted_at을 그대로 보존한다.
+    await tx
+      .update(document)
+      .set({ isDeleted: true, deletedAt: new Date() })
+      .where(and(inArray(document.folderId, ids), eq(document.isDeleted, false)));
   });
+}
+
+// RESEARCH Pitfall 3 / Common Pitfalls: resolveActiveWorkspaceId (35-41행) hardcodes
+// is_deleted=false — trash routes need the opposite (is_deleted=true rows must resolve too).
+// type-scoped: a trash item is always exactly one of folder|document (TRD §8 unified route).
+export async function resolveWorkspaceIdForTrashItem(
+  type: "folder" | "document",
+  id: string,
+  client: DbClient = db,
+) {
+  if (type === "folder") {
+    const [row] = await client.select({ workspaceId: folder.workspaceId }).from(folder).where(eq(folder.id, id));
+    return row ?? null;
+  }
+  const [row] = await client.select({ workspaceId: document.workspaceId }).from(document).where(eq(document.id, id));
+  return row ?? null;
+}
+
+// TRD §4 복원 / RESEARCH Pattern 5: trash_root 기준 서브트리 복원. getSubtree는 is_deleted=false만
+// 반환하므로 여기선 쓸 수 없다(Pitfall 3) — closure를 직접 조인해 is_deleted=true인 서브트리를
+// 모은다. WR-01 대칭(Pitfall 5, Open Question #2): 서브트리 안에서 자기 자신이 아니면서
+// is_trash_root=true인 항목(독립적으로 먼저 트래시된 것)은 복원 대상에서 제외한다.
+export async function restoreFolder(folderId: string, client: DbClient = db) {
+  return client.transaction(async (tx) => {
+    const [target] = await tx
+      .select({ isTrashRoot: folder.isTrashRoot, parentId: folder.parentId })
+      .from(folder)
+      .where(eq(folder.id, folderId));
+    if (!target || !target.isTrashRoot) return null; // 직접 삭제된 항목만 복원 가능(PRD §2-2)
+
+    const subtree = await tx
+      .select({ id: folder.id, isTrashRoot: folder.isTrashRoot })
+      .from(folder)
+      .innerJoin(folderClosure, eq(folderClosure.descendantId, folder.id))
+      .where(and(eq(folderClosure.ancestorId, folderId), eq(folder.isDeleted, true)));
+
+    const restorableIds = subtree.filter((f) => f.id === folderId || !f.isTrashRoot).map((f) => f.id);
+
+    await tx.update(folder).set({ isDeleted: false, deletedAt: null }).where(inArray(folder.id, restorableIds));
+    await tx.update(folder).set({ isTrashRoot: false }).where(eq(folder.id, folderId));
+    // cascade로 딸려온(is_trash_root=false) 문서만 복원 — 독립적으로 트래시된 문서는 그대로 둔다.
+    await tx
+      .update(document)
+      .set({ isDeleted: false, deletedAt: null })
+      .where(and(inArray(document.folderId, restorableIds), eq(document.isTrashRoot, false)));
+
+    if (target.parentId) {
+      const [parent] = await tx
+        .select({ isDeleted: folder.isDeleted })
+        .from(folder)
+        .where(eq(folder.id, target.parentId));
+      if (!parent || parent.isDeleted) {
+        // 기존 moveFolder를 재사용 — closure 재작성을 두 번째로 구현하지 않는다(Don't Hand-Roll).
+        await moveFolder(folderId, null, tx);
+        return { relocatedToRoot: true };
+      }
+    }
+    return { relocatedToRoot: false };
+  });
+}
+
+// folder ∪ document의 is_trash_root=true 항목(휴지통 목록, 04-05가 소비). 두 쿼리를 병합 —
+// 서로 다른 테이블이라 UNION보다 애플리케이션 레벨 병합이 타입 안전하고 명확하다.
+export async function getTrashItems(workspaceId: string, client: DbClient = db) {
+  const folders = await client
+    .select({ id: folder.id, name: folder.name, deletedAt: folder.deletedAt })
+    .from(folder)
+    .where(and(eq(folder.workspaceId, workspaceId), eq(folder.isTrashRoot, true)));
+  const documents = await client
+    .select({ id: document.id, title: document.title, deletedAt: document.deletedAt })
+    .from(document)
+    .where(and(eq(document.workspaceId, workspaceId), eq(document.isTrashRoot, true)));
+
+  return [
+    ...folders.map((f) => ({ type: "folder" as const, id: f.id, name: f.name, deletedAt: f.deletedAt })),
+    ...documents.map((d) => ({ type: "document" as const, id: d.id, name: d.title, deletedAt: d.deletedAt })),
+  ];
 }
