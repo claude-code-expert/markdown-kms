@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 5
-current_phase_name: Editor Enhancements & Personalization
+current_phase: 06
+current_phase_name: tags-search-export
 status: executing
-stopped_at: Completed 05-05-PLAN.md
-last_updated: "2026-08-08T08:57:12.941Z"
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-08-08T10:10:10.641Z"
 last_activity: 2026-08-08
-last_activity_desc: Phase 5 execution started (05-01)
+last_activity_desc: Phase 06 execution started
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 5
-  total_plans: 28
-  completed_plans: 28
+  total_plans: 32
+  completed_plans: 29
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-01)
 
 **Core value:** 에디터에 입력하면 60ms 안에 미리보기에 정확히(CommonMark 0.31.2 + GFM 3종) 렌더링되는 문서 작성 경험.
-**Current focus:** Phase 5 — Editor Enhancements & Personalization
+**Current focus:** Phase 06 — tags-search-export
 
 ## Current Position
 
-Phase: 5 (Editor Enhancements & Personalization) — EXECUTING
-Plan: 7 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
-Status: 05-01 complete (image upload tracer, EDIT-09 core happy path) — Phase 3/4 verification still deferred (bulk-verify-at-end per 2026-08-08 user instruction)
-Last activity: 2026-08-08 — Phase 5 execution started (05-01)
+Phase: 06 (tags-search-export) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-08-08 — Phase 06 execution started
 
-Progress: [██████████] 100%
+Progress: [█████████░] 91%
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Progress: [██████████] 100%
 | Phase 05 P04 | 20min | 3 tasks | 6 files |
 | Phase 05 P08 | 12min | 3 tasks | 8 files |
 | Phase 05 P05 | 15min | 3 tasks | 6 files |
+| Phase 06 P01 | 25min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -148,6 +149,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-08: layoutMode/splitRatio cookies complete the 05-07 RSC-read/client-write pattern for all 3 phase-5 personalization settings
 - [Phase ?]: DocumentWorkspaceProps gained hasNewerDraft/draftContent in Task 1's commit (not Task 3's) to satisfy TypeScript's JSX excess-property check on the RSC prop pass-down
 - [Phase ?]: Draft recovery restore is a single getView().dispatch() into the live EditorView, reusing the existing autosave/draft-delete pipeline instead of a separate force-save path
+- [Phase ?]: 06-01: pg_trgm GIN 인덱스는 schema.ts DSL에 선언하지 않는다 — 다음 drizzle-kit generate가 인덱스 없음으로 오인해 DROP을 시도하는 것을 막기 위함(custom SQL 마이그레이션 전용)
+- [Phase ?]: 06-01: Task 1 checkpoint:decision(one-way document_tag+pg_trgm+NFC 백필 마이그레이션)은 오케스트레이터가 사전 승인(2026-08-08) — 재프롬프트 없이 apply-now로 기록하고 진행
+- [Phase ?]: 06-01: REQUIREMENTS.md의 DOC-03/DOC-04는 미완료로 남긴다 — 스키마/검증 기반만 놓았고 실제 태그·검색 라우트(06-02/06-03)가 기능을 완성해야 체크 가능(04-01의 AUTH-03/WS-01 선례)
 
 ### Pending Todos
 
@@ -178,6 +182,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T08:57:06.083Z
-Stopped at: Completed 05-05-PLAN.md
+Last session: 2026-08-08T10:10:10.631Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
