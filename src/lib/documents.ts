@@ -171,6 +171,11 @@ export class TagLimitError extends Error {}
 // PK's exact-string uniqueness with an application-layer case-fold on top.
 export async function replaceTags(documentId: string, rawTags: string[], client: DbClient = db) {
   return client.transaction(async (tx) => {
+    // WR-03: READ COMMITTED lets two concurrent replace-all calls interleave their
+    // DELETE/INSERT/COUNT statements (see 06-REVIEW.md WR-03) and spuriously trip TagLimitError
+    // for a legitimate <=3-tag request. A per-document advisory lock, taken before any row is
+    // touched, serializes concurrent calls for the same document; auto-released at commit/rollback.
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${documentId}))`);
     await tx.delete(documentTag).where(eq(documentTag.documentId, documentId));
 
     const seen = new Map<string, string>();
