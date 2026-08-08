@@ -31,6 +31,9 @@ export interface FolderTreeNodeCtx {
   onSubmitCreateChild: (parentId: string, name: string) => void;
   onCancelCreateChild: () => void;
   onOpenMenu: (event: MouseEvent, folderId: string, folderName: string) => void;
+  // 04-03 — separate trigger for the document leaf's 1-item menu (folders and documents render
+  // different menuItems arrays off the same FolderContextMenu component).
+  onOpenDocMenu: (event: MouseEvent, docId: string, docTitle: string) => void;
   errorFor: (id: string) => string | null;
 }
 
@@ -169,7 +172,13 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
             <FolderTreeNode key={child.id} node={child} depth={depth + 1} ctx={ctx} />
           ))}
           {documentsHere.map((doc) => (
-            <DocumentTreeLeaf key={doc.id} doc={doc} depth={depth + 1} workspaceId={ctx.workspaceId} />
+            <DocumentTreeLeaf
+              key={doc.id}
+              doc={doc}
+              depth={depth + 1}
+              workspaceId={ctx.workspaceId}
+              onOpenMenu={ctx.onOpenDocMenu}
+            />
           ))}
         </div>
       )}

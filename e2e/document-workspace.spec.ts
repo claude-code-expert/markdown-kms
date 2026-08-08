@@ -80,3 +80,36 @@ test("shows the document as a leaf in the tree, indented under folders, opening 
   await expect(page).toHaveURL(/\/w\/[^/]+\/d\/[^/]+$/);
   await expect(page.getByRole("textbox", { name: "문서 제목" })).toHaveValue(docTitle);
 });
+
+// 04-03 Task 2: soft-delete via the tree's 1-item document menu ("삭제") — right-click and the
+// hover kebab converge on the same menu (folder-tree.spec.ts precedent). Deleting the document
+// that's currently open navigates away to the workspace's empty index (UI-SPEC Interaction
+// Contract "문서 삭제").
+test("deletes the open document via the tree menu, confirms, and navigates to the empty state", async ({ page }) => {
+  const seed = `${Date.now()}-delete`;
+  const docTitle = `E2E Delete Doc ${seed}`;
+
+  await signupAndOpenWorkspace(page, seed);
+
+  await page.getByRole("button", { name: "새 문서" }).click();
+  await page.getByPlaceholder("새 문서").fill(docTitle);
+  await page.getByPlaceholder("새 문서").press("Enter");
+  await expect(page).toHaveURL(/\/w\/[^/]+\/d\/[^/]+$/);
+  const workspaceUrl = page.url().replace(/\/d\/[^/]+$/, "");
+
+  // The layout's tree is server-rendered (getWorkspaceDocuments) and router.refresh()'s RSC
+  // re-fetch timing isn't guaranteed relative to the immediately-following router.push — a
+  // hard reload (same /d/docId route, still "open") deterministically shows the new leaf.
+  await page.reload();
+  await page.getByText(docTitle).click({ button: "right" });
+  // Document menu is exactly 1 item — no rename/move entries (unlike the folder's 4-item menu).
+  await expect(page.getByRole("menuitem")).toHaveCount(1);
+  await page.getByRole("menuitem", { name: "삭제" }).click();
+  await expect(page.getByText(`'${docTitle}' 문서를 삭제할까요?`)).toBeVisible();
+  await page.getByRole("button", { name: "삭제", exact: true }).click();
+
+  // Currently-open document was the delete target — navigates back to the empty index.
+  await expect(page).toHaveURL(`${workspaceUrl}`);
+  await expect(page.getByText("문서를 선택해 주세요")).toBeVisible();
+  await expect(page.getByText(docTitle)).toHaveCount(0);
+});

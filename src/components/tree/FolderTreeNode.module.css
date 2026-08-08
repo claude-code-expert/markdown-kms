@@ -71,6 +71,18 @@
   color: var(--muted);
 }
 
+/* DocumentTreeLeaf's inner <Link> (04-03) — wraps only the icon+name so the row's outer .node
+   div can host onContextMenu and a sibling .kebab button without nesting interactive elements. */
+.docLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
 .name {
   font-size: 13px;
   font-weight: 400;

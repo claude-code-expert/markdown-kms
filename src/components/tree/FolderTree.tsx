@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FilePlus2, FileText, FolderPlus, Pencil, FolderInput, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { documentSchema, folderSchema } from "@/lib/validation";
@@ -18,6 +18,7 @@ const RENAME_ERROR = "이름을 변경하지 못했어요. 다시 시도해 주�
 const MOVE_ERROR = "폴더를 이동하지 못했어요. 다시 시도해 주세요.";
 const DELETE_ERROR = "폴더를 삭제하지 못했어요. 다시 시도해 주세요.";
 const CREATE_DOCUMENT_ERROR = "문서를 만들지 못했어요. 다시 시도해 주세요.";
+const DELETE_DOCUMENT_ERROR = "문서를 삭제하지 못했어요. 다시 시도해 주세요.";
 const ROOT_ERROR_ID = "__root__";
 
 interface FolderTreeProps {
@@ -33,12 +34,20 @@ interface MenuState {
   folderName: string;
 }
 
+interface DocMenuState {
+  x: number;
+  y: number;
+  docId: string;
+  docTitle: string;
+}
+
 // Owns every piece of transient tree-interaction state (expand/select/drag/menu/modal) —
 // FolderTreeNode stays presentational, wired via the FolderTreeNodeCtx bundle. All mutations
 // are server-confirmed only (router.refresh() after the fetch resolves — no optimistic UI,
 // CONTEXT.md).
 export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const tree = buildTree(folders);
 
   // RESEARCH Pitfall 7 / Anti-pattern: buildTree stays folder-only — documents are grouped by
@@ -68,6 +77,10 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [moveTarget, setMoveTarget] = useState<{ id: string; name: string } | null>(null);
   const [actionError, setActionError] = useState<{ id: string; message: string } | null>(null);
+  const [docMenu, setDocMenu] = useState<DocMenuState | null>(null);
+  const [docDeleteTarget, setDocDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [docDeleteSubmitting, setDocDeleteSubmitting] = useState(false);
+  const [docDeleteError, setDocDeleteError] = useState<string | null>(null);
 
   function toggle(id: string) {
     setExpanded((prev) => {
@@ -152,7 +165,36 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
   }
 
   function openMenu(event: MouseEvent, folderId: string, folderName: string) {
+    setDocMenu(null); // only one context menu open at a time
     setMenu({ x: event.clientX, y: event.clientY, folderId, folderName });
+  }
+
+  function openDocMenu(event: MouseEvent, docId: string, docTitle: string) {
+    setMenu(null);
+    setDocMenu({ x: event.clientX, y: event.clientY, docId, docTitle });
+  }
+
+  // UI-SPEC Interaction Contract "문서 삭제(소프트)" — the currently-open document can't be left
+  // dangling in the editor once it's trashed, so a match against the live pathname triggers a
+  // navigate-away to the workspace's empty index right after the server confirms the delete.
+  async function confirmDeleteDocument() {
+    if (!docDeleteTarget) return;
+    setDocDeleteSubmitting(true);
+    setDocDeleteError(null);
+    const res = await fetch(`/api/documents/${docDeleteTarget.id}`, { method: "DELETE" });
+    setDocDeleteSubmitting(false);
+    if (!res.ok) {
+      setDocDeleteError(DELETE_DOCUMENT_ERROR);
+      return;
+    }
+    const wasOpen = pathname === `/w/${workspaceId}/d/${docDeleteTarget.id}`;
+    setDocDeleteTarget(null);
+    // Navigate first, refresh after: the shared layout (FolderTree's document list) is only
+    // re-fetched by refresh() — calling it before an immediately-following push() races the
+    // RSC re-fetch against the navigation and can lose the refresh, leaving the just-deleted
+    // node visible in the tree after landing on the empty state.
+    if (wasOpen) router.push(`/w/${workspaceId}`);
+    router.refresh();
   }
 
   // UI-SPEC Interaction Contract "새 문서 생성" — unlike folder creation, a successful document
@@ -200,6 +242,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
       setActionError(null);
     },
     onOpenMenu: openMenu,
+    onOpenDocMenu: openDocMenu,
     errorFor: (id) => (actionError?.id === id ? actionError.message : null),
   };
 
@@ -217,6 +260,19 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           icon: Trash2,
           destructive: true,
           onClick: () => setDeleteTarget({ id: menu.folderId, name: menu.folderName }),
+        },
+      ]
+    : [];
+
+  // UI-SPEC Tree Node Contract — document nodes get a 1-item menu (no rename/move entry
+  // points; renaming happens in the document's own title input, moving is out of scope/YAGNI).
+  const docMenuItems: FolderMenuItem[] = docMenu
+    ? [
+        {
+          label: "삭제",
+          icon: Trash2,
+          destructive: true,
+          onClick: () => setDocDeleteTarget({ id: docMenu.docId, title: docMenu.docTitle }),
         },
       ]
     : [];
@@ -276,10 +332,13 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           <FolderTreeNode key={node.id} node={node} depth={0} ctx={ctx} />
         ))}
         {rootDocuments.map((doc) => (
-          <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} />
+          <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} onOpenMenu={openDocMenu} />
         ))}
       </div>
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
+      {docMenu && (
+        <FolderContextMenu x={docMenu.x} y={docMenu.y} items={docMenuItems} onClose={() => setDocMenu(null)} />
+      )}
       {deleteTarget && (
         <ConfirmDialog
           open
@@ -305,6 +364,23 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           folders={folders}
           onClose={() => setMoveTarget(null)}
         />
+      )}
+      {docDeleteTarget && (
+        <ConfirmDialog
+          open
+          title={`'${docDeleteTarget.title || "제목 없음"}' 문서를 삭제할까요?`}
+          onCancel={() => {
+            setDocDeleteTarget(null);
+            setDocDeleteError(null);
+          }}
+          onConfirm={confirmDeleteDocument}
+          confirmLabel={docDeleteSubmitting ? "삭제하는 중…" : "삭제"}
+          confirmDisabled={docDeleteSubmitting}
+          destructive
+        >
+          <p>휴지통으로 이동합니다. 휴지통에서 복원할 수 있어요.</p>
+          {docDeleteError && <p className={nodeStyles.error}>{docDeleteError}</p>}
+        </ConfirmDialog>
       )}
     </nav>
   );
