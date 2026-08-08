@@ -143,7 +143,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A 1-second pause in typing triggers autosave; the status bar cycles saving -> saved/failed(retry), and shows "저장됨" only for the response matching the latest sent seq — an out-of-order (stale) response is ignored and never overwrites a newer status.
   4. Trash supports cascade restore (to original location or root) and permanent delete, with permanent delete gated to ADMIN and above.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 **Wave 1**
 
@@ -156,7 +156,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Wave 3** *(blocked on Wave 2, parallel)*
 
 - [x] 04-03-PLAN.md — 문서 소프트삭제 라우트(EDITOR·IDOR) + 트리 문서 노드 '삭제' 메뉴/확인 + 열람중 이탈
-- [ ] 04-04-PLAN.md — 휴지통 백엔드: 폴더 cascade + 복원(독립-트래시 보존·루트 재배치) + 완전삭제(FK 순서·ADMIN) + 통합 trash 라우트
+- [x] 04-04-PLAN.md — 휴지통 백엔드: 폴더 cascade + 복원(독립-트래시 보존·루트 재배치) + 완전삭제(FK 순서·ADMIN) + 통합 trash 라우트
 
 **Wave 4** *(blocked on Wave 3)*
 
@@ -230,7 +230,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Auth & Workspace Foundation | 5/5 | Complete    | 2026-08-02 |
 | 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
 | 3. Folder Tree (Closure Table) | 5/5 | In Progress|  |
-| 4. Documents, Autosave & 3-Pane Workspace | 3/5 | In Progress|  |
+| 4. Documents, Autosave & 3-Pane Workspace | 4/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 0/TBD | Not started | - |
 | 6. Tags, Search & Export | 0/TBD | Not started | - |
 | 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |

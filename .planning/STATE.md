@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 4
 current_phase_name: Documents, Autosave & 3-Pane Workspace
 status: executing
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-08-08T06:10:07.648Z"
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-08-08T06:19:40.276Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 4 execution started
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 4 (Documents, Autosave & 3-Pane Workspace) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-08 — Phase 4 execution started
 
-Progress: [█████████░] 90%
+Progress: [██████████] 95%
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Progress: [█████████░] 90%
 | Phase 04 P01 | 25min | 3 tasks | 8 files |
 | Phase 04 P02 | 35min | 3 tasks | 26 files |
 | Phase 04 P03 | 35min | 2 tasks | 7 files |
+| Phase 04 P04 | 15min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 04-02: autosave-controller's docId param dropped from RESEARCH's reference sketch — the pure debounce/seq algorithm never reads it, only useAutosave's useMemo([docId]) needs it
 - [Phase ?]: [Phase ?]: 04-03: DELETE /api/documents/:id route-level re-delete of an already-trashed doc returns 403 (not 204) — matches the 03-04 IDOR convention of never leaking existence via status code; the plan's idempotency note describes softDeleteDocument's DB-level guard (concurrent race protection), already covered by lib-level tests
 - [Phase ?]: [Phase ?]: 04-03: confirmDeleteDocument calls router.push() before router.refresh() (opposite of submitCreateDocument's existing order in FolderTree.tsx) — the reverse order raced the refresh against the navigation and left the deleted tree node visible; caught by e2e, not left unfixed for consistency with the untouched create-flow ordering
+- [Phase ?]: 04-04: getTrashItems merges two typed SELECTs (folder, document) in application code instead of a SQL UNION — different column shapes (name vs title), app-level merge stays type-safe
+- [Phase ?]: 04-04: restoreDocument/restoreFolder encode 'only a trash root is restorable' as a WHERE is_trash_root=true guard on the UPDATE itself, matching softDeleteDocument's WR-01 no-op-via-WHERE convention
 
 ### Pending Todos
 
@@ -147,6 +150,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T06:10:07.638Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-08-08T06:19:40.268Z
+Stopped at: Completed 04-04-PLAN.md
 Resume file: None
