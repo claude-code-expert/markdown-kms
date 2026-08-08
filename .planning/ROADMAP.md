@@ -211,7 +211,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can download a single document as a lossless `.md` file.
   4. User can download a folder's full subtree as a structure-preserving `.zip`.
 
-**Plans**: 1/4 plans executed
+**Plans**: 2/4 plans executed
 
 **Wave 1**
 
@@ -219,7 +219,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 06-02-PLAN.md — TRACER: 태그 end-to-end (replaceTags 트랜잭션 + PUT /tags(EDITOR·COUNT 400) + TagBar + 마운트 + RSC 초기값) [DOC-03]
+- [x] 06-02-PLAN.md — TRACER: 태그 end-to-end (replaceTags 트랜잭션 + PUT /tags(EDITOR·COUNT 400) + TagBar + 마운트 + RSC 초기값) [DOC-03]
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -270,6 +270,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Folder Tree (Closure Table) | 5/5 | In Progress|  |
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
-| 6. Tags, Search & Export | 1/4 | In Progress|  |
+| 6. Tags, Search & Export | 2/4 | In Progress|  |
 | 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |

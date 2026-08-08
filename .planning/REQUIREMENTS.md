@@ -40,7 +40,7 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 
 - [x] **DOC-01** (P0, FR-D1): 문서 생성·수정·삭제가 동작하고, 삭제는 소프트 삭제로 즉시 휴지통에 나타난다
 - [x] **DOC-02** (P0, FR-D2/PRD §2-2·2-3): 휴지통에서 복원(cascade, 원위치 또는 루트)과 완전 삭제(ADMIN 이상)가 동작한다
-- [ ] **DOC-03** (P1, FR-D3): 문서당 태그 3개까지 입력되고 4개째는 클라이언트·서버 모두 거부한다
+- [x] **DOC-03** (P1, FR-D3): 문서당 태그 3개까지 입력되고 4개째는 클라이언트·서버 모두 거부한다
 - [ ] **DOC-04** (P1, FR-D4): 제목·본문·태그 검색이 동작한다 (NFC 정규화, pg_trgm)
 
 ### Workspace & RBAC (WS)
@@ -103,7 +103,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-10 | Phase 5 | Complete |
 | EDIT-11 | Phase 5 | Complete |
 | EDIT-12 | Phase 5 | Complete |
-| DOC-03 | Phase 6 | Pending |
+| DOC-03 | Phase 6 | Complete |
 | DOC-04 | Phase 6 | Pending |
 | EXP-01 | Phase 6 | Pending |
 | EXP-02 | Phase 6 | Pending |
