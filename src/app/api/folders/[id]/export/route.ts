@@ -40,10 +40,17 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
   for (const entry of entries) {
     archive.append(entry.content, { name: entry.zipPath });
   }
-  // Pitfall 3: fire-and-forget — finalize() (now Promise<void>-returning in 8.0.0) triggers
-  // stream close asynchronously; all append() calls above are already queued synchronously
-  // before this point, so awaiting isn't needed before handing the stream to Response.
-  void archive.finalize();
+  // CR-01: archive.finalize()'s Promise rejects on any stream error (zlib error, client abort,
+  // etc — node_modules/archiver/lib/core.js), not just double-finalize/abort. Left unhandled,
+  // Node crashes the whole process on an unhandled rejection. The `error` listener covers the
+  // stream side (Readable.toWeb() already forwards stream errors to the response), the `.catch`
+  // covers finalize()'s own Promise so neither path can escape as an unhandled rejection.
+  archive.on("error", (err) => {
+    console.error("zip archive error", err);
+  });
+  archive.finalize().catch((err) => {
+    console.error("zip finalize error", err);
+  });
 
   const webStream = Readable.toWeb(archive) as ReadableStream;
   const filename = `${folderName}.zip`;
