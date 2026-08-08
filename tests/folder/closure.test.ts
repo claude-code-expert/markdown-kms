@@ -273,6 +273,23 @@ describe("closure.softDeleteFolder — cascade soft-delete, closure preserved", 
     const closureCountAfter = (await db.select().from(folderClosure)).length;
     expect(closureCountAfter).toBe(closureCountBefore);
   });
+
+  // WR-01: re-deleting a folder that's already soft-deleted (e.g. a descendant already
+  // cascaded by an ancestor's delete) must be a no-op — it must not set is_trash_root on the
+  // already-deleted row, which would fabricate a second independent trash-root for one delete.
+  it("is idempotent — re-deleting an already-deleted folder does not set is_trash_root on it", async () => {
+    const ws = await createTestWorkspace("softdelete-idempotent-ws");
+    createdWorkspaces.push(ws.id);
+    const a = await createFolder(ws.id, null, "A");
+    const b = await createFolder(ws.id, a.id, "B");
+
+    await softDeleteFolder(a.id); // cascades: a.isTrashRoot=true, b.isDeleted=true, b.isTrashRoot=false
+    await softDeleteFolder(b.id); // b is already soft-deleted via cascade — must be a no-op
+
+    const [updatedB] = await db.select().from(folder).where(eq(folder.id, b.id));
+    expect(updatedB.isDeleted).toBe(true);
+    expect(updatedB.isTrashRoot).toBe(false);
+  });
 });
 
 describe("POST /api/folders — IDOR-safe workspaceId resolution + RBAC", () => {

@@ -123,8 +123,16 @@ export async function moveFolder(folderId: string, newParentId: string | null, c
 // is_trash_root=true. folder_closure rows are left untouched (restore is the inverse op, TRD §4).
 // Phase 4 will extend this transaction with `document WHERE folder_id = ANY(ids)` once the
 // document table exists — no document table in this phase, so no query for it here.
+//
+// WR-01: idempotent on an already-deleted target. A descendant already cascaded into
+// is_deleted=true by an ancestor's delete has an empty subtree here (getSubtree only returns
+// active rows), so the is_trash_root UPDATE below would otherwise still fire unconditionally and
+// fabricate a second independent trash-root for one delete. Bail out before touching any row.
 export async function softDeleteFolder(folderId: string, client: DbClient = db) {
   return client.transaction(async (tx) => {
+    const [target] = await tx.select({ isDeleted: folder.isDeleted }).from(folder).where(eq(folder.id, folderId));
+    if (!target || target.isDeleted) return;
+
     const subtree = await getSubtree(folderId, tx);
     const ids = subtree.map((f) => f.id);
 
