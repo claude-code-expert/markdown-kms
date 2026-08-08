@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 06
 current_phase_name: tags-search-export
 status: executing
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-08-08T10:19:14.847Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-08-08T10:32:10.193Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 06 execution started
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 32
-  completed_plans: 30
+  completed_plans: 31
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 06 (tags-search-export) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-08-08 — Phase 06 execution started
 
-Progress: [█████████░] 94%
+Progress: [██████████] 97%
 
 ## Performance Metrics
 
@@ -84,6 +84,7 @@ Progress: [█████████░] 94%
 | Phase 05 P05 | 15min | 3 tasks | 6 files |
 | Phase 06 P01 | 25min | 3 tasks | 10 files |
 | Phase 06 P02 | 15min | 2 tasks | 9 files |
+| Phase 06 P03 | 22min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -154,6 +155,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-01: Task 1 checkpoint:decision(one-way document_tag+pg_trgm+NFC 백필 마이그레이션)은 오케스트레이터가 사전 승인(2026-08-08) — 재프롬프트 없이 apply-now로 기록하고 진행
 - [Phase ?]: 06-01: REQUIREMENTS.md의 DOC-03/DOC-04는 미완료로 남긴다 — 스키마/검증 기반만 놓았고 실제 태그·검색 라우트(06-02/06-03)가 기능을 완성해야 체크 가능(04-01의 AUTH-03/WS-01 선례)
 - [Phase ?]: TagBar의 3제한/중복/저장실패 상태를 Task 1에서 한번에 구현 — Task 2는 rbac.test.ts로 확인만(신규 프로덕션 코드 없음)
+- [Phase ?]: 06-03: searchWorkspace는 q를 재정규화하지 않는다 — NFC 정규화는 호출부(GET 라우트)의 책임으로 고정, 06-01의 write-time 정규화 원칙과 동형
+- [Phase ?]: 06-03: 태그 매칭은 EXISTS 서브쿼리, 태그 목록 반환은 상관 서브쿼리(array_agg)로 분리 — WHERE로 필터된 LEFT JOIN 하나만 쓰면 title/content 매칭 문서의 태그 일부가 누락됨
+- [Phase ?]: 06-03: SearchResultsList/useSearchResults를 SearchBox.tsx 한 파일에서 함께 export — 검색 입력과 결과 패널이 FolderTree DOM상 비인접이라 상태를 부모로 끌어올리되 신규 파일은 늘리지 않음
 
 ### Pending Todos
 
@@ -184,6 +188,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T10:19:14.836Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-08-08T10:32:10.183Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None
