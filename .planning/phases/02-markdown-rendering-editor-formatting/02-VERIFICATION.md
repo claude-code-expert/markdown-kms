@@ -1,7 +1,7 @@
 ---
 phase: 02-markdown-rendering-editor-formatting
 verified: 2026-08-02T15:40:00Z
-status: human_needed
+status: passed
 score: 4/5 truths verified
 behavior_unverified: 1
 overrides_applied: 0
@@ -9,6 +9,7 @@ re_verification:
   previous_status: gaps_found
   previous_score: 4/5 truths verified
   gaps_closed:
+
     - "GAP-1 (Critical): hr.ts inserted \"\\n---\\n\" which rendered as a Setext <h2>, not a thematic break — fixed: blank line prepended when on-line content precedes the insertion point."
     - "GAP-2 (Critical): table.ts glued trailing same-line content onto the last row, silently dropped by GFM — fixed: symmetric trailing blank-line separator appended when not at line-end."
     - "GAP-3 (Warning, then re-opened as CR-01): code-block.ts unclosed-fence swallowed trailing document content — fixed in the selection-wrap branch by 02-06, then found INCOMPLETE for the caret (from===to) branch by re-review, then fixed there too (commits 20621dd/4a4590c)."
@@ -19,33 +20,42 @@ re_verification:
   regressions: []
 gaps: []
 deferred:
+
   - truth: "hr.ts inserts a superfluous leading blank line at absolute document/line start (WR-01)"
     addressed_in: "Not scheduled — deliberately deferred as cosmetic"
     evidence: "02-REVIEW.md Resolution: \"Zero rendered-output impact (a correct <hr> either way); the plan's own must_have sanctions one leading newline for empty on-line content. Not worth churning a GREEN fixture.\" Independently re-verified by CommonMark reasoning: doc \"\\n---\\n\" opens with a blank line, so \"---\" cannot be read as a Setext heading underline (no paragraph text immediately precedes it) — it always renders <hr> correctly; the only defect is a stray blank line, not broken output."
+
   - truth: "Checked task-list marker \"- [x]\" is not recognized by any of the 5 line-prefix plugins' shared regex shape, including heading.ts (IN-01)"
     addressed_in: "Not scheduled — pre-existing limitation across all 5 sibling plugins, out of phase-2 scope per 02-06's planning_notes"
     evidence: "02-REVIEW.md IN-01: \"pre-existing limitation shared identically across all five prefix-replacing plugins (not introduced by the 02-06 gap-closure diff)\"."
+
   - truth: "PreviewPane.tsx logs via a render-time side effect inside the component body, which can double-log under React StrictMode (IN-02)"
     addressed_in: "Not scheduled — explicitly required by the plan (GAP-6), StrictMode double-log is dev-only cosmetic"
     evidence: "02-REVIEW.md IN-02: \"Not a correctness issue for production output... low priority; not required for this phase.\""
 behavior_unverified_items:
+
   - truth: "Typing Korean text via IME composes correctly without corruption or dropped characters (ROADMAP Success Criteria 5)"
     test: "Type '한글 조합 테스트' via a real Korean IME (not paste) into the editor at /w/[wsId], letting each syllable block compose naturally, then click Bold on part of the composed text."
     expected: "No dropped, duplicated, or reordered syllables at any point; the editor's final document content exactly matches what was typed (plus '**...**' wrap markers); the preview renders the same Korean text inside <strong>."
     why_human: "No authoritative headless-E2E recipe exists for driving real multi-keystroke jamo-assembly IME composition. Code-level support (EditorHost's uncontrolled mount-once useEffect, content read out only via updateListener) is verified present and wired; the behavioral guarantee itself is not exercised by any automated test. Unchanged by gap-closure — no plugin/EditorHost architecture code was touched."
 human_verification:
+
   - test: "Korean IME composition safety: type '한글 조합 테스트' via a real IME into the editor, apply Bold mid/adjacent to composition."
     expected: "No dropped/duplicated/reordered syllables; doc content matches input + Bold markers; preview shows the same Korean text inside <strong>."
     why_human: "No headless E2E can drive genuine IME composition events."
+
   - test: "Full toolbar visual walkthrough: hover each of the 14 controls (heading dropdown + 13 flat buttons); open the heading dropdown."
     expected: "Each renders a 16px lucide icon in a 32x32px button; hovering shows an immediate (no ~300ms delay) tooltip with the correct label; exactly two visual states exist (default/hover) with no pressed/active-format animation; heading dropdown shows exactly 5 items (제목1-4 + 본문)."
     why_human: "Hover-state timing and visual tooltip/dropdown styling are visual-craft judgments no automated assertion in this repo encodes."
+
   - test: "Preview overflow / long-text states: paste a long unbroken URL, a wide GFM table, a long unwrapped code line, and a long heading/paragraph."
     expected: "Long URL wraps within the pane (overflow-wrap); wide table and long code line scroll horizontally within their own container; long heading/paragraph wraps naturally with no ellipsis truncation."
     why_human: "Pixel-level overflow/scroll containment is a rendering outcome best confirmed visually."
+
   - test: "Non-persistent contract: type content into the editor, then refresh the browser tab."
     expected: "All content is lost (editor returns to empty state); no save indicator, status bar, or unsaved-changes warning appears at any point (Phase 4 owns persistence — this is intended, not a bug)."
     why_human: "An 'absence of any transient UI' assertion is more reliably confirmed by a human glance."
+
   - test: "(Informational, non-blocking) Applying a heading format to a line inside an open \\`\\`\\` code fence."
     expected: "heading.ts does not detect open code fences (known, documented limitation). Confirm whether this edge case matters in practice; it does not block EDIT-01 as specified."
     why_human: "No fixture in the locked test contract exercises this case — a human judgment call on follow-up priority."

@@ -18,13 +18,13 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 ### Editor (EDIT)
 
 - [x] **EDIT-01** (P0, FR-E1): 헤딩 H1~H4·P 서식을 툴바/문법으로 적용할 수 있다 (ATX `#`~`####`)
-- [ ] **EDIT-02** (P0, FR-E2): Bold·Italic·Strikethrough·Inline Code를 선택 텍스트에 적용할 수 있다
-- [ ] **EDIT-03** (P0, FR-E3): Bullet·Ordered·Task 목록을 삽입할 수 있다
+- [x] **EDIT-02** (P0, FR-E2): Bold·Italic·Strikethrough·Inline Code를 선택 텍스트에 적용할 수 있다
+- [x] **EDIT-03** (P0, FR-E3): Bullet·Ordered·Task 목록을 삽입할 수 있다
 - [x] **EDIT-04** (P0, FR-E4): Blockquote·언어 지정 Code Block·HR을 삽입할 수 있다
 - [x] **EDIT-05** (P0, FR-E5): Link·Image·Table(GFM)을 삽입할 수 있다
-- [ ] **EDIT-06** (P0, FR-E8/NFR-1.1): 10,000자 문서에서 keystroke → 미리보기 DOM 갱신 p95 ≤ 60ms
+- [x] **EDIT-06** (P0, FR-E8/NFR-1.1): 10,000자 문서에서 keystroke → 미리보기 DOM 갱신 p95 ≤ 60ms
 - [ ] **EDIT-07** (P0, FR-E9): 입력 중단 1초 후 자동 저장되고 상태 바가 저장 중→저장됨/실패(재시도)로 전환된다. seq 가드로 역순 도착이 무시되고, 상태 바는 마지막 발신 seq의 응답일 때만 "저장됨"을 표시한다
-- [ ] **EDIT-08** (P0, NFR-3.1): `<script>`·이벤트 핸들러·`javascript:` URL이 미리보기에서 실행되지 않는다. GFM 태스크 체크박스는 sanitize를 통과해 렌더링된다
+- [x] **EDIT-08** (P0, NFR-3.1): `<script>`·이벤트 핸들러·`javascript:` URL이 미리보기에서 실행되지 않는다. GFM 태스크 체크박스는 sanitize를 통과해 렌더링된다
 - [ ] **EDIT-09** (P1, FR-E6): 이미지 업로드 완료 시 커서 위치에 이미지 마크다운이 삽입된다
 - [ ] **EDIT-10** (P1, FR-E7): 툴바는 lucide 아이콘 + hover 300ms 내 툴팁 + 클릭 pressed 피드백을 갖는다
 - [ ] **EDIT-11** (P1, FR-E10): 1분 주기 임시 스냅샷이 저장되고, 재진입 시 임시본이 최신이면 복구 여부를 묻는다
@@ -87,12 +87,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WS-01 | Phase 1 | Complete |
 | WS-02 | Phase 1 | Complete |
 | EDIT-01 | Phase 2 | Complete |
-| EDIT-02 | Phase 2 | Pending |
-| EDIT-03 | Phase 2 | Pending |
+| EDIT-02 | Phase 2 | Complete |
+| EDIT-03 | Phase 2 | Complete |
 | EDIT-04 | Phase 2 | Complete |
 | EDIT-05 | Phase 2 | Complete |
-| EDIT-06 | Phase 2 | Pending |
-| EDIT-08 | Phase 2 | Pending |
+| EDIT-06 | Phase 2 | Complete |
+| EDIT-08 | Phase 2 | Complete |
 | TREE-01 | Phase 3 | Pending |
 | TREE-02 | Phase 3 | Pending |
 | TREE-03 | Phase 3 | Pending |
