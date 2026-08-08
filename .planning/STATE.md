@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 4
 current_phase_name: Documents, Autosave & 3-Pane Workspace
 status: executing
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-08-08T05:36:46.698Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-08-08T06:10:07.648Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 4 execution started
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 21
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 4 (Documents, Autosave & 3-Pane Workspace) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-08 — Phase 4 execution started
 
-Progress: [█████████░] 86%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Progress: [█████████░] 86%
 | Phase 03 P05 | 55min | 3 tasks | 9 files |
 | Phase 04 P01 | 25min | 3 tasks | 8 files |
 | Phase 04 P02 | 35min | 3 tasks | 26 files |
+| Phase 04 P03 | 35min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 04-01: DOC-01/EDIT-07 left unchecked in REQUIREMENTS.md from 04-01 alone — schema+service substrate only (no API routes/client autosave hook/UI yet); functional completion lands across 04-02/04-03/04-04, matching the 01-01 AUTH-03/WS-01 precedent
 - [Phase ?]: 04-02: DocumentWorkspace rendered with key={docId} (full remount on document switch) as the primary fix for the stale-pending-save pitfall, on top of the autosave controller's own reset()/dispose()
 - [Phase ?]: 04-02: autosave-controller's docId param dropped from RESEARCH's reference sketch — the pure debounce/seq algorithm never reads it, only useAutosave's useMemo([docId]) needs it
+- [Phase ?]: [Phase ?]: 04-03: DELETE /api/documents/:id route-level re-delete of an already-trashed doc returns 403 (not 204) — matches the 03-04 IDOR convention of never leaking existence via status code; the plan's idempotency note describes softDeleteDocument's DB-level guard (concurrent race protection), already covered by lib-level tests
+- [Phase ?]: [Phase ?]: 04-03: confirmDeleteDocument calls router.push() before router.refresh() (opposite of submitCreateDocument's existing order in FolderTree.tsx) — the reverse order raced the refresh against the navigation and left the deleted tree node visible; caught by e2e, not left unfixed for consistency with the untouched create-flow ordering
 
 ### Pending Todos
 
@@ -144,6 +147,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T05:36:46.689Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-08-08T06:10:07.638Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
