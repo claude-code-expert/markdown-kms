@@ -221,6 +221,24 @@ export async function restoreFolder(folderId: string, client: DbClient = db) {
   });
 }
 
+// RESEARCH Pitfall 4: document.folder_id에 ON DELETE CASCADE가 없다 — folder보다 document를
+// 먼저 DELETE한다. folder_closure 양쪽 컬럼은 ON DELETE CASCADE라 folder 삭제로 자동 정리된다.
+// 서브트리 id 목록은 is_deleted 필터 없이 closure 직접 조인으로 모은다(활성/비활성 무관 — 완전
+// 삭제는 휴지통에 있는 항목에 대해 호출되지만 필터를 걸 이유가 없다).
+export async function permanentlyDeleteFolder(folderId: string, client: DbClient = db) {
+  return client.transaction(async (tx) => {
+    const subtree = await tx
+      .select({ id: folder.id })
+      .from(folder)
+      .innerJoin(folderClosure, eq(folderClosure.descendantId, folder.id))
+      .where(eq(folderClosure.ancestorId, folderId));
+    const ids = subtree.map((f) => f.id);
+
+    await tx.delete(document).where(inArray(document.folderId, ids)); // 먼저 (Pitfall 4)
+    await tx.delete(folder).where(inArray(folder.id, ids)); // folder_closure는 cascade 자동정리
+  });
+}
+
 // folder ∪ document의 is_trash_root=true 항목(휴지통 목록, 04-05가 소비). 두 쿼리를 병합 —
 // 서로 다른 테이블이라 UNION보다 애플리케이션 레벨 병합이 타입 안전하고 명확하다.
 export async function getTrashItems(workspaceId: string, client: DbClient = db) {

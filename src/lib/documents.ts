@@ -66,6 +66,12 @@ export async function restoreDocument(documentId: string, client: DbClient = db)
     .where(and(eq(document.id, documentId), eq(document.isTrashRoot, true)));
 }
 
+// closure.ts permanentlyDeleteFolder's single-row analog — a document has no children, so no
+// FK-order concern (Pitfall 4 only applies to folder's document/folder_closure dependents).
+export async function permanentlyDeleteDocument(documentId: string, client: DbClient = db) {
+  await client.delete(document).where(eq(document.id, documentId));
+}
+
 // TRD §7 / T-04-01-SEQ: the WHERE clause is the concurrency judge, not this function — a stale
 // (lower-or-equal) seq matches 0 rows and is silently ignored (not an error). Mass-assignment
 // guard (T-04-01-MASS): only content/title/savedSeq/updatedAt are ever set, never arbitrary
