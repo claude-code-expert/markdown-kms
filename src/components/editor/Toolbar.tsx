@@ -17,6 +17,10 @@ import styles from "./Toolbar.module.css";
 
 interface ToolbarProps {
   getView: () => EditorView | null;
+  // EDIT-09 (05-01): image is the one button that no longer runs its plugin's run(state) —
+  // it opens EditorPreviewLayout's hidden file input instead. Optional so any other Toolbar
+  // caller (if one ever exists) keeps working without this prop.
+  onImageButtonClick?: () => void;
 }
 
 const GROUP_SIZES = [4, 3, 3, 3];
@@ -30,7 +34,7 @@ function buildGroups() {
   });
 }
 
-export function Toolbar({ getView }: ToolbarProps) {
+export function Toolbar({ getView, onImageButtonClick }: ToolbarProps) {
   const groups = buildGroups();
 
   return (
@@ -55,6 +59,10 @@ export function Toolbar({ getView }: ToolbarProps) {
                   onClick={() => {
                     const view = getView();
                     if (!view) return;
+                    if (plugin.id === "image") {
+                      onImageButtonClick?.();
+                      return;
+                    }
                     view.dispatch(plugin.run(view.state));
                     view.focus();
                   }}
