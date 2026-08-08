@@ -53,8 +53,8 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 
 ### Export (EXP)
 
-- [ ] **EXP-01** (P1, FR-X1/NFR-5.2): 문서를 원본 무손실 `.md`로 다운로드할 수 있다
-- [ ] **EXP-02** (P1, FR-X2): 폴더 하위 전체를 구조 유지 `.zip`으로 다운로드할 수 있다
+- [x] **EXP-01** (P1, FR-X1/NFR-5.2): 문서를 원본 무손실 `.md`로 다운로드할 수 있다
+- [x] **EXP-02** (P1, FR-X2): 폴더 하위 전체를 구조 유지 `.zip`으로 다운로드할 수 있다
 
 ### Presentation (PRES)
 
@@ -105,8 +105,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-12 | Phase 5 | Complete |
 | DOC-03 | Phase 6 | Complete |
 | DOC-04 | Phase 6 | Complete |
-| EXP-01 | Phase 6 | Pending |
-| EXP-02 | Phase 6 | Pending |
+| EXP-01 | Phase 6 | Complete |
+| EXP-02 | Phase 6 | Complete |
 | WS-03 | Phase 7 | Pending |
 | WS-04 | Phase 7 | Pending |
 | WS-05 | Phase 7 | Pending |
