@@ -1,0 +1,19 @@
+/* UI-SPEC Draft Recovery Dialog Contract — "폐기" is an inline text button, styled identically
+   to SaveStatusBar's "재시도" (SaveStatusBar.module.css .retryButton): no background, destructive
+   color, weight 600, hover underline, zero padding. Everything else reuses ConfirmDialog as-is. */
+.discard {
+  display: block;
+  margin-top: var(--space-sm);
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--destructive);
+  cursor: pointer;
+}
+
+.discard:hover {
+  text-decoration: underline;
+}
