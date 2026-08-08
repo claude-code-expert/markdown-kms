@@ -6,9 +6,10 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { user, workspace } from "@/db/schema";
+import { document, folder, user, workspace } from "@/db/schema";
 import { createFolder, softDeleteFolder } from "@/lib/closure";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor, type Role } from "../rbac/helpers";
+import { createTestDocument } from "../documents/helpers";
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
 
@@ -199,5 +200,40 @@ describe("RBAC matrix — DELETE /api/trash/[type]/[id] (permanent delete, ADMIN
   it("rejects a malformed uuid with 400", async () => {
     const res = await permanentDeleteRoute(deleteRequest("folder", "not-a-uuid"), ctx("folder", "not-a-uuid"));
     expect(res.status).toBe(400);
+  });
+
+  // CR-01: permanent delete must refuse a target that isn't actually trashed (is_trash_root=true).
+  // Without the guard, an ADMIN passing an active id hard-deletes it (and a folder's whole active
+  // subtree) with no soft-delete step — bypassing the project's core soft-delete invariant.
+  it("rejects permanent delete of an ACTIVE (non-trashed) folder and does not delete the row", async () => {
+    const ws = await createTestWorkspace("rbac-trash-perm-active-folder-ws");
+    createdWorkspaces.push(ws.id);
+    const caller = await createTestUser("rbac-trash-perm-active-folder");
+    createdUsers.push(caller.id);
+    await addMember(ws.id, caller.id, "ADMIN");
+    mockSessionFor(caller.id);
+    const target = await createFolder(ws.id, null, "Active"); // never soft-deleted
+
+    const res = await permanentDeleteRoute(deleteRequest("folder", target.id), ctx("folder", target.id));
+    expect(res.status).toBe(403);
+
+    const [row] = await db.select().from(folder).where(eq(folder.id, target.id));
+    expect(row).toBeDefined();
+  });
+
+  it("rejects permanent delete of an ACTIVE (non-trashed) document and does not delete the row", async () => {
+    const ws = await createTestWorkspace("rbac-trash-perm-active-doc-ws");
+    createdWorkspaces.push(ws.id);
+    const caller = await createTestUser("rbac-trash-perm-active-doc");
+    createdUsers.push(caller.id);
+    await addMember(ws.id, caller.id, "ADMIN");
+    mockSessionFor(caller.id);
+    const doc = await createTestDocument(ws.id, null, { title: "Active" }); // never soft-deleted
+
+    const res = await permanentDeleteRoute(deleteRequest("document", doc.id), ctx("document", doc.id));
+    expect(res.status).toBe(403);
+
+    const [row] = await db.select().from(document).where(eq(document.id, doc.id));
+    expect(row).toBeDefined();
   });
 });

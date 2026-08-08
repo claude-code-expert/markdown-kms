@@ -29,11 +29,19 @@ export async function getDocument(documentId: string, workspaceId: string, clien
 
 // PUT (autosave) route's IDOR/existence guard — active documents only (a trashed document is not
 // a valid autosave target). resolveActiveWorkspaceId(closure.ts:35-41) analog.
-export async function resolveWorkspaceIdForDocument(documentId: string, client: DbClient = db) {
-  const [row] = await client
-    .select({ workspaceId: document.workspaceId })
-    .from(document)
-    .where(and(eq(document.id, documentId), eq(document.isDeleted, false)));
+//
+// WR-03: single source of truth for "workspaceId from a document id" — closure.ts's
+// resolveWorkspaceIdForTrashItem reuses this (via { trashRootOnly: true }) instead of
+// reimplementing the same select with a different filter.
+export async function resolveWorkspaceIdForDocument(
+  documentId: string,
+  client: DbClient = db,
+  opts: { trashRootOnly?: boolean } = {},
+) {
+  const filter = opts.trashRootOnly
+    ? and(eq(document.id, documentId), eq(document.isTrashRoot, true))
+    : and(eq(document.id, documentId), eq(document.isDeleted, false));
+  const [row] = await client.select({ workspaceId: document.workspaceId }).from(document).where(filter);
   return row ?? null;
 }
 

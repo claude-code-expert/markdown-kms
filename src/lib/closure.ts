@@ -1,6 +1,7 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { document, folder, folderClosure } from "@/db/schema";
+import { resolveWorkspaceIdForDocument } from "@/lib/documents";
 
 // TRD §4 "폴더 이동" — moving into a cycle (self or a descendant). Rejected before any rewiring
 // happens (RESEARCH Pitfall 1, TOCTOU: check + rewiring share one transaction).
@@ -162,20 +163,28 @@ export async function softDeleteFolder(folderId: string, client: DbClient = db) 
   });
 }
 
-// RESEARCH Pitfall 3 / Common Pitfalls: resolveActiveWorkspaceId (35-41행) hardcodes
-// is_deleted=false — trash routes need the opposite (is_deleted=true rows must resolve too).
+// CR-01: must resolve ONLY actual trash roots (is_trash_root=true) — resolving any row
+// (active included) let an ADMIN permanently delete an active document/folder (and a folder's
+// whole active subtree) via DELETE /api/trash/:type/:id with no soft-delete step ever having
+// happened. softDeleteFolder/softDeleteDocument always set is_trash_root=true on the direct
+// delete target, so this filter doesn't change resolution for anything actually in the trash —
+// only for active rows, which now correctly fail to resolve (route responds 403/404).
 // type-scoped: a trash item is always exactly one of folder|document (TRD §8 unified route).
+// WR-03: document branch delegates to documents.ts's resolveWorkspaceIdForDocument instead of
+// reimplementing the same select — one source of truth for "workspaceId from a document id".
 export async function resolveWorkspaceIdForTrashItem(
   type: "folder" | "document",
   id: string,
   client: DbClient = db,
 ) {
   if (type === "folder") {
-    const [row] = await client.select({ workspaceId: folder.workspaceId }).from(folder).where(eq(folder.id, id));
+    const [row] = await client
+      .select({ workspaceId: folder.workspaceId })
+      .from(folder)
+      .where(and(eq(folder.id, id), eq(folder.isTrashRoot, true)));
     return row ?? null;
   }
-  const [row] = await client.select({ workspaceId: document.workspaceId }).from(document).where(eq(document.id, id));
-  return row ?? null;
+  return resolveWorkspaceIdForDocument(id, client, { trashRootOnly: true });
 }
 
 // TRD §4 복원 / RESEARCH Pattern 5: trash_root 기준 서브트리 복원. getSubtree는 is_deleted=false만
