@@ -40,5 +40,10 @@ Thumbs.db
 # GSD / harness (session-local, per .claude/CLAUDE.md)
 .handoff.md
 
+# Local upload storage (05-01, TRD §8) — runtime files never committed; only .gitkeep is
+# tracked so the directory itself exists on checkout.
+public/uploads/*
+!public/uploads/.gitkeep
+
 # 프롬프트 추출 워터마크 (Prompt.md 는 추적, 상태 사이드카는 로컬)
 Prompt.md.state
