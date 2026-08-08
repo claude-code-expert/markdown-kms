@@ -92,8 +92,8 @@ export const folderClosure = pgTable(
 );
 
 // TRD §3: 문서. folder_id는 ON DELETE CASCADE가 없다(NO ACTION) — 완전삭제는 document 행을
-// 먼저 지운 뒤 folder 행을 지워야 한다(Phase 4 RESEARCH Pitfall 4). document_tag/document_draft/
-// trigram(gin) 인덱스는 각각 Phase 6/5 — 이 phase는 의도적으로 만들지 않는다(CLAUDE.md 불변식).
+// 먼저 지운 뒤 folder 행을 지워야 한다(Phase 4 RESEARCH Pitfall 4). document_tag 인덱스는 Phase 6
+// — 이 phase는 의도적으로 만들지 않는다(CLAUDE.md 불변식).
 export const document = pgTable(
   "document",
   {
@@ -118,3 +118,13 @@ export const document = pgTable(
       .where(sql`${table.isDeleted} = false`),
   ],
 );
+
+// TRD §3 / §7 (FR-E10): draft 크래시 복구. document_id 자체가 PK — 문서당 1행 upsert 불변식을
+// 서러게이트 키 없이 DB가 강제(onConflictDoUpdate target). 인덱스 불필요(PK 조회만).
+export const documentDraft = pgTable("document_draft", {
+  documentId: uuid("document_id")
+    .primaryKey()
+    .references(() => document.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

@@ -65,3 +65,11 @@ export const autosaveBodySchema = documentSchema.extend({
 });
 
 export type AutosaveBodyInput = z.infer<typeof autosaveBodySchema>;
+
+// PUT 임시저장 body 전용(TRD §7) — content만, seq 없음(draft는 순서 가드 불필요, 1분 주기 upsert).
+// content는 trim 없음 — documentSchema 규칙 승계(CodeMirror 원문 그대로, NFR-5.2).
+export const draftBodySchema = z.object({
+  content: z.string(),
+});
+
+export type DraftBodyInput = z.infer<typeof draftBodySchema>;
