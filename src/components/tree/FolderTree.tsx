@@ -11,6 +11,7 @@ import { buildTree, type DocumentRow, type FolderRow } from "./tree-utils";
 import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import nodeStyles from "./FolderTreeNode.module.css";
 import styles from "./FolderTree.module.css";
 
@@ -347,6 +348,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
         <Trash2 size={16} />
         <span>휴지통</span>
       </Link>
+      <ThemeToggle />
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
       {docMenu && (
         <FolderContextMenu x={docMenu.x} y={docMenu.y} items={docMenuItems} onClose={() => setDocMenu(null)} />
