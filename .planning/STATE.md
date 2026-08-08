@@ -151,6 +151,7 @@ Items acknowledged and carried forward from previous milestone close:
 | Phase | State | Resume | 남은 항목 |
 |-------|-------|--------|----------|
 | 3 | verification_deferred_human | /gsd-verify-work 3 | DnD 드래그 커서/아웃라인 시각 피드백, MoveFolderModal 자기-서브트리 greying (순수 시각 2건; 자동 4/4 must-haves·811 tests·e2e 15 green) |
+| 4 | verification_deferred_human | /gsd-verify-work 4 | RestoreRootBanner 실제 렌더(부모 삭제 후 복원), ADMIN 완전삭제 클릭스루(시드 e2e가 EDITOR라 미검) (자동 4/4 must-haves·884 tests·e2e 20/20·code-review 1C/3W 수정) |
 
 ## Session Continuity
 
