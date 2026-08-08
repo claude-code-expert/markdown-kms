@@ -24,6 +24,46 @@
   --space-3xl: 64px;
 }
 
+/* Dark palette (UI-SPEC "다크 ([data-theme="dark"] override)") — 12 token
+   re-declarations only, slate/blue scale, WCAG-verified. Components stay
+   var(--token) references, so this block alone flips the whole app dark. */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #334155;
+  --border: #475569;
+  --border-strong: #64748b;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  --accent: #3b82f6;
+  --accent-strong: #60a5fa;
+  --accent-weak: #1e2a44;
+  --destructive: #ef4444;
+  --code-bg: #020617;
+}
+
+/* First visit (no theme cookie yet, so RSC hasn't set data-theme) falls back
+   to the OS setting — CONTEXT lock "첫 방문은 prefers-color-scheme 따름".
+   Same 12 values as above, duplicated (server can't read OS preference). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #334155;
+    --border: #475569;
+    --border-strong: #64748b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --accent: #3b82f6;
+    --accent-strong: #60a5fa;
+    --accent-weak: #1e2a44;
+    --destructive: #ef4444;
+    --code-bg: #020617;
+  }
+}
+
 html {
   height: 100%;
 }

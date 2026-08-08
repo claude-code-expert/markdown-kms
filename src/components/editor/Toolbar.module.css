@@ -49,6 +49,13 @@
   background: var(--surface-2);
 }
 
+/* UI-SPEC Toolbar Interaction Contract "pressed" — momentary while the mouse
+   button is down, no persistent "this format is active" class/state. */
+.button:active {
+  background: var(--accent-weak);
+  color: var(--accent);
+}
+
 .tooltip {
   position: absolute;
   top: 100%;
@@ -58,14 +65,21 @@
   padding: 4px 8px;
   font-size: 11px;
   white-space: nowrap;
-  background: var(--text);
+  /* Fixed, theme-independent — var(--text) would go near-white in dark mode,
+     making the tooltip invisible (white text on white bubble). UI-SPEC
+     "알려진 예외". */
+  background: #0f172a;
   color: #fff;
   border-radius: 4px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   opacity: 0;
   pointer-events: none;
+  /* Hide immediately on hover-out; the hover rule below overrides this with
+     a 300ms show delay. Split so unhover never gets a stray delayed hide. */
+  transition: opacity 0s linear 0s;
 }
 
 .buttonWrap:hover .tooltip {
   opacity: 1;
+  transition: opacity 0s linear 300ms;
 }
