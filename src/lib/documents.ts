@@ -1,9 +1,9 @@
 // Document CRUD/soft-delete/autosave service — mirrors src/lib/closure.ts's DbClient injection
 // pattern exactly (see closure.ts:12-17 for the union type's rationale: tx isn't structurally
 // typeof db, so the alias unions both).
-import { and, eq, lt } from "drizzle-orm";
+import { and, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { document, documentDraft, folder } from "@/db/schema";
+import { document, documentDraft, documentTag, folder } from "@/db/schema";
 
 type DbClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -155,4 +155,53 @@ export function isDraftNewer(
 ): boolean {
   if (!draft) return false;
   return draft.updatedAt > doc.updatedAt;
+}
+
+// DOC-03 / T-06-TAGCAP: thrown inside replaceTags's transaction when the post-insert row count
+// exceeds 3 — the route (tags/route.ts) catches this and maps it to 400. tagsBodySchema already
+// caps the raw request body at 3 (fast client-facing rejection), but this COUNT is the server's
+// final authority: it also catches a caller that bypasses the schema entirely (raw fetch/curl),
+// which is the only way this branch is actually reachable (06-PATTERNS Pattern 1).
+export class TagLimitError extends Error {}
+
+// closure.ts softDeleteFolder's "throw inside client.transaction = auto rollback" convention
+// (06-PATTERNS). replace-all semantics: DELETE the doc's existing tag rows first, so a second
+// call fully supersedes the first set rather than merging into it. Dedup is case-insensitive
+// (Map keyed by lowercase) but preserves the FIRST-seen original casing, matching the composite
+// PK's exact-string uniqueness with an application-layer case-fold on top.
+export async function replaceTags(documentId: string, rawTags: string[], client: DbClient = db) {
+  return client.transaction(async (tx) => {
+    await tx.delete(documentTag).where(eq(documentTag.documentId, documentId));
+
+    const seen = new Map<string, string>();
+    for (const raw of rawTags) {
+      const norm = raw.trim().normalize("NFC");
+      if (!norm) continue;
+      const key = norm.toLowerCase();
+      if (!seen.has(key)) seen.set(key, norm);
+    }
+    const tags = [...seen.values()];
+
+    if (tags.length > 0) {
+      await tx.insert(documentTag).values(tags.map((tag) => ({ documentId, tag })));
+    }
+
+    // COUNT is read back inside the same transaction (not `tags.length`) so a throw here rolls
+    // back the INSERT above too — the DELETE never gets a chance to "stick" without a new set.
+    const [{ count }] = await tx
+      .select({ count: sql<number>`count(*)::int` })
+      .from(documentTag)
+      .where(eq(documentTag.documentId, documentId));
+    if (count > 3) throw new TagLimitError("태그는 최대 3개까지 저장할 수 있습니다.");
+
+    return tags;
+  });
+}
+
+export async function getTags(documentId: string, client: DbClient = db): Promise<string[]> {
+  const rows = await client
+    .select({ tag: documentTag.tag })
+    .from(documentTag)
+    .where(eq(documentTag.documentId, documentId));
+  return rows.map((row) => row.tag);
 }

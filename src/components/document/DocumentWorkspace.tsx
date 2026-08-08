@@ -14,6 +14,7 @@ import {
 import { LayoutModeToggle } from "@/components/layout/LayoutModeToggle";
 import { DraftRecoveryDialog } from "./DraftRecoveryDialog";
 import { SaveStatusBar } from "./SaveStatusBar";
+import { TagBar } from "./TagBar";
 import { useAutosave } from "./useAutosave";
 import { useDraft } from "./useDraft";
 import styles from "./DocumentWorkspace.module.css";
@@ -43,6 +44,9 @@ interface DocumentWorkspaceProps {
   // clock comparison) and passes them down; full recovery-dialog wiring lands in Task 3.
   hasNewerDraft?: boolean;
   draftContent?: string | null;
+  // 06-02: RSC (d/[docId]/page.tsx) reads getTags(docId) in the same Promise.all as the
+  // document/draft lookup and passes the result down — TagBar owns all subsequent local state.
+  initialTags?: string[];
 }
 
 export function DocumentWorkspace({
@@ -54,6 +58,7 @@ export function DocumentWorkspace({
   initialSplitRatio = 50,
   hasNewerDraft = false,
   draftContent = null,
+  initialTags = [],
 }: DocumentWorkspaceProps) {
   const [title, setTitle] = useState(initialTitle);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(initialLayoutMode);
@@ -114,6 +119,7 @@ export function DocumentWorkspace({
         />
         <LayoutModeToggle mode={layoutMode} onChange={setLayoutMode} />
       </div>
+      <TagBar documentId={docId} initialTags={initialTags} />
       <div className={styles.body}>
         <EditorPreviewLayout
           ref={layoutRef}

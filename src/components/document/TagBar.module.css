@@ -1,0 +1,94 @@
+/* UI-SPEC "Tag Meta Bar Contract" — one-line flex row between titleRow and body, same 40px
+   rhythm as titleRow/SaveStatusBar. Pure var(--token) refs only, dark theme auto-inherits
+   (Phase 5's [data-theme="dark"] overrides). */
+.bar {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.bar:focus-within {
+  border-bottom-color: var(--accent);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 24px;
+  flex-shrink: 0;
+  padding: 0 var(--space-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.chipText {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.chipRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.chipRemove:hover {
+  color: var(--destructive);
+}
+
+.input {
+  flex: 1;
+  min-width: 80px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.input::placeholder {
+  color: var(--dim);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--destructive);
+  padding: 2px var(--space-sm);
+  margin: 0;
+}
