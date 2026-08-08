@@ -92,8 +92,8 @@ export const folderClosure = pgTable(
 );
 
 // TRD §3: 문서. folder_id는 ON DELETE CASCADE가 없다(NO ACTION) — 완전삭제는 document 행을
-// 먼저 지운 뒤 folder 행을 지워야 한다(Phase 4 RESEARCH Pitfall 4). document_tag 인덱스는 Phase 6
-// — 이 phase는 의도적으로 만들지 않는다(CLAUDE.md 불변식).
+// 먼저 지운 뒤 folder 행을 지워야 한다(Phase 4 RESEARCH Pitfall 4). pg_trgm GIN 인덱스(title/content)
+// 는 Phase 6 custom SQL 마이그레이션이 담당 — 이 DSL에는 없다(documentTag 테이블 주석 참고).
 export const document = pgTable(
   "document",
   {
@@ -128,3 +128,19 @@ export const documentDraft = pgTable("document_draft", {
   content: text("content").notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// TRD §3 (DOC-03): 문서 태그. (document_id, tag) 복합 PK가 자연히 완전동일 문자열 중복을 막는다
+// (대소문자만 다른 중복은 애플리케이션 레이어 dedup, src/lib/documents.ts replaceTags). 최대 3개
+// 제약은 저장 트랜잭션 COUNT 검증(REQUIREMENT §6) — 여기 DB 제약으로 넣지 않는다. pg_trgm GIN
+// 인덱스(document.title/content)는 의도적으로 이 DSL에 없다 — custom SQL 마이그레이션 전용
+// (drizzle-kit이 gin_trgm_ops 연산자 클래스를 누락하는 버그, 06-RESEARCH Pitfall 2).
+export const documentTag = pgTable(
+  "document_tag",
+  {
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => document.id, { onDelete: "cascade" }),
+    tag: text("tag").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.documentId, table.tag] })],
+);

@@ -36,6 +36,20 @@
       "when": 1786177245210,
       "tag": "0004_high_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786183527357,
+      "tag": "0005_classy_pixie",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786183534848,
+      "tag": "0006_pg_trgm_search_index",
+      "breakpoints": true
     }
   ]
 }
