@@ -1,0 +1,27 @@
+/* UI-SPEC Image Upload Contract "hover-drop" — covers .editorPane entirely, opaque background
+   (fine since it only shows for the instant of a drop), 2px dashed accent border. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  background: var(--surface);
+  border: 2px dashed var(--accent);
+}
+
+.icon {
+  color: var(--accent);
+}
+
+.text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--accent);
+}

@@ -8,6 +8,7 @@
 }
 
 .editorPane {
+  position: relative; /* 05-02: anchor for ImageDropzone/UploadErrorBanner overlays */
   grid-area: editor;
   display: flex;
   flex-direction: column;
