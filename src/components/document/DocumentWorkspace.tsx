@@ -18,6 +18,18 @@ import { useAutosave } from "./useAutosave";
 import { useDraft } from "./useDraft";
 import styles from "./DocumentWorkspace.module.css";
 
+// WR-03 (05-REVIEW): pure fetch-result extraction, exported so the failure/rejection paths are
+// unit-testable without rendering the component. Never throws — a rejected fetch (offline etc.)
+// resolves to false, same as a non-ok response.
+export async function discardDraft(docId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/documents/${docId}/draft`, { method: "DELETE" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 interface DocumentWorkspaceProps {
   docId: string;
   initialTitle: string;
@@ -80,8 +92,9 @@ export function DocumentWorkspace({
   }
 
   async function handleDiscard() {
-    await fetch(`/api/documents/${docId}/draft`, { method: "DELETE" });
-    setShowRecovery(false);
+    if (await discardDraft(docId)) setShowRecovery(false);
+    // WR-03: on failure, leave the dialog open — the server still has the draft, so closing it
+    // would tell the user "discarded" when it wasn't.
   }
 
   function handleDismiss() {
