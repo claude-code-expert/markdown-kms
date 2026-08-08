@@ -9,10 +9,26 @@
   flex-direction: column;
 }
 
-.titleInput {
+/* Layout Mode Toggle Contract: 제목 행 우측에 3버튼 세그먼트, 새 행을 만들지
+   않는다 — titleInput(flex:1) + LayoutModeToggle(고정폭)을 한 행에 배치. */
+.titleRow {
+  display: flex;
+  align-items: center;
   height: 40px;
   flex-shrink: 0;
-  width: 100%;
+  gap: var(--space-sm);
+  padding-right: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.titleRow:focus-within {
+  border-bottom-color: var(--accent);
+}
+
+.titleInput {
+  height: 100%;
+  flex: 1;
+  min-width: 0;
   border: none;
   outline: none;
   background: var(--bg);
@@ -20,12 +36,7 @@
   font-size: 20px;
   font-weight: 600;
   line-height: 1.2;
-  padding: 0 var(--space-md);
-  border-bottom: 1px solid var(--border);
-}
-
-.titleInput:focus {
-  border-bottom-color: var(--accent);
+  padding: 0 0 0 var(--space-md);
 }
 
 .titleInput::placeholder {

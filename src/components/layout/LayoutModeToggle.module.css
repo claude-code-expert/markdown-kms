@@ -1,0 +1,66 @@
+/* UI-SPEC Layout Mode Toggle Contract: 3x 24x24 buttons, gap 4px(xs).
+   Tooltip reuses Toolbar.module.css's hide-immediate/show-after-300ms split
+   transition (same CSS pattern, duplicated per-file since CSS Modules don't
+   share rules across files without a shared class — 3 short rules, not worth
+   a shared stylesheet). */
+.segment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.buttonWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* Accent reserved-for exception (UI-SPEC Color): a mutually-exclusive 3-way
+   mode switch showing "which mode is active now" is a different category
+   from the toolbar's banned persistent format-active tracking. */
+.active,
+.active:hover {
+  background: var(--accent-weak);
+  color: var(--accent);
+}
+
+.tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  background: #0f172a;
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0s linear 0s;
+}
+
+.buttonWrap:hover .tooltip {
+  opacity: 1;
+  transition: opacity 0s linear 300ms;
+}

@@ -6,7 +6,8 @@
 // useAutosave controller all start fresh — the cleanest fix for RESEARCH Pitfall 2, on top of
 // the controller's own reset()/dispose() defense).
 import { useRef, useState, type ChangeEvent } from "react";
-import { EditorPreviewLayout } from "@/components/layout/EditorPreviewLayout";
+import { EditorPreviewLayout, type LayoutMode } from "@/components/layout/EditorPreviewLayout";
+import { LayoutModeToggle } from "@/components/layout/LayoutModeToggle";
 import { SaveStatusBar } from "./SaveStatusBar";
 import { useAutosave } from "./useAutosave";
 import styles from "./DocumentWorkspace.module.css";
@@ -16,10 +17,22 @@ interface DocumentWorkspaceProps {
   initialTitle: string;
   initialContent: string;
   initialSeq: number;
+  // RSC (d/[docId]/page.tsx) reads these from cookies for no-FOUC first render
+  // (05-08 Task 3) — default here covers any other/older caller.
+  initialLayoutMode?: LayoutMode;
+  initialSplitRatio?: number;
 }
 
-export function DocumentWorkspace({ docId, initialTitle, initialContent, initialSeq }: DocumentWorkspaceProps) {
+export function DocumentWorkspace({
+  docId,
+  initialTitle,
+  initialContent,
+  initialSeq,
+  initialLayoutMode = "split",
+  initialSplitRatio = 50,
+}: DocumentWorkspaceProps) {
   const [title, setTitle] = useState(initialTitle);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(initialLayoutMode);
   // Body content is owned by EditorPreviewLayout's internal state (D-P2 uncontrolled editor) —
   // this ref just tracks the latest value so a title-only edit can still send the current body.
   const contentRef = useRef(initialContent);
@@ -38,15 +51,23 @@ export function DocumentWorkspace({ docId, initialTitle, initialContent, initial
 
   return (
     <div className={styles.workspace}>
-      <input
-        className={styles.titleInput}
-        value={title}
-        onChange={handleTitleChange}
-        placeholder="제목 없음"
-        aria-label="문서 제목"
-      />
+      <div className={styles.titleRow}>
+        <input
+          className={styles.titleInput}
+          value={title}
+          onChange={handleTitleChange}
+          placeholder="제목 없음"
+          aria-label="문서 제목"
+        />
+        <LayoutModeToggle mode={layoutMode} onChange={setLayoutMode} />
+      </div>
       <div className={styles.body}>
-        <EditorPreviewLayout initialContent={initialContent} onChange={handleContentChange} />
+        <EditorPreviewLayout
+          initialContent={initialContent}
+          onChange={handleContentChange}
+          layoutMode={layoutMode}
+          initialSplitRatio={initialSplitRatio}
+        />
       </div>
       <SaveStatusBar status={status} onRetry={retry} />
     </div>
