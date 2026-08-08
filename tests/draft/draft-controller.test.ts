@@ -68,4 +68,34 @@ describe("createDraftController — dirty-flag + 60s interval", () => {
 
     expect(send).not.toHaveBeenCalled();
   });
+
+  // CR-01 (05-REVIEW): a failed draft send must not be silently dropped — this is the
+  // crash-recovery feature's only safety net, so a rejected fetch must leave dirty=true
+  // for the next tick to retry.
+  it("keeps dirty=true after a rejected send so the next tick retries (crash-recovery guarantee)", async () => {
+    const send = vi.fn(() => Promise.reject(new Error("offline")));
+    const controller = createDraftController({ send, intervalMs: 60_000 });
+
+    controller.onContentChange("x");
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send).toHaveBeenLastCalledWith("x");
+  });
+
+  // Same guarantee for a resolved-but-failed response ({ ok: false }, e.g. HTTP 4xx/5xx) —
+  // distinct code path from a rejected fetch promise.
+  it("keeps dirty=true after a { ok: false } response so the next tick retries", async () => {
+    const send = vi.fn(() => Promise.resolve({ ok: false }));
+    const controller = createDraftController({ send, intervalMs: 60_000 });
+
+    controller.onContentChange("x");
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(send).toHaveBeenCalledTimes(2);
+  });
 });

@@ -21,8 +21,19 @@ export function createDraftController({
   let latestContent = "";
   const timer = setInterval(() => {
     if (!dirty) return;
-    dirty = false;
-    void send(latestContent);
+    const content = latestContent;
+    dirty = false; // optimistic clear, same as before — but a failure re-marks dirty below
+    void send(content)
+      .then((res) => {
+        // CR-01: a failed save (4xx/5xx) must not be dropped — keep dirty so the next tick
+        // retries. This is the only safety net the crash-recovery feature has.
+        if (!res.ok) dirty = true;
+      })
+      .catch(() => {
+        // fetch itself rejected (offline, etc.) — same retry guarantee, and this .catch()
+        // is what prevents an unhandled promise rejection.
+        dirty = true;
+      });
   }, intervalMs);
 
   return {
