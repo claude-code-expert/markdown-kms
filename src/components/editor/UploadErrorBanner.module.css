@@ -1,0 +1,48 @@
+/* UI-SPEC Image Upload Contract "에러 배너" — position:absolute below the 44px toolbar so it
+   overlays the editor pane instead of pushing document height (Layout & Composition Contract). */
+.banner {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  background: var(--surface-2);
+  border-left: 4px solid var(--border-strong);
+  padding: 12px var(--space-md);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--destructive);
+  margin-top: 2px;
+}
+
+.text {
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--destructive);
+}
+
+.close {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--text);
+}

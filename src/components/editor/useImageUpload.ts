@@ -8,11 +8,15 @@
 // dispatch time can be invalidated by the user's own further edits before the response
 // returns — searching for the fixed placeholder text avoids the changes-mapping
 // bookkeeping that coordinate tracking would require.
-import { useCallback, useRef, type ChangeEvent } from "react";
+import { useCallback, useRef, useState, type ChangeEvent } from "react";
 import { useParams } from "next/navigation";
 import type { EditorView } from "@codemirror/view";
 
 const PLACEHOLDER = "![업로드 중...]()";
+// UI-SPEC Copywriting Contract "일반 실패" — used only when the server never responded at all
+// (fetch itself threw, e.g. offline). Size/format failures use the server's own 400 body.error,
+// which already contains the exact TOO_LARGE/BAD_TYPE copy (route.ts) — no duplication here.
+const GENERIC_UPLOAD_ERROR = "이미지를 업로드하지 못했어요. 다시 시도해 주세요.";
 
 export function useImageUpload(getView: () => EditorView | null) {
   const params = useParams<{ wsId?: string }>();
@@ -21,11 +25,14 @@ export function useImageUpload(getView: () => EditorView | null) {
   // Pitfall 2: a single in-flight flag rather than a queue — UI-SPEC defines no multi-upload
   // UI, so a second attempt while one is pending is simply ignored (button click no-ops).
   const uploadingRef = useRef(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const openFilePicker = useCallback(() => {
     if (uploadingRef.current) return;
     inputRef.current?.click();
   }, []);
+
+  const dismissError = useCallback(() => setErrorMessage(null), []);
 
   const handleFileChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,28 +44,42 @@ export function useImageUpload(getView: () => EditorView | null) {
       if (!view) return;
 
       uploadingRef.current = true;
+      setErrorMessage(null); // a new attempt replaces any stale banner (UI-SPEC: no auto-timer)
       const insertAt = view.state.selection.main.from;
       view.dispatch({ changes: { from: insertAt, insert: PLACEHOLDER } });
+
+      const removePlaceholder = () => {
+        const currentView = getView();
+        if (!currentView) return;
+        const doc = currentView.state.doc.toString();
+        const at = doc.indexOf(PLACEHOLDER);
+        if (at === -1) return; // user already edited the placeholder away — nothing to remove
+        currentView.dispatch({ changes: { from: at, to: at + PLACEHOLDER.length, insert: "" } });
+      };
 
       try {
         const formData = new FormData();
         formData.set("file", file);
         const res = await fetch(`/api/uploads?wsId=${wsId}`, { method: "POST", body: formData });
-        const body: { url?: string } = await res.json().catch(() => ({}));
-
-        const currentView = getView();
-        if (!currentView) return;
-        const doc = currentView.state.doc.toString();
-        const at = doc.indexOf(PLACEHOLDER);
-        if (at === -1) return; // user already edited the placeholder away — nothing to replace
+        const body: { url?: string; error?: string } = await res.json().catch(() => ({}));
 
         if (res.ok && body.url) {
+          const currentView = getView();
+          if (!currentView) return;
+          const doc = currentView.state.doc.toString();
+          const at = doc.indexOf(PLACEHOLDER);
+          if (at === -1) return; // user already edited the placeholder away — nothing to replace
           currentView.dispatch({
             changes: { from: at, to: at + PLACEHOLDER.length, insert: `![${file.name}](${body.url})` },
           });
         } else {
-          currentView.dispatch({ changes: { from: at, to: at + PLACEHOLDER.length, insert: "" } });
+          removePlaceholder();
+          setErrorMessage(body.error ?? GENERIC_UPLOAD_ERROR);
         }
+      } catch {
+        // fetch itself threw (network down) — no response body to read, use the generic copy
+        removePlaceholder();
+        setErrorMessage(GENERIC_UPLOAD_ERROR);
       } finally {
         uploadingRef.current = false;
       }
@@ -66,5 +87,5 @@ export function useImageUpload(getView: () => EditorView | null) {
     [getView, wsId],
   );
 
-  return { inputRef, openFilePicker, handleFileChange };
+  return { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError };
 }

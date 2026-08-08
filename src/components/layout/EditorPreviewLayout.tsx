@@ -14,6 +14,7 @@ import { EditorHost, type EditorHostHandle } from "../editor/EditorHost";
 import { ImageDropzone } from "../editor/ImageDropzone";
 import { Toolbar } from "../editor/Toolbar";
 import { useImageUpload } from "../editor/useImageUpload";
+import { UploadErrorBanner } from "../editor/UploadErrorBanner";
 import { PreviewPane } from "../preview/PreviewPane";
 import styles from "./EditorPreviewLayout.module.css";
 
@@ -37,7 +38,8 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
 
     // EDIT-09 tracer: upload orchestration is owned here (RESEARCH Pattern 1), not by the
     // Toolbar or the image plugin — Toolbar only intercepts the click to open this hidden input.
-    const { inputRef, openFilePicker, handleFileChange } = useImageUpload(getView);
+    const { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError } =
+      useImageUpload(getView);
 
     function handleChange(next: string) {
       setContent(next);
@@ -97,6 +99,7 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
             aria-label="이미지 파일 선택"
           />
           {isDraggingFile && <ImageDropzone />}
+          {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}
         </div>
         <div className={styles.previewPane}>
           <PreviewPane content={content} />
