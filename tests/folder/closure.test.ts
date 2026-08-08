@@ -8,10 +8,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { folder, folderClosure, user, workspace } from "@/db/schema";
+import { document, folder, folderClosure, user, workspace } from "@/db/schema";
 import { CycleError, createFolder, getSubtree, getWorkspaceFolders, moveFolder, softDeleteFolder } from "@/lib/closure";
+import { softDeleteDocument } from "@/lib/documents";
 import { POST } from "@/app/api/folders/route";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor } from "../rbac/helpers";
+import { createTestDocument } from "../documents/helpers";
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
 
@@ -289,6 +291,56 @@ describe("closure.softDeleteFolder — cascade soft-delete, closure preserved", 
     const [updatedB] = await db.select().from(folder).where(eq(folder.id, b.id));
     expect(updatedB.isDeleted).toBe(true);
     expect(updatedB.isTrashRoot).toBe(false);
+  });
+});
+
+// 04-04 Task 1: softDeleteFolder cascade extended to the document table (RESEARCH Pattern 4).
+describe("closure.softDeleteFolder — document cascade", () => {
+  const createdWorkspaces: string[] = [];
+
+  afterEach(async () => {
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+  });
+
+  it("cascades is_deleted to active documents in the deleted subtree, without setting is_trash_root on them", async () => {
+    const ws = await createTestWorkspace("softdelete-doc-cascade-ws");
+    createdWorkspaces.push(ws.id);
+    const a = await createFolder(ws.id, null, "A");
+    const b = await createFolder(ws.id, a.id, "B");
+    const x = await createTestDocument(ws.id, a.id, { title: "X" });
+    const y = await createTestDocument(ws.id, b.id, { title: "Y" });
+
+    await softDeleteFolder(a.id);
+
+    const rows = await db.select().from(document).where(eq(document.workspaceId, ws.id));
+    const byId = new Map(rows.map((d) => [d.id, d]));
+
+    expect(byId.get(x.id)?.isDeleted).toBe(true);
+    expect(byId.get(x.id)?.deletedAt).not.toBeNull();
+    expect(byId.get(x.id)?.isTrashRoot).toBe(false);
+
+    expect(byId.get(y.id)?.isDeleted).toBe(true);
+    expect(byId.get(y.id)?.deletedAt).not.toBeNull();
+    expect(byId.get(y.id)?.isTrashRoot).toBe(false);
+  });
+
+  // WR-01 symmetry (Pitfall 5): a document independently trashed before its parent folder is
+  // deleted must not be touched by the cascade — its is_trash_root (and deletedAt) stay as-is.
+  it("does not overwrite an already-independently-trashed document's is_trash_root/deleted_at", async () => {
+    const ws = await createTestWorkspace("softdelete-doc-independent-ws");
+    createdWorkspaces.push(ws.id);
+    const a = await createFolder(ws.id, null, "A");
+    const b = await createFolder(ws.id, a.id, "B");
+    const z = await createTestDocument(ws.id, b.id, { title: "Z" });
+    await softDeleteDocument(z.id);
+    const [beforeCascade] = await db.select().from(document).where(eq(document.id, z.id));
+
+    await softDeleteFolder(a.id);
+
+    const [afterCascade] = await db.select().from(document).where(eq(document.id, z.id));
+    expect(afterCascade.isDeleted).toBe(true);
+    expect(afterCascade.isTrashRoot).toBe(true);
+    expect(afterCascade.deletedAt?.getTime()).toBe(beforeCascade.deletedAt?.getTime());
   });
 });
 
