@@ -15,6 +15,13 @@
       "when": 1785605919058,
       "tag": "0001_sudden_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786158482872,
+      "tag": "0002_third_tattoo",
+      "breakpoints": true
     }
   ]
 }
