@@ -1,0 +1,57 @@
+.list {
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: var(--space-md) 0;
+  padding: 0;
+}
+
+.item,
+.itemSelected,
+.itemDisabled {
+  display: block;
+  width: 100%;
+  height: 32px;
+  padding-right: var(--space-sm);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
+
+.itemSelected {
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* UI-SPEC "이동" 폴백 모달 — dragged folder's own subtree, greyed out + non-interactive */
+.itemDisabled {
+  color: var(--dim);
+  pointer-events: none;
+  cursor: default;
+}
+
+.error {
+  font-size: 12px;
+  color: var(--destructive);
+  margin: 0 0 var(--space-sm);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
