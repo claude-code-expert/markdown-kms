@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 4
-current_phase_name: Documents, Autosave & 3-Pane Workspace
-status: verifying
-stopped_at: Completed 04-05-PLAN.md
-last_updated: "2026-08-08T06:44:45.440Z"
+current_phase: 5
+current_phase_name: Editor Enhancements & Personalization
+status: executing
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-08-08T08:17:53.675Z"
 last_activity: 2026-08-08
-last_activity_desc: Phase 4 execution started
+last_activity_desc: Phase 5 execution started
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 21
-  completed_plans: 21
+  total_plans: 28
+  completed_plans: 22
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-01)
 
 **Core value:** 에디터에 입력하면 60ms 안에 미리보기에 정확히(CommonMark 0.31.2 + GFM 3종) 렌더링되는 문서 작성 경험.
-**Current focus:** Phase 4 — Documents, Autosave & 3-Pane Workspace
+**Current focus:** Phase 5 — Editor Enhancements & Personalization
 
 ## Current Position
 
-Phase: 4 (Documents, Autosave & 3-Pane Workspace) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-08-08 — Phase 4 execution started
+Phase: 5 (Editor Enhancements & Personalization) — EXECUTING
+Plan: 1 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
+Status: 05-01 complete (image upload tracer, EDIT-09 core happy path) — Phase 3/4 verification still deferred (bulk-verify-at-end per 2026-08-08 user instruction)
+Last activity: 2026-08-08 — Phase 5 execution started (05-01)
 
-Progress: [██████████] 100%
+Progress: [████████░░] 79%
 
 ## Performance Metrics
 
@@ -75,6 +75,7 @@ Progress: [██████████] 100%
 | Phase 04 P03 | 35min | 2 tasks | 7 files |
 | Phase 04 P04 | 15min | 3 tasks | 8 files |
 | Phase 04 P05 | 70min | 3 tasks | 12 files |
+| Phase 5 P1 | 13min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 04-05: restoreDocument now mirrors restoreFolder's root-relocation (Open Q #2 parity) — a document independently trashed while its folder was still active, then left behind when that folder was later deleted, is relocated to workspace root on restore instead of resurfacing under a still-deleted folderId
 - [Phase ?]: 04-05: trash restore route now returns 200 JSON with { relocatedToRoot } for documents too (was 204) so the client can drive RestoreRootBanner uniformly for both item types
 - [Phase ?]: 04-05: TrashList (client component) receives canRestore/canPermanentDelete as booleans computed server-side in trash/page.tsx, not the raw role + ROLE_RANK — importing @/lib/rbac into a 'use client' file pulled bcrypt's native fs binding into the browser bundle and broke the build
+- [Phase ?]: 05-01: POST /api/uploads uses plain Request + new URL(req.url).searchParams (not NextRequest.nextUrl) — matches documents/[id]/route.ts convention, directly testable
+- [Phase ?]: 05-01: useImageUpload reads wsId via useParams() inside the hook, not threaded through DocumentWorkspace props — keeps the tracer self-contained to this plan's file list
+- [Phase ?]: 05-01: EditorPreviewLayout promoted to forwardRef<EditorPreviewLayoutHandle> exposing getView() — 05-05 draft recovery reuses this same handle
 
 ### Pending Todos
 
@@ -155,6 +159,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T06:42:52.251Z
-Stopped at: Completed 04-05-PLAN.md
+Last session: 2026-08-08T08:17:53.665Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
