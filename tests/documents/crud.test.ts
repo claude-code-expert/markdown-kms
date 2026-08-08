@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { document, user, workspace } from "@/db/schema";
 import { createFolder } from "@/lib/closure";
+import { getWorkspaceDocuments } from "@/lib/documents";
 import { createTestDocument } from "./helpers";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor } from "../rbac/helpers";
 
@@ -29,6 +30,10 @@ function putRequest(id: string, body: unknown) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
+}
+
+function deleteRequest(id: string) {
+  return new Request(`http://localhost/api/documents/${id}`, { method: "DELETE" });
 }
 
 describe("POST /api/documents (create, EDITOR+)", () => {
@@ -188,6 +193,95 @@ describe("PUT /api/documents/[id] (autosave, seq-guarded, EDITOR+)", () => {
     const doc = await createTestDocument(ws.id, null);
 
     const res = await autosaveRoute(putRequest(doc.id, { content: "x", title: "t" }), ctx(doc.id));
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("DELETE /api/documents/[id] (soft-delete, EDITOR+, IDOR)", () => {
+  let deleteRoute: typeof import("@/app/api/documents/[id]/route").DELETE;
+  const createdUsers: string[] = [];
+  const createdWorkspaces: string[] = [];
+
+  beforeAll(async () => {
+    ({ DELETE: deleteRoute } = await import("@/app/api/documents/[id]/route"));
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+    await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
+  });
+
+  it("soft-deletes for an EDITOR (204); the doc drops out of getWorkspaceDocuments and is_trash_root", async () => {
+    const ws = await createTestWorkspace("doc-delete-ok-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("doc-delete-ok-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+    const doc = await createTestDocument(ws.id, null, { title: "삭제될 문서" });
+
+    const res = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
+    expect(res.status).toBe(204);
+
+    const active = await getWorkspaceDocuments(ws.id);
+    expect(active.find((d) => d.id === doc.id)).toBeUndefined();
+
+    const [row] = await db.select().from(document).where(eq(document.id, doc.id));
+    expect(row.isDeleted).toBe(true);
+    expect(row.isTrashRoot).toBe(true);
+    expect(row.deletedAt).not.toBeNull();
+  });
+
+  it("rejects a VIEWER with 403", async () => {
+    const ws = await createTestWorkspace("doc-delete-viewer-ws");
+    createdWorkspaces.push(ws.id);
+    const viewer = await createTestUser("doc-delete-viewer");
+    createdUsers.push(viewer.id);
+    await addMember(ws.id, viewer.id, "VIEWER");
+    mockSessionFor(viewer.id);
+    const doc = await createTestDocument(ws.id, null);
+
+    const res = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
+    expect(res.status).toBe(403);
+  });
+
+  it("rejects a non-member with 403 (IDOR — workspace_id is server re-derived, never client-trusted)", async () => {
+    const ws = await createTestWorkspace("doc-delete-nonmember-ws");
+    createdWorkspaces.push(ws.id);
+    const outsider = await createTestUser("doc-delete-nonmember");
+    createdUsers.push(outsider.id);
+    mockSessionFor(outsider.id);
+    const doc = await createTestDocument(ws.id, null);
+
+    const res = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
+    expect(res.status).toBe(403);
+  });
+
+  it("is idempotent — deleting an already-deleted document still returns 204 (WR-01 analog)", async () => {
+    const ws = await createTestWorkspace("doc-delete-idempotent-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("doc-delete-idempotent-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+    const doc = await createTestDocument(ws.id, null);
+
+    const first = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
+    expect(first.status).toBe(204);
+    const second = await deleteRoute(deleteRequest(doc.id), ctx(doc.id));
+    expect(second.status).toBe(204);
+  });
+
+  it("returns 400 for a malformed uuid path param", async () => {
+    const ws = await createTestWorkspace("doc-delete-badid-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("doc-delete-badid-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+
+    const res = await deleteRoute(deleteRequest("not-a-uuid"), ctx("not-a-uuid"));
     expect(res.status).toBe(400);
   });
 });
