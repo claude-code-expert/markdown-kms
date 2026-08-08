@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FilePlus2, FileText, FolderPlus, Pencil, FolderInput, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -335,6 +336,17 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} onOpenMenu={openDocMenu} />
         ))}
       </div>
+      {/* UI-SPEC Trash Contract "진입" — flex-shrink:0 bottom row below the flex:1 tree, same
+          "current location" accent treatment as a selected tree node. */}
+      <Link
+        href={`/w/${workspaceId}/trash`}
+        className={[styles.trashLink, pathname === `/w/${workspaceId}/trash` ? styles.trashLinkActive : ""]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <Trash2 size={16} />
+        <span>휴지통</span>
+      </Link>
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
       {docMenu && (
         <FolderContextMenu x={docMenu.x} y={docMenu.y} items={docMenuItems} onClose={() => setDocMenu(null)} />

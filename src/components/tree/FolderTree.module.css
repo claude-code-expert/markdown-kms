@@ -122,3 +122,30 @@
   line-height: 1.5;
   color: var(--muted);
 }
+
+/* UI-SPEC Trash Contract "진입" — sidebar's flex-direction:column lets this sit below .tree
+   (flex:1) as a fixed 40px bottom row, same accent-on-current-location language as a selected
+   tree node (.node.selected in FolderTreeNode.module.css). */
+.trashLink {
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.trashLink:hover {
+  background: var(--surface-2);
+}
+
+.trashLinkActive {
+  background: var(--accent-weak);
+  color: var(--accent);
+}
