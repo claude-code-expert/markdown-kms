@@ -6,10 +6,16 @@
 // useAutosave controller all start fresh — the cleanest fix for RESEARCH Pitfall 2, on top of
 // the controller's own reset()/dispose() defense).
 import { useRef, useState, type ChangeEvent } from "react";
-import { EditorPreviewLayout, type LayoutMode } from "@/components/layout/EditorPreviewLayout";
+import {
+  EditorPreviewLayout,
+  type EditorPreviewLayoutHandle,
+  type LayoutMode,
+} from "@/components/layout/EditorPreviewLayout";
 import { LayoutModeToggle } from "@/components/layout/LayoutModeToggle";
+import { DraftRecoveryDialog } from "./DraftRecoveryDialog";
 import { SaveStatusBar } from "./SaveStatusBar";
 import { useAutosave } from "./useAutosave";
+import { useDraft } from "./useDraft";
 import styles from "./DocumentWorkspace.module.css";
 
 interface DocumentWorkspaceProps {
@@ -34,23 +40,53 @@ export function DocumentWorkspace({
   initialSeq,
   initialLayoutMode = "split",
   initialSplitRatio = 50,
+  hasNewerDraft = false,
+  draftContent = null,
 }: DocumentWorkspaceProps) {
   const [title, setTitle] = useState(initialTitle);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(initialLayoutMode);
+  const [showRecovery, setShowRecovery] = useState(hasNewerDraft);
   // Body content is owned by EditorPreviewLayout's internal state (D-P2 uncontrolled editor) —
   // this ref just tracks the latest value so a title-only edit can still send the current body.
   const contentRef = useRef(initialContent);
+  // Pitfall 6: DocumentWorkspace never imports CodeMirror/EditorView directly — this ref only
+  // holds EditorPreviewLayout's forwardRef handle, and dispatch() is reached structurally through
+  // getView()'s declared return type, no @codemirror/* import needed in this file.
+  const layoutRef = useRef<EditorPreviewLayoutHandle>(null);
   const { status, scheduleSave, retry } = useAutosave(docId, initialSeq);
+  const draft = useDraft(docId);
 
   function handleContentChange(next: string) {
     contentRef.current = next;
     scheduleSave(next, title);
+    draft.onContentChange(next);
   }
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.value;
     setTitle(next);
     scheduleSave(contentRef.current, next);
+  }
+
+  // Pattern 5: one dispatch, nothing else. It re-triggers EditorHost's updateListener ->
+  // handleContentChange -> scheduleSave, and that autosave's own success is what deletes the
+  // draft server-side (documents/[id]/route.ts, 05-04) — no separate force-save/delete call here.
+  function handleRestore() {
+    const view = layoutRef.current?.getView();
+    if (view && draftContent != null) {
+      view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: draftContent } });
+    }
+    setShowRecovery(false);
+  }
+
+  async function handleDiscard() {
+    await fetch(`/api/documents/${docId}/draft`, { method: "DELETE" });
+    setShowRecovery(false);
+  }
+
+  function handleDismiss() {
+    // Draft stays on the server — re-prompts next time this page is entered if still newer.
+    setShowRecovery(false);
   }
 
   return (
@@ -67,6 +103,7 @@ export function DocumentWorkspace({
       </div>
       <div className={styles.body}>
         <EditorPreviewLayout
+          ref={layoutRef}
           initialContent={initialContent}
           onChange={handleContentChange}
           layoutMode={layoutMode}
@@ -74,6 +111,12 @@ export function DocumentWorkspace({
         />
       </div>
       <SaveStatusBar status={status} onRetry={retry} />
+      <DraftRecoveryDialog
+        open={showRecovery}
+        onRestore={handleRestore}
+        onDiscard={handleDiscard}
+        onDismiss={handleDismiss}
+      />
     </div>
   );
 }
