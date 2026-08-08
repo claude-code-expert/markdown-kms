@@ -6,6 +6,15 @@ export interface FolderRow {
   name: string;
 }
 
+// Phase 4 — mirrors lib/documents.ts's getWorkspaceDocuments select shape. Documents are NOT
+// merged into buildTree's folder-only algorithm (RESEARCH Pitfall 7/Anti-pattern) — callers
+// group these by folderId separately (documentsByFolderId Map) and render them as leaves.
+export interface DocumentRow {
+  id: string;
+  folderId: string | null;
+  title: string;
+}
+
 export interface FolderTreeNode extends FolderRow {
   children: FolderTreeNode[];
 }

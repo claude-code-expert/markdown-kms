@@ -3,13 +3,18 @@
 import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import { ChevronRight, Folder, MoreHorizontal } from "lucide-react";
 import { folderSchema } from "@/lib/validation";
-import { isDescendantOrSelf, type FolderRow, type FolderTreeNode as TreeNode } from "./tree-utils";
+import { DocumentTreeLeaf } from "./DocumentTreeLeaf";
+import { isDescendantOrSelf, type DocumentRow, type FolderRow, type FolderTreeNode as TreeNode } from "./tree-utils";
 import styles from "./FolderTreeNode.module.css";
 
 // Shared callbacks/state threaded through the recursive node tree — bundled into one object
 // so recursive calls stay a one-line prop spread instead of re-listing a dozen props per level.
 export interface FolderTreeNodeCtx {
   folders: FolderRow[];
+  workspaceId: string;
+  // Phase 4 — documents grouped by their folderId (RESEARCH Pitfall 7: buildTree stays
+  // folder-only, documents are merged in at render time via this Map instead).
+  documentsByFolderId: Map<string | null, DocumentRow[]>;
   expanded: Set<string>;
   onToggle: (id: string) => void;
   selectedId: string | null;
@@ -40,7 +45,10 @@ interface FolderTreeNodeProps {
 // instance; recursion renders children directly (no virtualization — trees here are small).
 export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
   const [dropState, setDropState] = useState<"none" | "valid" | "rejected">("none");
-  const hasChildren = node.children.length > 0;
+  const documentsHere = ctx.documentsByFolderId.get(node.id) ?? [];
+  // A folder with only documents (no subfolders) still needs a chevron to be expandable
+  // (otherwise its documents would be permanently unreachable behind chevronSpace).
+  const hasChildren = node.children.length > 0 || documentsHere.length > 0;
   const isOpen = ctx.expanded.has(node.id);
   const isRenaming = ctx.renamingId === node.id;
   const isPending = ctx.pendingId === node.id;
@@ -159,6 +167,9 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
           )}
           {node.children.map((child) => (
             <FolderTreeNode key={child.id} node={child} depth={depth + 1} ctx={ctx} />
+          ))}
+          {documentsHere.map((doc) => (
+            <DocumentTreeLeaf key={doc.id} doc={doc} depth={depth + 1} workspaceId={ctx.workspaceId} />
           ))}
         </div>
       )}

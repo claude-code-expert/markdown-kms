@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { FolderPlus, Pencil, FolderInput, Trash2 } from "lucide-react";
+import { FilePlus2, FileText, FolderPlus, Pencil, FolderInput, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { folderSchema } from "@/lib/validation";
-import { buildTree, type FolderRow } from "./tree-utils";
+import { documentSchema, folderSchema } from "@/lib/validation";
+import { DocumentTreeLeaf } from "./DocumentTreeLeaf";
+import { buildTree, type DocumentRow, type FolderRow } from "./tree-utils";
 import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
@@ -16,10 +17,12 @@ const CREATE_ERROR = "폴더를 만들지 못했어요. 다시 시도해 주세�
 const RENAME_ERROR = "이름을 변경하지 못했어요. 다시 시도해 주세요.";
 const MOVE_ERROR = "폴더를 이동하지 못했어요. 다시 시도해 주세요.";
 const DELETE_ERROR = "폴더를 삭제하지 못했어요. 다시 시도해 주세요.";
+const CREATE_DOCUMENT_ERROR = "문서를 만들지 못했어요. 다시 시도해 주세요.";
 const ROOT_ERROR_ID = "__root__";
 
 interface FolderTreeProps {
   folders: FolderRow[];
+  documents: DocumentRow[];
   workspaceId: string;
 }
 
@@ -34,13 +37,27 @@ interface MenuState {
 // FolderTreeNode stays presentational, wired via the FolderTreeNodeCtx bundle. All mutations
 // are server-confirmed only (router.refresh() after the fetch resolves — no optimistic UI,
 // CONTEXT.md).
-export function FolderTree({ folders, workspaceId }: FolderTreeProps) {
+export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps) {
   const router = useRouter();
   const tree = buildTree(folders);
+
+  // RESEARCH Pitfall 7 / Anti-pattern: buildTree stays folder-only — documents are grouped by
+  // folderId here and merged in at render time (FolderTreeNode ctx.documentsByFolderId).
+  const documentsByFolderId = useMemo(() => {
+    const map = new Map<string | null, DocumentRow[]>();
+    for (const doc of documents) {
+      const list = map.get(doc.folderId);
+      if (list) list.push(doc);
+      else map.set(doc.folderId, [doc]);
+    }
+    return map;
+  }, [documents]);
+  const rootDocuments = documentsByFolderId.get(null) ?? [];
 
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [creatingRoot, setCreatingRoot] = useState(false);
+  const [creatingDocumentRoot, setCreatingDocumentRoot] = useState(false);
   const [creatingChildOf, setCreatingChildOf] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -138,8 +155,30 @@ export function FolderTree({ folders, workspaceId }: FolderTreeProps) {
     setMenu({ x: event.clientX, y: event.clientY, folderId, folderName });
   }
 
+  // UI-SPEC Interaction Contract "새 문서 생성" — unlike folder creation, a successful document
+  // create both refreshes the tree (new leaf appears) AND navigates straight to the new
+  // document (the one deliberate exception to "creation never navigates", per UI-SPEC).
+  async function submitCreateDocument(title: string) {
+    setActionError(null);
+    const res = await fetch("/api/documents", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ title, folderId: null, workspaceId }),
+    });
+    if (!res.ok) {
+      setActionError({ id: ROOT_ERROR_ID, message: CREATE_DOCUMENT_ERROR });
+      return;
+    }
+    const created = await res.json();
+    setCreatingDocumentRoot(false);
+    router.refresh();
+    router.push(`/w/${workspaceId}/d/${created.id}`);
+  }
+
   const ctx: FolderTreeNodeCtx = {
     folders,
+    workspaceId,
+    documentsByFolderId,
     expanded,
     onToggle: toggle,
     selectedId,
@@ -186,14 +225,24 @@ export function FolderTree({ folders, workspaceId }: FolderTreeProps) {
     <nav className={styles.sidebar} aria-label="폴더 트리">
       <div className={styles.header}>
         <span className={styles.headerLabel}>폴더</span>
-        <button
-          type="button"
-          className={styles.headerButton}
-          aria-label="새 폴더"
-          onClick={() => setCreatingRoot(true)}
-        >
-          <FolderPlus size={16} />
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.headerButton}
+            aria-label="새 폴더"
+            onClick={() => setCreatingRoot(true)}
+          >
+            <FolderPlus size={16} />
+          </button>
+          <button
+            type="button"
+            className={styles.headerButton}
+            aria-label="새 문서"
+            onClick={() => setCreatingDocumentRoot(true)}
+          >
+            <FilePlus2 size={16} />
+          </button>
+        </div>
       </div>
       <div className={styles.tree}>
         {creatingRoot && (
@@ -206,7 +255,17 @@ export function FolderTree({ folders, workspaceId }: FolderTreeProps) {
             error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
           />
         )}
-        {tree.length === 0 && !creatingRoot && (
+        {creatingDocumentRoot && (
+          <CreateDocumentRootInput
+            onSubmit={submitCreateDocument}
+            onCancel={() => {
+              setCreatingDocumentRoot(false);
+              setActionError(null);
+            }}
+            error={actionError?.id === ROOT_ERROR_ID ? actionError.message : null}
+          />
+        )}
+        {tree.length === 0 && rootDocuments.length === 0 && !creatingRoot && !creatingDocumentRoot && (
           <p className={styles.empty}>
             폴더가 없어요
             <br />
@@ -215,6 +274,9 @@ export function FolderTree({ folders, workspaceId }: FolderTreeProps) {
         )}
         {tree.map((node) => (
           <FolderTreeNode key={node.id} node={node} depth={0} ctx={ctx} />
+        ))}
+        {rootDocuments.map((doc) => (
+          <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} />
         ))}
       </div>
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
@@ -273,6 +335,48 @@ function CreateRootInput({
         <input
           className={styles.inlineInput}
           placeholder="새 폴더"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onKeyDown={onKeyDown}
+          onBlur={onCancel}
+          autoFocus
+        />
+      </div>
+      {error && <p className={nodeStyles.error}>{error}</p>}
+    </div>
+  );
+}
+
+// UI-SPEC Interaction Contract "새 문서 생성" — CreateRootInput's document-flavored twin
+// (FileText icon, placeholder "새 문서", documentSchema.pick({title:true}) validation). Blank
+// submission is disabled client-side even though documentSchema itself allows an empty title
+// (the server default) — UI-SPEC: "빈 값 제출 비활성화(클라이언트 최소 가드)".
+function CreateDocumentRootInput({
+  onSubmit,
+  onCancel,
+  error,
+}: {
+  onSubmit: (title: string) => void;
+  onCancel: () => void;
+  error: string | null;
+}) {
+  const [value, setValue] = useState("");
+
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter" && value.trim()) {
+      const parsed = documentSchema.pick({ title: true }).safeParse({ title: value });
+      if (parsed.success) onSubmit(parsed.data.title);
+    }
+    if (event.key === "Escape") onCancel();
+  }
+
+  return (
+    <div>
+      <div className={styles.node} style={{ paddingLeft: 8 }}>
+        <FileText size={16} className={nodeStyles.folderIcon} />
+        <input
+          className={styles.inlineInput}
+          placeholder="새 문서"
           value={value}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}

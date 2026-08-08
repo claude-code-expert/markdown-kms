@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { workspace } from "@/db/schema";
 import { ForbiddenError, requireRole } from "@/lib/rbac";
 import { getWorkspaceFolders } from "@/lib/closure";
+import { getWorkspaceDocuments } from "@/lib/documents";
 import { FolderTree } from "@/components/tree/FolderTree";
 import styles from "./layout.module.css";
 
@@ -30,11 +31,11 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
   const [ws] = await db.select({ name: workspace.name }).from(workspace).where(eq(workspace.id, wsId));
   if (!ws) notFound();
 
-  const folders = await getWorkspaceFolders(wsId);
+  const [folders, documents] = await Promise.all([getWorkspaceFolders(wsId), getWorkspaceDocuments(wsId)]);
 
   return (
     <div className={styles.page}>
-      <FolderTree folders={folders} workspaceId={wsId} />
+      <FolderTree folders={folders} documents={documents} workspaceId={wsId} />
       <main className={styles.main}>{children}</main>
     </div>
   );

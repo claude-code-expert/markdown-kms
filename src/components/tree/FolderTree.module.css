@@ -24,6 +24,13 @@
   color: var(--muted);
 }
 
+/* UI-SPEC Interaction Contract — 새 폴더 → 새 문서 순서, gap xs between the two 24x24 buttons */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 .headerButton {
   width: 24px;
   height: 24px;
