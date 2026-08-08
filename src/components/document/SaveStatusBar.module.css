@@ -1,0 +1,71 @@
+/* UI-SPEC Document Workspace Contract — 저장 상태 바: 우측 컬럼 최하단, 40px, 상단 구분선. */
+.bar {
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* Scaled down from docs/ui-kit.html .loader-spinner (Phase 3 FolderTreeNode.module.css .spinner
+   convention reused verbatim — no new spinner invented). */
+.spinner {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.iconMuted {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.iconDestructive {
+  flex-shrink: 0;
+  color: var(--destructive);
+}
+
+.textMuted {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.textDestructive {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--destructive);
+}
+
+/* margin-left (xs) stacks with the container's gap (xs) between text and button = sm (8px),
+   matching the UI-SPEC's icon-text=xs / text-button=sm rhythm without a second gap value. */
+.retryButton {
+  margin-left: var(--space-xs);
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--destructive);
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  text-decoration: underline;
+}

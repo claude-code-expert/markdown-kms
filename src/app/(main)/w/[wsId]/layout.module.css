@@ -1,0 +1,17 @@
+/* 100vh is declared here at the host route level only (UI-SPEC Layout & Composition
+   Contract) — moved from page.module.css's .page (now owned by the shared layout).
+   No padding on .main — DocumentWorkspace's title input/status bar must span the full
+   right-column width edge to edge; the index/trash pages add their own inner padding. */
+.page {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.main {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}

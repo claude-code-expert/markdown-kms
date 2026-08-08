@@ -18,16 +18,22 @@ export interface EditorHostHandle {
 
 interface EditorHostProps {
   onChange: (content: string) => void;
+  // Phase 4: injected into EditorState.doc exactly once at mount (uncontrolled — never pushed
+  // back in on prop changes, same IME-safety rule as onChange). Captured via useRef's
+  // lazy-initializer so later re-renders with a different value are ignored, matching the
+  // mount-once effect below.
+  initialContent?: string;
 }
 
 export const EditorHost = forwardRef<EditorHostHandle, EditorHostProps>(function EditorHost(
-  { onChange },
+  { onChange, initialContent = "" },
   ref
 ) {
   const parentRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const initialContentRef = useRef(initialContent);
 
   useImperativeHandle(ref, () => ({
     getView: () => viewRef.current,
@@ -37,7 +43,7 @@ export const EditorHost = forwardRef<EditorHostHandle, EditorHostProps>(function
     if (!parentRef.current) return;
 
     const state = EditorState.create({
-      doc: "",
+      doc: initialContentRef.current,
       extensions: [
         history(),
         keymap.of([...defaultKeymap, ...historyKeymap]),
