@@ -120,12 +120,12 @@ describe("closure.getSubtree — ancestor-based single-query subtree (TREE-02)",
   it("excludes soft-deleted folders from the subtree", async () => {
     const ws = await createTestWorkspace("subtree-softdel-ws");
     createdWorkspaces.push(ws.id);
-    const { a, b, c } = await buildTree(ws.id);
+    const { a, b, c, d } = await buildTree(ws.id);
     await db.update(folder).set({ isDeleted: true }).where(eq(folder.id, c.id));
 
     const rows = await getSubtree(a.id);
     expect(rows.map((f) => f.id)).not.toContain(c.id);
-    expect(new Set(rows.map((f) => f.id))).toEqual(new Set([a.id, b.id]));
+    expect(new Set(rows.map((f) => f.id))).toEqual(new Set([a.id, b.id, d.id]));
   });
 });
 
@@ -136,13 +136,16 @@ describe("closure.moveFolder — TOCTOU-safe cycle check + rewiring + cross-work
     await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
   });
 
-  // Tree: A > B > C, A > D
+  // Tree: A > B > C, A > D, plus an unrelated root E (not under A) — E is used as a move
+  // target that shares no ancestor with A, so a genuine external-link drop is observable
+  // (moving into D, itself a child of A, would keep A as a transitive ancestor via D).
   async function buildTree(wsId: string) {
     const a = await createFolder(wsId, null, "A");
     const b = await createFolder(wsId, a.id, "B");
     const c = await createFolder(wsId, b.id, "C");
     const d = await createFolder(wsId, a.id, "D");
-    return { a, b, c, d };
+    const e = await createFolder(wsId, null, "E");
+    return { a, b, c, d, e };
   }
 
   async function closureSnapshot() {
@@ -150,19 +153,19 @@ describe("closure.moveFolder — TOCTOU-safe cycle check + rewiring + cross-work
     return rows.sort((x, y) => `${x.ancestorId}:${x.descendantId}`.localeCompare(`${y.ancestorId}:${y.descendantId}`));
   }
 
-  it("moves B (with subtree B,C) under D: drops external ancestor links, keeps internal links, rewrites new-parent ancestors x subtree, updates parentId", async () => {
+  it("moves B (with subtree B,C) under E: drops external ancestor links, keeps internal links, rewrites new-parent ancestors x subtree, updates parentId", async () => {
     const ws = await createTestWorkspace("move-basic-ws");
     createdWorkspaces.push(ws.id);
-    const { a, b, c, d } = await buildTree(ws.id);
+    const { a, b, c, e } = await buildTree(ws.id);
 
-    await moveFolder(b.id, d.id);
+    await moveFolder(b.id, e.id);
 
     const bRows = await db.select().from(folderClosure).where(eq(folderClosure.descendantId, b.id));
     const cRows = await db.select().from(folderClosure).where(eq(folderClosure.descendantId, c.id));
     const byAncestorB = new Map(bRows.map((r) => [r.ancestorId, r.depth]));
     const byAncestorC = new Map(cRows.map((r) => [r.ancestorId, r.depth]));
 
-    // external ancestor links to A dropped
+    // external ancestor links to A dropped (A shares no ancestry with E)
     expect(byAncestorB.has(a.id)).toBe(false);
     expect(byAncestorC.has(a.id)).toBe(false);
     // internal links preserved
@@ -170,11 +173,11 @@ describe("closure.moveFolder — TOCTOU-safe cycle check + rewiring + cross-work
     expect(byAncestorC.get(b.id)).toBe(1);
     expect(byAncestorC.get(c.id)).toBe(0);
     // new-parent ancestors x subtree rewritten
-    expect(byAncestorB.get(d.id)).toBe(1);
-    expect(byAncestorC.get(d.id)).toBe(2);
+    expect(byAncestorB.get(e.id)).toBe(1);
+    expect(byAncestorC.get(e.id)).toBe(2);
 
     const [updated] = await db.select().from(folder).where(eq(folder.id, b.id));
-    expect(updated.parentId).toBe(d.id);
+    expect(updated.parentId).toBe(e.id);
   });
 
   it("rejects moving a folder into its own descendant (cycle) before any rewiring", async () => {
