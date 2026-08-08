@@ -211,7 +211,25 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can download a single document as a lossless `.md` file.
   4. User can download a folder's full subtree as a structure-preserving `.zip`.
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+**Wave 1**
+
+- [ ] 06-01-PLAN.md — Foundation: document_tag 스키마 + pg_trgm custom SQL 마이그레이션(one-way 게이트) + NFC 백필 + 저장 NFC 정규화 + tagsBodySchema + archiver 설치
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 06-02-PLAN.md — TRACER: 태그 end-to-end (replaceTags 트랜잭션 + PUT /tags(EDITOR·COUNT 400) + TagBar + 마운트 + RSC 초기값) [DOC-03]
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 06-03-PLAN.md — 검색: searchWorkspace(pg_trgm ILIKE·질의 NFC·파라미터 바인딩·VIEWER) + SearchBox(debounce·레이스 가드) + FolderTree 마운트 [DOC-04]
+
+**Wave 4** *(blocked on Wave 3 — FolderTree.tsx 공유)*
+
+- [ ] 06-04-PLAN.md — Export: .md 원문(EXP-01) + 폴더 .zip archiver 스트리밍·zip-slip sanitize(EXP-02) + 컨텍스트 메뉴 항목 + 다운로드 트리거
+
+**UI hint**: yes
 
 ### Phase 7: Workspace Collaboration (Join & Invite)
 
@@ -252,6 +270,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Folder Tree (Closure Table) | 5/5 | In Progress|  |
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
-| 6. Tags, Search & Export | 0/TBD | Not started | - |
+| 6. Tags, Search & Export | 0/4 | Not started | - |
 | 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
