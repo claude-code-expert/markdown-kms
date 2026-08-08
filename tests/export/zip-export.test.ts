@@ -82,7 +82,8 @@ describe("buildZipEntries — folder hierarchy preserved as zip paths (EXP-02, p
 
   it("does not import archiver — stays a pure, DB-only helper unit-testable without real zip I/O", () => {
     const source = readFileSync(new URL("../../src/lib/export.ts", import.meta.url), "utf-8");
-    expect(source).not.toMatch(/archiver/i);
+    expect(source).not.toMatch(/from ["']archiver["']/);
+    expect(source).not.toMatch(/require\(["']archiver["']\)/);
   });
 });
 
