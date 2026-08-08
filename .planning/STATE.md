@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 5
 current_phase_name: Editor Enhancements & Personalization
 status: executing
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-08-08T08:23:40.909Z"
+stopped_at: Completed 05-07-PLAN.md
+last_updated: "2026-08-08T08:32:46.646Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 5 execution started (05-01)
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 28
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 5 (Editor Enhancements & Personalization) — EXECUTING
-Plan: 2 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
+Plan: 3 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
 Status: 05-01 complete (image upload tracer, EDIT-09 core happy path) — Phase 3/4 verification still deferred (bulk-verify-at-end per 2026-08-08 user instruction)
 Last activity: 2026-08-08 — Phase 5 execution started (05-01)
 
-Progress: [████████░░] 82%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
@@ -77,6 +77,7 @@ Progress: [████████░░] 82%
 | Phase 04 P05 | 70min | 3 tasks | 12 files |
 | Phase 5 P1 | 13min | 3 tasks | 10 files |
 | Phase 05 P03 | 15min | 3 tasks | 6 files |
+| Phase 5 P07 | 6min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -133,6 +134,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-01: EditorPreviewLayout promoted to forwardRef<EditorPreviewLayoutHandle> exposing getView() — 05-05 draft recovery reuses this same handle
 - [Phase ?]: document_draft.document_id is the PK directly (no surrogate id) — matches TRD §3, enforces 1-row-per-document via onConflictDoUpdate
 - [Phase ?]: tests/draft/helpers.ts uses local db.insert() instead of reusing tests/rbac/helpers.ts (avoids unrelated @/auth mock coupling)
+- [Phase ?]: 05-07: RSC reads theme cookie / client writes it (document.cookie), no API route — pattern for all remaining phase-5 personalization settings (layout-mode, resize-ratio)
+- [Phase ?]: 05-07: vitest.config.ts oxc.jsx forced to automatic runtime — Vite 8 otherwise inherits tsconfig's jsx:preserve (Next SWC-only) and fails to parse any .tsx import under vitest
 
 ### Pending Todos
 
@@ -162,6 +165,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T08:23:40.878Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-08-08T08:32:46.636Z
+Stopped at: Completed 05-07-PLAN.md
 Resume file: None

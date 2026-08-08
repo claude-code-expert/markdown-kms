@@ -176,13 +176,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A 1-minute snapshot autosave lets the user recover unsaved work after a crash; re-entering a document with a newer snapshot prompts to restore it.
   4. User can switch between light/dark theme and split/editor-only/preview-only layout.
 
-**Plans**: 2/7 plans executed
+**Plans**: 3/7 plans executed
 
 **Wave 1** *(parallel — zero file overlap)*
 
 - [x] 05-01-PLAN.md — TRACER: 이미지 업로드 end-to-end (storage 매직바이트 + uploads 라우트 + getView 상위 노출 + useImageUpload 버튼 경로) [EDIT-09]
 - [x] 05-03-PLAN.md — draft 백엔드 기반: 마이그레이션(one-way gate) + documentDraft 스키마 + upsert/get/delete 서비스 + draftBodySchema [EDIT-11]
-- [ ] 05-07-PLAN.md — 테마: 다크 토큰 override + @media 폴백 + RSC 쿠키 SSR + 테마 토글 + 툴바 pressed/300ms CSS [EDIT-12, EDIT-10]
+- [x] 05-07-PLAN.md — 테마: 다크 토큰 override + @media 폴백 + RSC 쿠키 SSR + 테마 토글 + 툴바 pressed/300ms CSS [EDIT-12, EDIT-10]
 
 **Wave 2** *(parallel — blocked on Wave 1)*
 
@@ -251,7 +251,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
 | 3. Folder Tree (Closure Table) | 5/5 | In Progress|  |
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
-| 5. Editor Enhancements & Personalization | 2/7 | In Progress|  |
+| 5. Editor Enhancements & Personalization | 3/7 | In Progress|  |
 | 6. Tags, Search & Export | 0/TBD | Not started | - |
 | 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
