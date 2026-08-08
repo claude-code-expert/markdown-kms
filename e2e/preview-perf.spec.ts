@@ -7,11 +7,10 @@ import { expect, test, type Page } from "@playwright/test";
 // trusting its numbers against the real editor (a broken harness must fail loudly, not
 // silently pass/fail EDIT-06).
 //
-// RED-by-design (TDD wave-0, this plan): `/w/[wsId]`'s 2-pane editor+preview host (02-03)
-// does not exist yet, so `.cm-content` (CodeMirror's own DOM class, guaranteed by
-// @codemirror/view regardless of theme) and `[data-testid="preview-pane"]` (the selector
-// this plan pins as PreviewPane's required root-element contract for 02-03) will not be
-// found. Only the self-sanity control below can pass before 02-03 lands.
+// `.cm-content` (CodeMirror's own DOM class, guaranteed by @codemirror/view regardless of
+// theme) and `[data-testid="preview-pane"]` (PreviewPane's root-element contract) live on the
+// document route `/w/[wsId]/d/[docId]` (04-02 route split) — `/w/[wsId]` itself is now an
+// EmptyState with no editor.
 
 interface MeasureOptions {
   typeTarget: string;
@@ -131,7 +130,13 @@ test.describe("preview p95 latency (EDIT-06)", () => {
     await page.getByRole("button", { name: "만들기", exact: true }).click();
     await expect(page).toHaveURL(/\/w\/[^/]+$/);
 
-    // RED-by-design: the editor+preview host (02-03) does not exist yet.
+    // 04-02 route split: the editor+preview host now lives at /w/[wsId]/d/[docId] -- create a
+    // document to reach it (mirrors e2e/document-workspace.spec.ts).
+    await page.getByRole("button", { name: "새 문서" }).click();
+    await page.getByPlaceholder("새 문서").fill(`Perf Doc ${Date.now()}`);
+    await page.getByPlaceholder("새 문서").press("Enter");
+    await expect(page).toHaveURL(/\/w\/[^/]+\/d\/[^/]+$/);
+
     await page.waitForSelector(".cm-content", { timeout: 5000 });
     await page.waitForSelector('[data-testid="preview-pane"]', { timeout: 5000 });
 

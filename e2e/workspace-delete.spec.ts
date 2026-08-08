@@ -15,8 +15,9 @@ test("OWNER creates then deletes a workspace via the re-type dialog", async ({ p
   await page.getByLabel("이름").fill(workspaceName);
   await page.getByRole("button", { name: "만들기", exact: true }).click();
   await expect(page).toHaveURL(/\/w\/[^/]+$/);
-  // D-14 placeholder — no sidebar, just name + empty state.
-  await expect(page.getByRole("heading", { name: workspaceName })).toBeVisible();
+  // 04-02 route split — /w/[wsId] index is now the no-document-open EmptyState (workspace
+  // name itself isn't rendered here anymore; the dashboard check below covers that).
+  await expect(page.getByText("문서를 선택해 주세요")).toBeVisible();
 
   await page.goto("/dashboard");
   await expect(page.getByText(workspaceName)).toBeVisible();

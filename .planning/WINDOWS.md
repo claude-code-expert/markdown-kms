@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 5
+open_count: 3
 waived_count: 0
-fixed_count: 0
+fixed_count: 2
 total_count: 5
-last_updated: 2026-08-08T06:09:54.900Z
+last_updated: 2026-08-08T06:49:27.170Z
 ---
 
 # Broken Windows Ledger
@@ -17,8 +17,8 @@ last_updated: 2026-08-08T06:09:54.900Z
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 3 | unrun-verify | .planning/phases/03-folder-tree-closure-table/03-05-PLAN.md |  | Task 3 human-check (drag-over cursor/outline visual feedback in real browser) not run this session | open |  | 2026-08-08T03:57:25.631Z |  |
 | 2 | 3 | unrun-verify | src/components/tree/MoveFolderModal.tsx |  | MoveFolderModal own-subtree-disabled greying has no dedicated e2e assertion (not in must_haves), human_judgment flagged in 03-05-SUMMARY D7 | open |  | 2026-08-08T03:57:25.700Z |  |
-| 3 | 04 | deviation | e2e/preview-perf.spec.ts | 113 | 60ms-budget test still targets /w/[wsId] as the 2-pane editor host (pre-04-02 Phase 2 assumption); since 04-02's route split the editor lives at /w/[wsId]/d/[docId] — spec needs updating, out of 04-03 scope | open |  | 2026-08-08T06:09:54.764Z |  |
-| 4 | 04 | deviation | e2e/workspace-delete.spec.ts | 19 | asserts a workspace-name heading on /w/[wsId] (Phase 1 D-14 placeholder) — superseded by 04-02's page.tsx rewrite to EmptyState; spec needs updating, out of 04-03 scope | open |  | 2026-08-08T06:09:54.833Z |  |
+| 3 | 04 | deviation | e2e/preview-perf.spec.ts | 113 | 60ms-budget test still targets /w/[wsId] as the 2-pane editor host (pre-04-02 Phase 2 assumption); since 04-02's route split the editor lives at /w/[wsId]/d/[docId] — spec needs updating, out of 04-03 scope | fixed |  | 2026-08-08T06:09:54.764Z | 2026-08-08T06:49:27.089Z |
+| 4 | 04 | deviation | e2e/workspace-delete.spec.ts | 19 | asserts a workspace-name heading on /w/[wsId] (Phase 1 D-14 placeholder) — superseded by 04-02's page.tsx rewrite to EmptyState; spec needs updating, out of 04-03 scope | fixed |  | 2026-08-08T06:09:54.833Z | 2026-08-08T06:49:27.170Z |
 | 5 | 04 | deviation | e2e/document-workspace.spec.ts | 54 | pre-existing tracer test intermittently misses the transient '저장 중…' status text under load — unrelated to 04-03's files (autosave-controller/useAutosave/SaveStatusBar are unmodified 04-02 code) | open |  | 2026-08-08T06:09:54.900Z |  |
 
 ````json
@@ -54,10 +54,10 @@ last_updated: 2026-08-08T06:09:54.900Z
     "file": "e2e/preview-perf.spec.ts",
     "line": 113,
     "description": "60ms-budget test still targets /w/[wsId] as the 2-pane editor host (pre-04-02 Phase 2 assumption); since 04-02's route split the editor lives at /w/[wsId]/d/[docId] — spec needs updating, out of 04-03 scope",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-08T06:09:54.764Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-08T06:49:27.089Z"
   },
   {
     "id": 4,
@@ -66,10 +66,10 @@ last_updated: 2026-08-08T06:09:54.900Z
     "file": "e2e/workspace-delete.spec.ts",
     "line": 19,
     "description": "asserts a workspace-name heading on /w/[wsId] (Phase 1 D-14 placeholder) — superseded by 04-02's page.tsx rewrite to EmptyState; spec needs updating, out of 04-03 scope",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-08T06:09:54.833Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-08T06:49:27.170Z"
   },
   {
     "id": 5,
