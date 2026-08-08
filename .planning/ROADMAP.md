@@ -176,7 +176,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A 1-minute snapshot autosave lets the user recover unsaved work after a crash; re-entering a document with a newer snapshot prompts to restore it.
   4. User can switch between light/dark theme and split/editor-only/preview-only layout.
 
-**Plans**: 6/7 plans executed
+**Plans**: 7/7 plans executed
 
 **Wave 1** *(parallel — zero file overlap)*
 
@@ -195,7 +195,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Wave 4** *(blocked on Wave 3)*
 
-- [ ] 05-05-PLAN.md — draft 복구 다이얼로그 + RSC 최신 비교 + uncontrolled 에디터 적재 배선 [EDIT-11] *(depends: 05-01, 05-04, 05-08)*
+- [x] 05-05-PLAN.md — draft 복구 다이얼로그 + RSC 최신 비교 + uncontrolled 에디터 적재 배선 [EDIT-11] *(depends: 05-01, 05-04, 05-08)*
 
 **UI hint**: yes
 
@@ -251,7 +251,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
 | 3. Folder Tree (Closure Table) | 5/5 | In Progress|  |
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
-| 5. Editor Enhancements & Personalization | 6/7 | In Progress|  |
+| 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
 | 6. Tags, Search & Export | 0/TBD | Not started | - |
 | 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
