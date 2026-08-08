@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 5
 current_phase_name: Editor Enhancements & Personalization
 status: executing
-stopped_at: Completed 05-04-PLAN.md
-last_updated: "2026-08-08T08:42:56.706Z"
+stopped_at: Completed 05-08-PLAN.md
+last_updated: "2026-08-08T08:50:50.011Z"
 last_activity: 2026-08-08
 last_activity_desc: Phase 5 execution started (05-01)
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 28
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 5 (Editor Enhancements & Personalization) — EXECUTING
-Plan: 5 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
+Plan: 6 of 7 (Wave 1 — 05-01 TRACER complete; 05-03/05-07 remain in Wave 1)
 Status: 05-01 complete (image upload tracer, EDIT-09 core happy path) — Phase 3/4 verification still deferred (bulk-verify-at-end per 2026-08-08 user instruction)
 Last activity: 2026-08-08 — Phase 5 execution started (05-01)
 
-Progress: [█████████░] 93%
+Progress: [██████████] 96%
 
 ## Performance Metrics
 
@@ -80,6 +80,7 @@ Progress: [█████████░] 93%
 | Phase 5 P07 | 6min | 3 tasks | 8 files |
 | Phase 05 P02 | 17min | 2 tasks | 7 files |
 | Phase 05 P04 | 20min | 3 tasks | 6 files |
+| Phase 05 P08 | 12min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-02: no client-side size/type pre-check before the network round-trip — server 400 body.error is reused verbatim as the UI-SPEC copy, avoiding a second source of truth for validation thresholds
 - [Phase ?]: 05-04: DELETE draft route returns 204 (no body), matching documents/[id]/route.ts's DELETE convention exactly
 - [Phase ?]: 05-04: draft-autodelete.test.ts calls the PUT route handler directly (idor.test.ts pattern) instead of a new IDOR suite — deleteDraft gate is the only new correctness surface, RBAC/IDOR already proven
+- [Phase ?]: 05-08: EditorHost's initialContent now sourced from live content state (not the stale outer prop) so toggling out of and back into preview-only doesn't discard unsaved edits
+- [Phase ?]: 05-08: layoutMode/splitRatio cookies complete the 05-07 RSC-read/client-write pattern for all 3 phase-5 personalization settings
 
 ### Pending Todos
 
@@ -171,6 +174,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T08:42:56.698Z
-Stopped at: Completed 05-04-PLAN.md
+Last session: 2026-08-08T08:50:50.002Z
+Stopped at: Completed 05-08-PLAN.md
 Resume file: None
