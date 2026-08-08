@@ -14,7 +14,7 @@ markdown-kms goes from an empty repo to a full workspace-based markdown KMS in e
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Auth & Workspace Foundation** - Users can sign up, stay signed in, and land in a role-enforced default workspace (completed 2026-08-02)
-- [ ] **Phase 2: Markdown Rendering & Editor Formatting** - Users can format markdown and see an accurate, safe, 60ms live preview
+- [x] **Phase 2: Markdown Rendering & Editor Formatting** - Users can format markdown and see an accurate, safe, 60ms live preview (completed 2026-08-08)
 - [ ] **Phase 3: Folder Tree (Closure Table)** - Users can organize documents into a folder hierarchy with single-query subtree lookups
 - [ ] **Phase 4: Documents, Autosave & 3-Pane Workspace** - Users can author documents in the full 3-pane screen with reliable, seq-guarded autosave and a recoverable trash
 - [ ] **Phase 5: Editor Enhancements & Personalization** - Users get image upload, toolbar polish, crash-recovery drafts, and theme/layout switching
@@ -189,7 +189,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Auth & Workspace Foundation | 5/5 | Complete    | 2026-08-02 |
-| 2. Markdown Rendering & Editor Formatting | 6/6 | In Progress|  |
+| 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
 | 3. Folder Tree (Closure Table) | 0/TBD | Not started | - |
 | 4. Documents, Autosave & 3-Pane Workspace | 0/TBD | Not started | - |
 | 5. Editor Enhancements & Personalization | 0/TBD | Not started | - |

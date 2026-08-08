@@ -8,6 +8,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `.claude/CLAUDE.md`는 이 프로젝트가 아니라 드롭인 하네스(MCP·commands·skills·hooks) 문서다. 혼동하지 말 것.
 
+## 언어
+
+**모든 문서·산출물은 한글로 작성한다.** `.planning/`의 GSD 산출물(SPEC·PLAN·VERIFICATION·UAT·REVIEW 등), `docs/`, 커밋 메시지 본문, PR 설명, 코드 주석의 설명 문장까지 포함한다. GSD 커맨드·스킬·서브에이전트가 영문으로 생성한 산출물은 한글로 다시 작성한다. 예외는 다음뿐: 코드 식별자, 파일 경로, 라이브러리·API 이름, frontmatter 키(`status`/`phase` 등 구조 필드), 고정된 기술 용어(GFM·CommonMark 등).
+
 ## 문서 체계 (우선순위 순)
 
 1. `docs/REQUIREMENT.md` — 원 요구사항 (FR/NFR/US, CommonMark 0.31.2 기준)
