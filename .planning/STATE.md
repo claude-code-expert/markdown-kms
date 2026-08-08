@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 3
 current_phase_name: Folder Tree (Closure Table)
 status: planning
-stopped_at: "Completed 03-02-PLAN.md (folder tree tracer slice: closure ops + POST /api/folders + sidebar wiring)"
-last_updated: "2026-08-08T03:21:34.214Z"
+stopped_at: "Completed 03-03-PLAN.md (folder tree closure operations: getSubtree/moveFolder/softDeleteFolder)"
+last_updated: "2026-08-08T03:29:22.938Z"
 last_activity: 2026-08-08
 last_activity_desc: "Phase 3 Plan 1 complete: folder/folder_closure schema + migration"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 16
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 3 — Folder Tree (Closure Table)
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-08 — Phase 3 Plan 1 complete: folder/folder_closure schema + migration
 
-Progress: [████████░░] 81%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [████████░░] 81%
 | Phase 02 P06 | 23min | 3 tasks | 10 files |
 | Phase 3 P1 | 25min | 2 tasks | 5 files |
 | Phase 3 P2 | 40min | 2 tasks | 11 files |
+| Phase 03 P03 | 35min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 03-02: POST /api/folders derives workspaceId from parentId's folder row (never client-trusted); a mismatched client-supplied workspaceId is rejected 400 before requireRole runs
 - [Phase ?]: 03-02: FolderTree renders top-level folders at depth 0 (no literal workspace-root row yet) — deferred to 03-05 with full Tree Node Contract states
 - [Phase ?]: 03-02: tests/folder/query-count.test.ts mocks @/auth to avoid a next-auth/next/server resolution failure pulled in transitively via tests/rbac/helpers.ts
+- [Phase ?]: 03-03: moveFolder rewiring test moves B under an unrelated root E (not D, a child of A) — moving into D would legitimately keep A as a transitive ancestor via D, matching TRD/plan's documented root-ancestor rewrite behavior, not a bug
+- [Phase ?]: 03-03: DbClient type widened to typeof db | tx-callback-param union so cascade ops (softDeleteFolder) can pass their own tx into getSubtree without a TS2345 error
 
 ### Pending Todos
 
@@ -119,6 +122,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T03:21:34.207Z
-Stopped at: Completed 03-02-PLAN.md (folder tree tracer slice: closure ops + POST /api/folders + sidebar wiring)
+Last session: 2026-08-08T03:29:22.930Z
+Stopped at: Completed 03-03-PLAN.md (folder tree closure operations: getSubtree/moveFolder/softDeleteFolder)
 Resume file: None
