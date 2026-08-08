@@ -147,6 +147,41 @@ describe("documents.restoreDocument — single-document restore", () => {
     const [row] = await db.select().from(document).where(eq(document.id, doc.id));
     expect(row.isDeleted).toBe(false);
   });
+
+  // 04-05 Rule 2 parity fix: restoreFolder already relocates to root when the original parent
+  // is deleted (Open Q #2) — a document independently trashed while its folder was still
+  // active, then left behind (not revived) when that folder was later deleted, needs the same
+  // treatment. Without this, restoring the document alone would resurrect it under a still-
+  // deleted folderId, making it vanish from the tree (no active parent node to render under).
+  it("relocates to workspace root when the original folder is deleted (Open Q #2 parity)", async () => {
+    const ws = await createTestWorkspace("restore-doc-root-relocate-ws");
+    createdWorkspaces.push(ws.id);
+    const parentFolder = await createFolder(ws.id, null, "Parent");
+    const doc = await createTestDocument(ws.id, parentFolder.id, { title: "Orphaned" });
+    await softDeleteDocument(doc.id); // independent trash while Parent is still active
+    await softDeleteFolder(parentFolder.id); // Parent trashed afterwards; cascade skips doc
+
+    const result = await restoreDocument(doc.id);
+
+    const [restored] = await db.select().from(document).where(eq(document.id, doc.id));
+    expect(restored.isDeleted).toBe(false);
+    expect(restored.folderId).toBeNull();
+    expect(result?.relocatedToRoot).toBe(true);
+  });
+
+  it("does not relocate when the original folder is still active", async () => {
+    const ws = await createTestWorkspace("restore-doc-no-relocate-ws");
+    createdWorkspaces.push(ws.id);
+    const parentFolder = await createFolder(ws.id, null, "Parent");
+    const doc = await createTestDocument(ws.id, parentFolder.id, { title: "Solo" });
+    await softDeleteDocument(doc.id);
+
+    const result = await restoreDocument(doc.id);
+
+    const [restored] = await db.select().from(document).where(eq(document.id, doc.id));
+    expect(restored.folderId).toBe(parentFolder.id);
+    expect(result?.relocatedToRoot).toBe(false);
+  });
 });
 
 describe("closure.resolveWorkspaceIdForTrashItem — is_deleted-agnostic IDOR lookup", () => {

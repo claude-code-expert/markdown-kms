@@ -33,6 +33,9 @@ export async function POST(req: Request, context: { params: Promise<{ type: stri
     return Response.json(result ?? {}, { status: 200 });
   }
 
-  await restoreDocument(id);
-  return new Response(null, { status: 204 });
+  // 04-05: restoreDocument now mirrors restoreFolder's { relocatedToRoot } shape (Open Q #2
+  // parity fix) — the trash UI reads this to decide whether to show RestoreRootBanner, so both
+  // types must respond with the same JSON contract instead of document-only 204.
+  const result = await restoreDocument(id);
+  return Response.json(result ?? {}, { status: 200 });
 }

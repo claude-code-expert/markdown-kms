@@ -3,7 +3,7 @@
 // typeof db, so the alias unions both).
 import { and, eq, lt } from "drizzle-orm";
 import { db } from "@/db";
-import { document } from "@/db/schema";
+import { document, folder } from "@/db/schema";
 
 type DbClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -58,12 +58,34 @@ export async function softDeleteDocument(documentId: string, client: DbClient = 
 
 // closure.ts restoreFolder's single-document analog — only a directly-trashed document
 // (is_trash_root=true) is restorable; a document still cascaded under a trashed folder is
-// restored via restoreFolder, not this function.
+// restored via restoreFolder, not this function. 04-05 Rule 2 parity fix: mirrors
+// restoreFolder's root-relocation (Open Q #2) — a document trashed independently while its
+// folder was still active, then left behind (not revived) when that folder was later deleted,
+// must not resurface under a still-deleted folderId (it would vanish from the tree, no active
+// parent node to render under). No closure table to rewrite for a document, so relocation is
+// a plain folderId=null update (no moveFolder reuse needed, unlike restoreFolder).
 export async function restoreDocument(documentId: string, client: DbClient = db) {
-  await client
-    .update(document)
-    .set({ isDeleted: false, deletedAt: null, isTrashRoot: false })
-    .where(and(eq(document.id, documentId), eq(document.isTrashRoot, true)));
+  return client.transaction(async (tx) => {
+    const [target] = await tx
+      .select({ folderId: document.folderId })
+      .from(document)
+      .where(and(eq(document.id, documentId), eq(document.isTrashRoot, true)));
+    if (!target) return null; // not a trash root — no-op, matches softDeleteDocument's WR-01 convention
+
+    await tx
+      .update(document)
+      .set({ isDeleted: false, deletedAt: null, isTrashRoot: false })
+      .where(and(eq(document.id, documentId), eq(document.isTrashRoot, true)));
+
+    if (target.folderId) {
+      const [parent] = await tx.select({ isDeleted: folder.isDeleted }).from(folder).where(eq(folder.id, target.folderId));
+      if (!parent || parent.isDeleted) {
+        await tx.update(document).set({ folderId: null }).where(eq(document.id, documentId));
+        return { relocatedToRoot: true };
+      }
+    }
+    return { relocatedToRoot: false };
+  });
 }
 
 // closure.ts permanentlyDeleteFolder's single-row analog — a document has no children, so no
