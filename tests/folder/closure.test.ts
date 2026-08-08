@@ -359,4 +359,22 @@ describe("POST /api/folders — IDOR-safe workspaceId resolution + RBAC", () => 
     const res = await POST(req({ name: "New Folder", parentId: foreign.id, workspaceId: wsA.id }));
     expect(res.status).toBe(400);
   });
+
+  // WR-02: a soft-deleted parentId must be rejected like a nonexistent one — otherwise the
+  // created child's parent is excluded from getWorkspaceFolders and tree-utils.ts mis-renders
+  // it as a root.
+  it("rejects creating a child under a soft-deleted parentId with 400", async () => {
+    const ws = await createTestWorkspace("folders-route-softdel-parent-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("folders-route-softdel-parent-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+
+    const parent = await createFolder(ws.id, null, "Parent");
+    await db.update(folder).set({ isDeleted: true }).where(eq(folder.id, parent.id));
+
+    const res = await POST(req({ name: "Child", parentId: parent.id, workspaceId: ws.id }));
+    expect(res.status).toBe(400);
+  });
 });

@@ -1,8 +1,5 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { folder } from "@/db/schema";
-import { createFolder } from "@/lib/closure";
+import { createFolder, resolveActiveWorkspaceId } from "@/lib/closure";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 import { folderSchema } from "@/lib/validation";
 
@@ -37,10 +34,7 @@ export async function POST(req: Request) {
 
   let workspaceId: string;
   if (parentId) {
-    const [parent] = await db
-      .select({ workspaceId: folder.workspaceId })
-      .from(folder)
-      .where(eq(folder.id, parentId));
+    const parent = await resolveActiveWorkspaceId(parentId);
     if (!parent) {
       return Response.json({ error: "잘못된 요청입니다." }, { status: 400 });
     }

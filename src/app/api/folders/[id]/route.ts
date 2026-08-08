@@ -2,18 +2,11 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { folder } from "@/db/schema";
-import { softDeleteFolder } from "@/lib/closure";
+import { resolveActiveWorkspaceId, softDeleteFolder } from "@/lib/closure";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 import { folderSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
-
-// T-03-04-IDOR: neither route has a wsId in the URL — the server re-derives workspace_id from
-// the target folder row (never the client) and passes THAT to requireRole (RESEARCH Pitfall 3).
-async function resolveWorkspaceIdOrForbidden(id: string) {
-  const [target] = await db.select({ workspaceId: folder.workspaceId }).from(folder).where(eq(folder.id, id));
-  return target ?? null; // no row = membership can't be established = 403, not 404 (mirrors DELETE /api/workspaces/[id])
-}
 
 // TREE-03: rename. EDITOR+. Body: { name }.
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
@@ -22,7 +15,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     return Response.json({ error: "잘못된 요청입니다." }, { status: 400 });
   }
 
-  const target = await resolveWorkspaceIdOrForbidden(id);
+  const target = await resolveActiveWorkspaceId(id);
   if (!target) return forbiddenResponse();
 
   try {
@@ -55,7 +48,7 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
     return Response.json({ error: "잘못된 요청입니다." }, { status: 400 });
   }
 
-  const target = await resolveWorkspaceIdOrForbidden(id);
+  const target = await resolveActiveWorkspaceId(id);
   if (!target) return forbiddenResponse();
 
   try {

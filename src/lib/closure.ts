@@ -27,6 +27,19 @@ export async function getWorkspaceFolders(workspaceId: string, client: DbClient 
     .where(and(eq(folder.workspaceId, workspaceId), eq(folder.isDeleted, false)));
 }
 
+// T-03-04-IDOR / WR-02 / WR-03: shared "resolve workspace_id from a folder id" lookup, used by
+// every mutation route that has no wsId in the URL (PATCH/DELETE/move rename target, and the
+// create route's parentId lookup) instead of each reimplementing it. isDeleted=false means a
+// soft-deleted folder behaves like it doesn't exist — callers treat a null return the same as a
+// nonexistent id (403/400 per their existing convention), never silently mutating a trashed row.
+export async function resolveActiveWorkspaceId(folderId: string, client: DbClient = db) {
+  const [row] = await client
+    .select({ workspaceId: folder.workspaceId })
+    .from(folder)
+    .where(and(eq(folder.id, folderId), eq(folder.isDeleted, false)));
+  return row ?? null;
+}
+
 // TRD §4 / RESEARCH Pattern 3: insert the folder row, copy the parent's ancestor rows at
 // depth+1, then add a self row (depth 0). When parentId is null (workspace-root creation),
 // `WHERE descendant_id = NULL` matches 0 rows under SQL 3-valued logic — no special-casing
@@ -85,11 +98,11 @@ export async function moveFolder(folderId: string, newParentId: string | null, c
         .where(and(eq(folderClosure.ancestorId, folderId), eq(folderClosure.descendantId, newParentId)));
       if (cycle) throw new CycleError("Cannot move a folder into itself or its own descendant.");
 
-      const [target] = await tx.select({ workspaceId: folder.workspaceId }).from(folder).where(eq(folder.id, folderId));
-      const [newParent] = await tx
-        .select({ workspaceId: folder.workspaceId })
-        .from(folder)
-        .where(eq(folder.id, newParentId));
+      // WR-02: filter isDeleted=false on both ends — a soft-deleted newParentId must be
+      // rejected the same as a nonexistent one (CrossWorkspaceError -> 400), not silently
+      // accepted as a move target.
+      const target = await resolveActiveWorkspaceId(folderId, tx);
+      const newParent = await resolveActiveWorkspaceId(newParentId, tx);
       if (!newParent || !target || newParent.workspaceId !== target.workspaceId) {
         throw new CrossWorkspaceError("Cannot move a folder into a different workspace.");
       }

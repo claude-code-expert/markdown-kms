@@ -5,7 +5,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { user, workspace } from "@/db/schema";
+import { folder, user, workspace } from "@/db/schema";
 import { createFolder } from "@/lib/closure";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor } from "../rbac/helpers";
 
@@ -148,6 +148,66 @@ describe("move cycle rejection — moving into own descendant", () => {
 
     const res = await moveFolderRoute(moveRequest(a.id, b.id), ctx(a.id));
     expect(res.status).toBe(409);
+  });
+});
+
+describe("soft-deleted target/parent — mutation routes must not treat deleted rows as active", () => {
+  let patchFolder: typeof import("@/app/api/folders/[id]/route").PATCH;
+  let deleteFolder: typeof import("@/app/api/folders/[id]/route").DELETE;
+  let moveFolderRoute: typeof import("@/app/api/folders/[id]/move/route").POST;
+  const createdUsers: string[] = [];
+  const createdWorkspaces: string[] = [];
+
+  beforeAll(async () => {
+    ({ PATCH: patchFolder, DELETE: deleteFolder } = await import("@/app/api/folders/[id]/route"));
+    ({ POST: moveFolderRoute } = await import("@/app/api/folders/[id]/move/route"));
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await Promise.all(createdWorkspaces.splice(0).map((id) => db.delete(workspace).where(eq(workspace.id, id))));
+    await Promise.all(createdUsers.splice(0).map((id) => db.delete(user).where(eq(user.id, id))));
+  });
+
+  async function setupCallerAndDeletedFolder() {
+    const ws = await createTestWorkspace("softdel-mutation-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("softdel-mutation-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+    const target = await createFolder(ws.id, null, "Target");
+    await db.update(folder).set({ isDeleted: true }).where(eq(folder.id, target.id));
+    return { ws, target };
+  }
+
+  // WR-02: a soft-deleted folder id must be treated like it doesn't exist (mirrors the
+  // existing "no row = 403" convention for nonexistent ids), not silently mutated.
+  it("PATCH returns 403 renaming an already-deleted folder id", async () => {
+    const { target } = await setupCallerAndDeletedFolder();
+    const res = await patchFolder(patchRequest(target.id, { name: "Hijacked" }), ctx(target.id));
+    expect(res.status).toBe(403);
+  });
+
+  it("DELETE returns 403 re-deleting an already-deleted folder id", async () => {
+    const { target } = await setupCallerAndDeletedFolder();
+    const res = await deleteFolder(deleteRequest(target.id), ctx(target.id));
+    expect(res.status).toBe(403);
+  });
+
+  it("move returns 400 when newParentId is a soft-deleted folder", async () => {
+    const ws = await createTestWorkspace("softdel-move-target-ws");
+    createdWorkspaces.push(ws.id);
+    const editor = await createTestUser("softdel-move-editor");
+    createdUsers.push(editor.id);
+    await addMember(ws.id, editor.id, "EDITOR");
+    mockSessionFor(editor.id);
+    const movable = await createFolder(ws.id, null, "Movable");
+    const deletedParent = await createFolder(ws.id, null, "DeletedParent");
+    await db.update(folder).set({ isDeleted: true }).where(eq(folder.id, deletedParent.id));
+
+    const res = await moveFolderRoute(moveRequest(movable.id, deletedParent.id), ctx(movable.id));
+    expect(res.status).toBe(400);
   });
 });
 

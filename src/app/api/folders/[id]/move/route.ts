@@ -1,8 +1,5 @@
-import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "@/db";
-import { folder } from "@/db/schema";
-import { CrossWorkspaceError, CycleError, moveFolder } from "@/lib/closure";
+import { CrossWorkspaceError, CycleError, moveFolder, resolveActiveWorkspaceId } from "@/lib/closure";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 
 export const runtime = "nodejs";
@@ -19,8 +16,8 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
     return Response.json({ error: "잘못된 요청입니다." }, { status: 400 });
   }
 
-  const [target] = await db.select({ workspaceId: folder.workspaceId }).from(folder).where(eq(folder.id, id));
-  if (!target) return forbiddenResponse(); // no row = membership can't be established = 403
+  const target = await resolveActiveWorkspaceId(id);
+  if (!target) return forbiddenResponse(); // no row (or soft-deleted) = membership can't be established = 403
 
   try {
     await requireRole(target.workspaceId, "EDITOR");
