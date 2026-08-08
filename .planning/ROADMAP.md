@@ -107,11 +107,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Creating, renaming, moving, and soft-deleting a folder all work correctly.
   4. Moving a folder into one of its own descendants is rejected by a same-transaction ancestor/cycle check before any rewiring happens.
 
-**Plans**: 5 plans (5 waves)
+**Plans**: 1/5 plans executed
 
 **Wave 1**
 
-- [ ] 03-01-PLAN.md — folder/folder_closure 스키마 + 마이그레이션 (one-way 게이트)
+- [x] 03-01-PLAN.md — folder/folder_closure 스키마 + 마이그레이션 (one-way 게이트)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -128,6 +128,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Wave 5** *(blocked on Wave 4)*
 
 - [ ] 03-05-PLAN.md — 트리 UI: 컨텍스트 메뉴 + 인라인 이름변경 + 네이티브 DnD + 이동 모달 + 삭제 확인 + e2e
+
 **UI hint**: yes
 
 ### Phase 4: Documents, Autosave & 3-Pane Workspace
@@ -210,7 +211,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Auth & Workspace Foundation | 5/5 | Complete    | 2026-08-02 |
 | 2. Markdown Rendering & Editor Formatting | 6/6 | Complete    | 2026-08-08 |
-| 3. Folder Tree (Closure Table) | 0/5 | Not started | - |
+| 3. Folder Tree (Closure Table) | 1/5 | In Progress|  |
 | 4. Documents, Autosave & 3-Pane Workspace | 0/TBD | Not started | - |
 | 5. Editor Enhancements & Personalization | 0/TBD | Not started | - |
 | 6. Tags, Search & Export | 0/TBD | Not started | - |

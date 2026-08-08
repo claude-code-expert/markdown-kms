@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 3
 current_phase_name: Folder Tree (Closure Table)
 status: planning
-stopped_at: "Completed 02-06-PLAN.md (gap-closure: 6/6 GAPs closed, plugin-render integration gate added)"
-last_updated: "2026-08-08T02:02:11.821Z"
+stopped_at: Completed 03-01-PLAN.md (folder/folder_closure schema + migration 0002 applied to dev DB)
+last_updated: "2026-08-08T03:10:23.300Z"
 last_activity: 2026-08-08
-last_activity_desc: Phase 2 complete, transitioned to Phase 3
+last_activity_desc: "Phase 3 Plan 1 complete: folder/folder_closure schema + migration"
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 16
+  completed_plans: 12
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 3 — Folder Tree (Closure Table)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-08 — Phase 2 complete, transitioned to Phase 3
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-08 — Phase 3 Plan 1 complete: folder/folder_closure schema + migration
 
-Progress: [██████████] 100%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [██████████] 100%
 | Phase 01 P04 | 23min | 4 tasks | 13 files |
 | Phase 01 P05 | 16min | 2 tasks | 16 files |
 | Phase 02 P06 | 23min | 3 tasks | 10 files |
+| Phase 3 P1 | 25min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 02-06: hr.ts fix merges CR-02 (blank-line-before-rule) + WR-03 (preserve selection) — insert always at 'to', blank-line decision from on-line content before 'to'
 - [Phase ?]: 02-06: heading.ts inlines ANY_LIST_PREFIX_RE (not imported) per 1-feature-1-file invariant; IN-01 shared-module extraction stays out of scope
 - [Phase ?]: 02-06: reworded PreviewPane.tsx pre-existing comment to drop literal 'dangerouslySetInnerHTML' substring so the zero-occurrence verification grep passes (comment-only, same security intent)
+- [Phase ?]: 03-01: Task 1 checkpoint:decision (one-way folder/folder_closure migration) pre-approved by user via orchestrator (2026-08-08) — recorded apply-now, migration generated+applied without re-prompting
+- [Phase ?]: 03-01: folder.parent_id self-FK has no ON DELETE action (only workspace_id and folder_closure's FKs cascade), matching TRD §3 literally
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-02T06:01:35.081Z
-Stopped at: Completed 02-06-PLAN.md (gap-closure: 6/6 GAPs closed, plugin-render integration gate added)
+Last session: 2026-08-08T03:10:23.293Z
+Stopped at: Completed 03-01-PLAN.md (folder/folder_closure schema + migration 0002 applied to dev DB)
 Resume file: None
