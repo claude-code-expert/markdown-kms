@@ -1,0 +1,42 @@
+/* Ported from docs/ui-kit.html #dropdown-menu, values overridden per UI-SPEC Interaction
+   Contract (item padding 8px 12px, hover var(--surface-2) — not the ui-kit literal colors). */
+.menu {
+  position: fixed;
+  min-width: 168px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.item,
+.itemDestructive {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.item {
+  color: var(--text);
+}
+
+.itemDestructive {
+  color: var(--destructive);
+}
+
+.item:hover,
+.itemDestructive:hover {
+  background: var(--surface-2);
+}

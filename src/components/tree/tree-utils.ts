@@ -23,3 +23,24 @@ export function buildTree(folders: FolderRow[]): FolderTreeNode[] {
   }
   return roots;
 }
+
+// 03-05: client-side cycle pre-judgment for DnD/move-modal UX only — NOT a trust boundary.
+// The server (moveFolder, 03-03/03-04) re-validates inside the same transaction as the
+// rewiring (T-03-05-CLIENTTRUST). rootId === candidateId is treated as "descendant-or-self"
+// so both "drop onto itself" and "drop onto its own descendant" are rejected the same way.
+// Source: RESEARCH Pattern 6 (verbatim).
+export function isDescendantOrSelf(
+  folders: { id: string; parentId: string | null }[],
+  rootId: string,
+  candidateId: string,
+): boolean {
+  if (rootId === candidateId) return true;
+  const childrenOf = (id: string) => folders.filter((f) => f.parentId === id);
+  const stack = [...childrenOf(rootId)];
+  while (stack.length) {
+    const node = stack.pop()!;
+    if (node.id === candidateId) return true;
+    stack.push(...childrenOf(node.id));
+  }
+  return false;
+}
