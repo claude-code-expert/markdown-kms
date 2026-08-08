@@ -15,6 +15,14 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  // tsconfig.json sets jsx:"preserve" (Next.js SWC handles JSX at build time,
+  // not Vite's own oxc/esbuild transform) — Vite 8 defaults to its oxc
+  // transform, which otherwise inherits "preserve" from tsconfig.json and
+  // leaves raw JSX in the output. Force "automatic" so importing a .tsx file
+  // (e.g. src/app/layout.tsx in tests/theme/rsc-cookie.test.ts) works.
+  oxc: {
+    jsx: { runtime: "automatic" },
+  },
   test: {
     watch: false,
     environment: "node",

@@ -1,0 +1,43 @@
+// 05-07 Task 2: RootLayout (RSC) reads the `theme` cookie via next/headers
+// cookies() and bakes data-theme into the first HTML render (no-FOUC).
+// next/headers is server-only — stub it so this stays a pure render-logic
+// test (no real request/cookie jar needed).
+import { describe, expect, it, vi } from "vitest";
+
+const mockCookieValue: { value: string | undefined } = { value: undefined };
+
+vi.mock("next/headers", () => ({
+  cookies: async () => ({
+    get: (name: string) => (name === "theme" ? { value: mockCookieValue.value } : undefined),
+  }),
+}));
+
+// next/font/google relies on a Next.js build-time loader (webpack/SWC) that isn't
+// present under vitest — stub both fonts layout.tsx calls with plain functions.
+vi.mock("next/font/google", () => ({
+  IBM_Plex_Sans: () => ({ variable: "--font-ibm-plex-sans" }),
+  IBM_Plex_Mono: () => ({ variable: "--font-ibm-plex-mono" }),
+}));
+
+describe("RootLayout theme cookie -> data-theme", () => {
+  it("renders no data-theme attribute when the theme cookie is absent (first visit, @media fallback)", async () => {
+    mockCookieValue.value = undefined;
+    const { default: RootLayout } = await import("@/app/layout");
+    const element = await RootLayout({ children: null });
+    expect(element.props["data-theme"]).toBeUndefined();
+  });
+
+  it('renders data-theme="light" when the theme cookie is "light"', async () => {
+    mockCookieValue.value = "light";
+    const { default: RootLayout } = await import("@/app/layout");
+    const element = await RootLayout({ children: null });
+    expect(element.props["data-theme"]).toBe("light");
+  });
+
+  it('renders data-theme="dark" when the theme cookie is "dark"', async () => {
+    mockCookieValue.value = "dark";
+    const { default: RootLayout } = await import("@/app/layout");
+    const element = await RootLayout({ children: null });
+    expect(element.props["data-theme"]).toBe("dark");
+  });
+});
