@@ -1,0 +1,90 @@
+/* UI-SPEC Trash Contract — page has no host padding of its own (layout.module.css's .main
+   dropped padding in 04-02 so DocumentWorkspace can span edge to edge); this page owns its own
+   var(--space-xl) top/side padding instead (page.module.css .main precedent, ported here). */
+.wrap {
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-xl);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 var(--space-md) 0;
+}
+
+/* Left-aligned, not centered — UI-SPEC Trash Contract "빈 목록" row explicitly calls out the
+   tree's empty-state placement convention (FolderTree.module.css .empty) over the centered
+   EmptyState component used by the document-workspace index. */
+.empty {
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* min-height (not fixed height) — the row's default state is 40px, but an inline restore/
+   delete error paragraph below the row needs to grow it without overlapping content. */
+.row {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+}
+
+.row:hover {
+  background: var(--surface-2);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.name {
+  flex: 1;
+  min-width: 120px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deletedAt {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-right: var(--space-md);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.gateHint {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.errorText {
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--destructive);
+  margin: 0 0 var(--space-xs) 0;
+}
