@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { folder, folderClosure } from "@/db/schema";
 
@@ -10,9 +10,11 @@ export class CycleError extends Error {}
 export class CrossWorkspaceError extends Error {}
 
 // Both functions take an optional db/tx client (RESEARCH A3) — the query-count test injects a
-// debug-hooked client, and future cascade operations (move/soft-delete) will inject `tx` so
-// their subtree reads stay inside the same transaction (RESEARCH Pitfall 4).
-type DbClient = typeof db;
+// debug-hooked client, and cascade operations (move/soft-delete) inject the transaction's `tx`
+// so their subtree reads stay inside the same transaction (RESEARCH Pitfall 4). `tx` (the
+// callback param of db.transaction) isn't structurally the same type as `db` (it lacks
+// `$client`), so the alias is a union of both rather than just `typeof db`.
+type DbClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 // TREE-02: the `folder` table has no row representing the workspace itself (parent_id IS NULL
 // means "workspace-root child", not a root row) — so the closure-join subtree pattern (TRD §4)
@@ -112,5 +114,21 @@ export async function moveFolder(folderId: string, newParentId: string | null, c
     }
 
     await tx.update(folder).set({ parentId: newParentId, updatedAt: new Date() }).where(eq(folder.id, folderId));
+  });
+}
+
+// TRD §4 "폴더 삭제" / RESEARCH Pattern 5: cascade soft-delete. getSubtree(folderId, tx) reads
+// the subtree id list inside the same transaction as the UPDATE (RESEARCH Pitfall 4, read-skew
+// avoidance) — the whole subtree gets is_deleted=true/deleted_at, only the delete target gets
+// is_trash_root=true. folder_closure rows are left untouched (restore is the inverse op, TRD §4).
+// Phase 4 will extend this transaction with `document WHERE folder_id = ANY(ids)` once the
+// document table exists — no document table in this phase, so no query for it here.
+export async function softDeleteFolder(folderId: string, client: DbClient = db) {
+  return client.transaction(async (tx) => {
+    const subtree = await getSubtree(folderId, tx);
+    const ids = subtree.map((f) => f.id);
+
+    await tx.update(folder).set({ isDeleted: true, deletedAt: new Date() }).where(inArray(folder.id, ids));
+    await tx.update(folder).set({ isTrashRoot: true }).where(eq(folder.id, folderId));
   });
 }
