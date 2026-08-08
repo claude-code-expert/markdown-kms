@@ -18,6 +18,13 @@ const PLACEHOLDER = "![업로드 중...]()";
 // which already contains the exact TOO_LARGE/BAD_TYPE copy (route.ts) — no duplication here.
 const GENERIC_UPLOAD_ERROR = "이미지를 업로드하지 못했어요. 다시 시도해 주세요.";
 
+// WR-01 (05-REVIEW): file.name is client-controlled and never validated server-side — strip
+// markdown-structural characters before splicing it into alt text, so a crafted filename
+// (e.g. `x](evil) [y`) can't close the alt early and inject a sibling markdown link/image.
+export function sanitizeAlt(name: string): string {
+  return name.replace(/[[\]()`\r\n]/g, "");
+}
+
 export function useImageUpload(getView: () => EditorView | null) {
   const params = useParams<{ wsId?: string }>();
   const wsId = params?.wsId;
@@ -70,7 +77,11 @@ export function useImageUpload(getView: () => EditorView | null) {
           const at = doc.indexOf(PLACEHOLDER);
           if (at === -1) return; // user already edited the placeholder away — nothing to replace
           currentView.dispatch({
-            changes: { from: at, to: at + PLACEHOLDER.length, insert: `![${file.name}](${body.url})` },
+            changes: {
+              from: at,
+              to: at + PLACEHOLDER.length,
+              insert: `![${sanitizeAlt(file.name)}](${body.url})`,
+            },
           });
         } else {
           removePlaceholder();
