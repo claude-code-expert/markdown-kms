@@ -3,10 +3,22 @@
 import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FilePlus2, FileText, FolderPlus, Pencil, FolderInput, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  Download,
+  FilePlus2,
+  FileText,
+  FolderDown,
+  FolderPlus,
+  Pencil,
+  FolderInput,
+  Trash2,
+  X,
+} from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { documentSchema, folderSchema } from "@/lib/validation";
 import { DocumentTreeLeaf } from "./DocumentTreeLeaf";
+import { downloadExport } from "./download-export";
 import { buildTree, type DocumentRow, type FolderRow } from "./tree-utils";
 import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
@@ -22,6 +34,7 @@ const MOVE_ERROR = "폴더를 이동하지 못했어요. 다시 시도해 주세
 const DELETE_ERROR = "폴더를 삭제하지 못했어요. 다시 시도해 주세요.";
 const CREATE_DOCUMENT_ERROR = "문서를 만들지 못했어요. 다시 시도해 주세요.";
 const DELETE_DOCUMENT_ERROR = "문서를 삭제하지 못했어요. 다시 시도해 주세요.";
+const EXPORT_ERROR = "내보내기에 실패했어요. 다시 시도해 주세요.";
 const ROOT_ERROR_ID = "__root__";
 
 interface FolderTreeProps {
@@ -84,6 +97,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
   const [docDeleteTarget, setDocDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [docDeleteSubmitting, setDocDeleteSubmitting] = useState(false);
   const [docDeleteError, setDocDeleteError] = useState<string | null>(null);
+  const [exportError, setExportError] = useState(false);
   const search = useSearchResults(workspaceId);
   const searchActive = search.status !== "idle";
 
@@ -222,6 +236,20 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
     router.push(`/w/${workspaceId}/d/${created.id}`);
   }
 
+  // EXP-01/EXP-02 — UI-SPEC Export Menu Contract: no downloading-state UI (browser download
+  // chrome owns progress), no success toast (file landing in Downloads is the feedback), only a
+  // failure banner. Falls back to "제목 없음" for a blank title, matching the tree's own display
+  // fallback (DocumentTreeLeaf/FolderTreeNode).
+  async function exportDocument(docId: string, docTitle: string) {
+    const ok = await downloadExport(`/api/documents/${docId}/export`, `${docTitle || "제목 없음"}.md`);
+    if (!ok) setExportError(true);
+  }
+
+  async function exportFolder(folderId: string, folderName: string) {
+    const ok = await downloadExport(`/api/folders/${folderId}/export`, `${folderName || "제목 없음"}.zip`);
+    if (!ok) setExportError(true);
+  }
+
   const ctx: FolderTreeNodeCtx = {
     folders,
     workspaceId,
@@ -251,6 +279,8 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
     errorFor: (id) => (actionError?.id === id ? actionError.message : null),
   };
 
+  // EXP-02 / UI-SPEC Export Menu Contract: ".zip 내보내기" sits after "이동...", before "삭제" —
+  // destructive items stay array-last.
   const menuItems: FolderMenuItem[] = menu
     ? [
         { label: "새 하위 폴더", icon: FolderPlus, onClick: () => setCreatingChildOf(menu.folderId) },
@@ -261,6 +291,11 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           onClick: () => setMoveTarget({ id: menu.folderId, name: menu.folderName }),
         },
         {
+          label: ".zip 내보내기",
+          icon: FolderDown,
+          onClick: () => exportFolder(menu.folderId, menu.folderName),
+        },
+        {
           label: "삭제",
           icon: Trash2,
           destructive: true,
@@ -269,10 +304,16 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
       ]
     : [];
 
-  // UI-SPEC Tree Node Contract — document nodes get a 1-item menu (no rename/move entry
+  // UI-SPEC Tree Node Contract — document nodes get a 2-item menu (no rename/move entry
   // points; renaming happens in the document's own title input, moving is out of scope/YAGNI).
+  // EXP-01 / UI-SPEC Export Menu Contract: ".md 내보내기" before "삭제".
   const docMenuItems: FolderMenuItem[] = docMenu
     ? [
+        {
+          label: ".md 내보내기",
+          icon: Download,
+          onClick: () => exportDocument(docMenu.docId, docMenu.docTitle),
+        },
         {
           label: "삭제",
           icon: Trash2,
@@ -311,6 +352,22 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           </button>
         </div>
       </div>
+      {/* UI-SPEC Export Menu Contract "error" — sits above whichever of .tree/.searchResults is
+          showing; no auto-dismiss timer (same principle as RestoreRootBanner/UploadErrorBanner). */}
+      {exportError && (
+        <div className={styles.exportErrorBanner} role="alert">
+          <AlertCircle size={16} className={styles.exportErrorIcon} />
+          <p className={styles.exportErrorText}>{EXPORT_ERROR}</p>
+          <button
+            type="button"
+            className={styles.exportErrorClose}
+            aria-label="내보내기 실패 안내 닫기"
+            onClick={() => setExportError(false)}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
       {searchActive ? (
         <SearchResultsList
           workspaceId={workspaceId}
