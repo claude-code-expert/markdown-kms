@@ -126,8 +126,16 @@ Items acknowledged and carried forward from previous milestone close:
 |----------|------|--------|-------------|
 | *(none)* | | | |
 
+## Deferred Verification
+
+전체 phase 구현 후 몰아서 검증하는 방식(사용자 지시 2026-08-08). human_needed 항목은 여기 누적하고 끝에 `/gsd-audit-uat` 또는 phase별 `/gsd-verify-work`로 일괄 확인한다.
+
+| Phase | State | Resume | 남은 항목 |
+|-------|-------|--------|----------|
+| 3 | verification_deferred_human | /gsd-verify-work 3 | DnD 드래그 커서/아웃라인 시각 피드백, MoveFolderModal 자기-서브트리 greying (순수 시각 2건; 자동 4/4 must-haves·811 tests·e2e 15 green) |
+
 ## Session Continuity
 
-Last session: 2026-08-08T03:57:34.905Z
-Stopped at: Completed 03-05-PLAN.md (folder tree interaction UI: context menu, hover actions, inline rename, native DnD move, move modal fallback, delete confirm) — Phase 3 complete (5/5 plans)
+Last session: 2026-08-08
+Stopped at: Phase 3 빌드 완료(5/5 waves)·자동 verify human_needed(4/4 must-haves)·code-review 0C/3W 수정(811 tests green). 검증 defer 기록. 다음 = Phase 4 discuss (build-all-then-test).
 Resume file: None
