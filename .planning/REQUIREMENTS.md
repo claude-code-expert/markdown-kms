@@ -32,7 +32,7 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 
 ### Folder Tree (TREE)
 
-- [ ] **TREE-01** (P0, FR-T1): 사이드바에 워크스페이스>폴더>자식 폴더>문서 계층 트리가 표시된다
+- [x] **TREE-01** (P0, FR-T1): 사이드바에 워크스페이스>폴더>자식 폴더>문서 계층 트리가 표시된다
 - [x] **TREE-02** (P0, FR-T2/NFR-1.3): 폴더 계층은 Closure Table로 저장되고 서브트리 조회가 단일 쿼리로 수행된다
 - [x] **TREE-03** (P0, FR-T3): 폴더 생성·이름 변경·이동·소프트 삭제가 동작한다. 자기 자손으로의 이동은 거부된다
 
@@ -93,7 +93,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-05 | Phase 2 | Complete |
 | EDIT-06 | Phase 2 | Complete |
 | EDIT-08 | Phase 2 | Complete |
-| TREE-01 | Phase 3 | Pending |
+| TREE-01 | Phase 3 | Complete |
 | TREE-02 | Phase 3 | Complete |
 | TREE-03 | Phase 3 | Complete |
 | DOC-01 | Phase 4 | Pending |
