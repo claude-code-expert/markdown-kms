@@ -18,8 +18,13 @@ export function sanitizeZipSegment(name: string): string {
   const cleaned = name
     .replace(/[/\\]/g, "-")
     .replace(/\.\./g, "_")
-    .replace(/[\x00-\x1f]/g, "")
-    .trim();
+    // WR-02: `:` is the Windows drive-letter/ADS separator (e.g. "C:\Windows"); control chars
+    // are stripped alongside it.
+    .replace(/[\x00-\x1f:]/g, "")
+    .trim()
+    // WR-02: leading/trailing dots are invalid on Windows filenames — also covers the odd-dot-run
+    // leftover ("....." -> "__." after the pair-replace above, minus a straggler dot).
+    .replace(/^\.+|\.+$/g, "");
   return cleaned || "제목 없음";
 }
 

@@ -36,4 +36,19 @@ describe("sanitizeZipSegment — zip-slip defense (T-06-ZIPSLIP)", () => {
   it("leaves an ordinary Korean/ASCII title unchanged", () => {
     expect(sanitizeZipSegment("프로젝트 문서")).toBe("프로젝트 문서");
   });
+
+  // WR-02: colon is a Windows drive-letter/ADS separator (e.g. "C:\Windows\System32") that
+  // survived sanitization untouched; a trailing dot on an odd-length dot run ("....." -> "__.")
+  // also survived because /\.\./g only ever consumes non-overlapping pairs.
+  it("strips a colon (Windows drive-letter vector)", () => {
+    expect(sanitizeZipSegment("C:evil")).not.toContain(":");
+  });
+
+  it("leaves no trailing dot after sanitizing an odd-length dot run", () => {
+    expect(sanitizeZipSegment("a...")).not.toMatch(/\.$/);
+  });
+
+  it("leaves no trailing dot when a name ends in a single dot", () => {
+    expect(sanitizeZipSegment("문서.")).not.toMatch(/\.$/);
+  });
 });
