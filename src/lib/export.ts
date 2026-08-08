@@ -28,6 +28,18 @@ export function sanitizeZipSegment(name: string): string {
   return cleaned || "제목 없음";
 }
 
+// WR-01: shared Content-Disposition builder for both export routes. The real (possibly non-ASCII)
+// name always travels via the RFC 5987 filename* parameter; the ASCII filename="..." fallback is
+// only for legacy clients, so it just needs to be a structurally safe quoted-string. CR/LF is
+// stripped defensively (encodeURIComponent already neutralizes it in filename*, and the
+// \x20-\x7E filter already drops it from the fallback, but a raw value must never reach a header
+// setter). `"` and `\` would otherwise break out of the quoted-string and corrupt the header.
+export function contentDispositionHeader(filename: string): string {
+  const safe = filename.replace(/[\r\n]/g, "");
+  const asciiSafe = safe.replace(/[^\x20-\x7E]/g, "_").replace(/["\\]/g, "_");
+  return `attachment; filename="${asciiSafe}"; filename*=UTF-8''${encodeURIComponent(safe)}`;
+}
+
 export interface ZipEntry {
   zipPath: string;
   content: string;

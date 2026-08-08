@@ -60,6 +60,24 @@ describe("GET /api/documents/[id]/export — verbatim .md download (EXP-01)", ()
     expect(disposition).toContain(encodeURIComponent("한글제목.md"));
   });
 
+  it("escapes embedded quotes/backslashes and strips CR/LF from the title in Content-Disposition (WR-01)", async () => {
+    const ws = await createTestWorkspace("md-export-header-injection-ws");
+    createdWorkspaces.push(ws.id);
+    const viewer = await createTestUser("md-export-header-injection-viewer");
+    createdUsers.push(viewer.id);
+    await addMember(ws.id, viewer.id, "VIEWER");
+    mockSessionFor(viewer.id);
+    const title = 'Report "Q3"\\evil\r\nInjected: header-break';
+    const doc = await createTestDocument(ws.id, null, { title, content: "x" });
+
+    const res = await exportRoute(exportRequest(doc.id, "documents"), ctx(doc.id));
+    const disposition = res.headers.get("content-disposition") ?? "";
+    expect(disposition).not.toMatch(/[\r\n]/);
+    const quotedMatch = disposition.match(/filename="([^]*?)"; filename\*=/);
+    expect(quotedMatch).not.toBeNull();
+    expect(quotedMatch![1]).not.toMatch(/["\\]/);
+  });
+
   it("rejects a non-member with 403", async () => {
     const ws = await createTestWorkspace("md-export-403-ws");
     createdWorkspaces.push(ws.id);

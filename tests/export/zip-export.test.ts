@@ -123,6 +123,23 @@ describe("GET /api/folders/[id]/export — VIEWER RBAC + streams a real zip (EXP
     expect(Array.from(buf.slice(0, 2))).toEqual([0x50, 0x4b]); // "PK" zip magic — proves Readable.toWeb() didn't hand back a 0-byte/corrupt stream (Pitfall 3)
   });
 
+  it("escapes embedded quotes/backslashes and strips CR/LF from the folder name in Content-Disposition (WR-01)", async () => {
+    const ws = await createTestWorkspace("zip-route-header-injection-ws");
+    createdWorkspaces.push(ws.id);
+    const viewer = await createTestUser("zip-route-header-injection-viewer");
+    createdUsers.push(viewer.id);
+    await addMember(ws.id, viewer.id, "VIEWER");
+    mockSessionFor(viewer.id);
+    const root = await createFolder(ws.id, null, 'Report "Q3"\\evil\r\nInjected: header-break');
+
+    const res = await exportRoute(exportRequest(root.id, "folders"), ctx(root.id));
+    const disposition = res.headers.get("content-disposition") ?? "";
+    expect(disposition).not.toMatch(/[\r\n]/);
+    const quotedMatch = disposition.match(/filename="([^]*?)"; filename\*=/);
+    expect(quotedMatch).not.toBeNull();
+    expect(quotedMatch![1]).not.toMatch(/["\\]/);
+  });
+
   it("rejects a non-member with 403", async () => {
     const ws = await createTestWorkspace("zip-route-403-ws");
     createdWorkspaces.push(ws.id);

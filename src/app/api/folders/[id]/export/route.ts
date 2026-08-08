@@ -5,7 +5,7 @@ import { Readable } from "node:stream";
 import { db } from "@/db";
 import { folder } from "@/db/schema";
 import { resolveActiveWorkspaceId } from "@/lib/closure";
-import { buildZipEntries, sanitizeZipSegment } from "@/lib/export";
+import { buildZipEntries, contentDispositionHeader, sanitizeZipSegment } from "@/lib/export";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 
 export const runtime = "nodejs"; // archiver is a Node API — no edge runtime (RESEARCH Pattern 3).
@@ -54,11 +54,10 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
 
   const webStream = Readable.toWeb(archive) as ReadableStream;
   const filename = `${folderName}.zip`;
-  const asciiSafe = filename.replace(/[^\x20-\x7E]/g, "_");
   return new Response(webStream, {
     headers: {
       "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="${asciiSafe}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      "Content-Disposition": contentDispositionHeader(filename),
     },
   });
 }

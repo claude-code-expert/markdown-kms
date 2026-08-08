@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getDocument, resolveWorkspaceIdForDocument } from "@/lib/documents";
+import { contentDispositionHeader } from "@/lib/export";
 import { ForbiddenError, forbiddenResponse, requireRole } from "@/lib/rbac";
 
 export const runtime = "nodejs";
@@ -30,11 +31,10 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
   // Pitfall 5: filename* alone breaks on browsers/downloaders that don't understand RFC 5987 —
   // always send both.
   const filename = `${doc.title}.md`;
-  const asciiSafe = filename.replace(/[^\x20-\x7E]/g, "_");
   return new Response(doc.content, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${asciiSafe}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      "Content-Disposition": contentDispositionHeader(filename),
     },
   });
 }
