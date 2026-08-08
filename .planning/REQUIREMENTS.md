@@ -27,7 +27,7 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 - [x] **EDIT-08** (P0, NFR-3.1): `<script>`·이벤트 핸들러·`javascript:` URL이 미리보기에서 실행되지 않는다. GFM 태스크 체크박스는 sanitize를 통과해 렌더링된다
 - [x] **EDIT-09** (P1, FR-E6): 이미지 업로드 완료 시 커서 위치에 이미지 마크다운이 삽입된다
 - [ ] **EDIT-10** (P1, FR-E7): 툴바는 lucide 아이콘 + hover 300ms 내 툴팁 + 클릭 pressed 피드백을 갖는다
-- [ ] **EDIT-11** (P1, FR-E10): 1분 주기 임시 스냅샷이 저장되고, 재진입 시 임시본이 최신이면 복구 여부를 묻는다
+- [x] **EDIT-11** (P1, FR-E10): 1분 주기 임시 스냅샷이 저장되고, 재진입 시 임시본이 최신이면 복구 여부를 묻는다
 - [ ] **EDIT-12** (P1, FR-E11): 라이트/다크 테마와 split/에디터 전용/미리보기 전용 레이아웃을 전환할 수 있다
 
 ### Folder Tree (TREE)
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EDIT-07 | Phase 4 | Complete |
 | EDIT-09 | Phase 5 | Complete |
 | EDIT-10 | Phase 5 | Pending |
-| EDIT-11 | Phase 5 | Pending |
+| EDIT-11 | Phase 5 | Complete |
 | EDIT-12 | Phase 5 | Pending |
 | DOC-03 | Phase 6 | Pending |
 | DOC-04 | Phase 6 | Pending |
