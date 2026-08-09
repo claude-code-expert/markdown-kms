@@ -36,7 +36,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
   }
 
   try {
-    await decideJoinRequest(reqId, parsed.data.decision, session.userId);
+    await decideJoinRequest(wsId, reqId, parsed.data.decision, session.userId);
   } catch (err) {
     if (err instanceof AlreadyDecidedError) {
       return Response.json({ error: "이미 처리된 신청이에요." }, { status: 409 });

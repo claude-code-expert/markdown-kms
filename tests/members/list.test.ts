@@ -48,7 +48,7 @@ describe("getPendingJoinRequests", () => {
     const req1 = await createJoinRequest(ws.id, applicant1.id);
     const req2 = await createJoinRequest(ws.id, applicant2.id);
     const approvedReq = await createJoinRequest(ws.id, approvedApplicant.id);
-    await decideJoinRequest(approvedReq.id, "APPROVED", admin.id);
+    await decideJoinRequest(ws.id, approvedReq.id, "APPROVED", admin.id);
 
     const otherWs = await createTestWorkspace("members-pending-other-ws");
     const otherApplicant = await createTestUser("members-pending-other-applicant");

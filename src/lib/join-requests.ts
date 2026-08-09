@@ -26,6 +26,7 @@ export async function createJoinRequest(workspaceId: string, userId: string, cli
 // re-checked at transaction-execution time — not a pre-transaction SELECT — so two concurrent
 // decisions on the same reqId can't both succeed (2nd sees 0 rows -> AlreadyDecidedError).
 export async function decideJoinRequest(
+  workspaceId: string,
   reqId: string,
   decision: "APPROVED" | "REJECTED",
   adminUserId: string,
@@ -35,18 +36,29 @@ export async function decideJoinRequest(
     const decided = await tx
       .update(workspaceJoinRequest)
       .set({ status: decision, decidedBy: adminUserId, decidedAt: new Date() })
-      .where(and(eq(workspaceJoinRequest.id, reqId), eq(workspaceJoinRequest.status, "PENDING")))
+      .where(
+        and(
+          eq(workspaceJoinRequest.id, reqId),
+          eq(workspaceJoinRequest.workspaceId, workspaceId), // CR-01: reqId alone isn't enough — scope to the caller's authorized workspace
+          eq(workspaceJoinRequest.status, "PENDING"),
+        ),
+      )
       .returning({ userId: workspaceJoinRequest.userId, workspaceId: workspaceJoinRequest.workspaceId });
 
     if (decided.length === 0) throw new AlreadyDecidedError();
-    const { userId, workspaceId } = decided[0];
+    // CR-01: destructured as decidedWorkspaceId (not workspaceId) — shadowing the outer
+    // workspaceId param here would put it in TDZ for the WHERE clause above (same block scope).
+    const { userId, workspaceId: decidedWorkspaceId } = decided[0];
 
     if (decision === "APPROVED") {
       // acceptInvitation's admission idiom: onConflictDoNothing keeps this idempotent even if the
       // applicant is already a member (with any role) by the time an ADMIN approves.
-      await tx.insert(workspaceMember).values({ workspaceId, userId, role: "EDITOR" }).onConflictDoNothing();
+      await tx
+        .insert(workspaceMember)
+        .values({ workspaceId: decidedWorkspaceId, userId, role: "EDITOR" })
+        .onConflictDoNothing();
     }
 
-    return { userId, workspaceId, decision };
+    return { userId, workspaceId: decidedWorkspaceId, decision };
   });
 }

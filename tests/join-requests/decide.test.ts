@@ -55,7 +55,7 @@ describe("createJoinRequest / decideJoinRequest", () => {
     await addMember(ws.id, admin.id, "ADMIN");
     const created = await createJoinRequest(ws.id, applicant.id);
 
-    const result = await decideJoinRequest(created.id, "APPROVED", admin.id);
+    const result = await decideJoinRequest(ws.id, created.id, "APPROVED", admin.id);
     expect(result.decision).toBe("APPROVED");
 
     const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
@@ -75,7 +75,7 @@ describe("createJoinRequest / decideJoinRequest", () => {
     await addMember(ws.id, admin.id, "ADMIN");
     const created = await createJoinRequest(ws.id, applicant.id);
 
-    const result = await decideJoinRequest(created.id, "REJECTED", admin.id);
+    const result = await decideJoinRequest(ws.id, created.id, "REJECTED", admin.id);
     expect(result.decision).toBe("REJECTED");
 
     const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
@@ -93,9 +93,9 @@ describe("createJoinRequest / decideJoinRequest", () => {
     await addMember(ws.id, admin.id, "ADMIN");
     const created = await createJoinRequest(ws.id, applicant.id);
 
-    await decideJoinRequest(created.id, "APPROVED", admin.id);
+    await decideJoinRequest(ws.id, created.id, "APPROVED", admin.id);
 
-    await expect(decideJoinRequest(created.id, "REJECTED", admin.id)).rejects.toThrow(AlreadyDecidedError);
+    await expect(decideJoinRequest(ws.id, created.id, "REJECTED", admin.id)).rejects.toThrow(AlreadyDecidedError);
 
     const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
     expect(row.status).toBe("APPROVED"); // unchanged by the rejected re-decision attempt
@@ -109,7 +109,7 @@ describe("createJoinRequest / decideJoinRequest", () => {
     await addMember(ws.id, applicant.id, "VIEWER"); // already a member with a different role
     const created = await createJoinRequest(ws.id, applicant.id);
 
-    await decideJoinRequest(created.id, "APPROVED", admin.id);
+    await decideJoinRequest(ws.id, created.id, "APPROVED", admin.id);
 
     const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
     expect(row.status).toBe("APPROVED");
@@ -129,8 +129,8 @@ describe("createJoinRequest / decideJoinRequest", () => {
     await addMember(ws.id, admin.id, "ADMIN");
     const created = await createJoinRequest(ws.id, applicant.id);
 
-    await decideJoinRequest(created.id, "APPROVED", admin.id);
-    await expect(decideJoinRequest(created.id, "APPROVED", admin.id)).rejects.toThrow(AlreadyDecidedError);
+    await decideJoinRequest(ws.id, created.id, "APPROVED", admin.id);
+    await expect(decideJoinRequest(ws.id, created.id, "APPROVED", admin.id)).rejects.toThrow(AlreadyDecidedError);
 
     const rows = await db
       .select()
@@ -233,6 +233,28 @@ describe("PATCH /api/workspaces/:id/join-requests/:reqId", () => {
 
     const second = await callPatchRoute(ws.id, created.id, { decision: "REJECTED" });
     expect(second.status).toBe(409);
+  });
+
+  it("CR-01: cross-workspace approve is rejected (409), no membership created, request stays PENDING", async () => {
+    // Attacker is OWNER of their own workspace (wsA) and files a join request against a
+    // different, unrelated workspace (wsB) they don't administer. Approving via wsA's PATCH
+    // route must not touch wsB's request.
+    const attacker = await createTestUser("jr-cross-attacker");
+    const wsA = await createTestWorkspace("jr-cross-a");
+    await addMember(wsA.id, attacker.id, "OWNER");
+
+    const wsB = await createTestWorkspace("jr-cross-b");
+    const created = await createJoinRequest(wsB.id, attacker.id);
+    mockSessionFor(attacker.id);
+
+    const res = await callPatchRoute(wsA.id, created.id, { decision: "APPROVED" });
+    expect(res.status).toBe(409);
+
+    const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
+    expect(row.status).toBe("PENDING");
+
+    const member = await isMember(wsB.id, attacker.id);
+    expect(member).toBeNull();
   });
 
   it("rejects a non-uuid reqId (400)", async () => {
