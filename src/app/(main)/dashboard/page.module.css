@@ -22,3 +22,23 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-md);
 }
+
+/* UI-SPEC Dashboard Join-Request Contract "위치" — separated from .grid with a divider, kept as
+   a secondary/bottom action so it never competes with "워크스페이스 만들기" (Phase 1 Visual
+   Hierarchy). max-width caps the input row at a readable line length instead of stretching full
+   page width. */
+.joinSection {
+  max-width: 400px;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+}
+
+.joinLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--muted);
+  margin: 0 0 var(--space-sm) 0;
+}

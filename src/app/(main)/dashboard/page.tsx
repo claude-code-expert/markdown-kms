@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { listMembershipsForUser } from "@/lib/db-membership";
 import { WorkspaceCard } from "@/components/workspace/WorkspaceCard";
 import { CreateWorkspaceButton } from "@/components/workspace/CreateWorkspaceButton";
+import { JoinWorkspaceInput } from "@/components/workspace/JoinWorkspaceInput";
 import styles from "./page.module.css";
 
 // D-11: card dashboard landing screen. D-12: showing the workspace here satisfies AUTH-03's
@@ -33,6 +34,10 @@ export default async function DashboardPage() {
             role={membership.role}
           />
         ))}
+      </div>
+      <div className={styles.joinSection}>
+        <span className={styles.joinLabel}>워크스페이스 참여 신청</span>
+        <JoinWorkspaceInput />
       </div>
     </main>
   );

@@ -150,6 +150,31 @@
   color: var(--accent);
 }
 
+/* UI-SPEC Layout Contract "멤버 페이지 진입점" — .trashLink/.trashLinkActive 선언 복제, 신규 값 없음. */
+.membersLink {
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.membersLink:hover {
+  background: var(--surface-2);
+}
+
+.membersLinkActive {
+  background: var(--accent-weak);
+  color: var(--accent);
+}
+
 /* EXP-01/EXP-02 Export Menu Contract "error" — same left-border/surface-2 layout as
    RestoreRootBanner/UploadErrorBanner (Phase 4/2), color driven fully destructive per spec
    (border/icon/text all --destructive, unlike those two which only tint the icon/text). */

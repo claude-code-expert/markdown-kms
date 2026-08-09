@@ -1,0 +1,27 @@
+/* UI-SPEC Dashboard Join-Request Contract — inline input row, not a modal. Section chrome
+   (border-top divider, section margins) lives in dashboard/page.module.css; this file only
+   owns the input+button row and the feedback line. */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.input {
+  flex: 1;
+}
+
+.feedback {
+  margin: var(--space-xs) 0 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.feedbackSuccess {
+  color: var(--text);
+}
+
+.feedbackError {
+  color: var(--destructive);
+}

@@ -13,6 +13,7 @@ import {
   Pencil,
   FolderInput,
   Trash2,
+  Users,
   X,
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -423,6 +424,16 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
       >
         <Trash2 size={16} />
         <span>휴지통</span>
+      </Link>
+      {/* UI-SPEC Layout Contract "멤버 페이지 진입점" — trashLink 블록 복제, 동일 관례. */}
+      <Link
+        href={`/w/${workspaceId}/members`}
+        className={[styles.membersLink, pathname === `/w/${workspaceId}/members` ? styles.membersLinkActive : ""]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <Users size={16} />
+        <span>멤버</span>
       </Link>
       <ThemeToggle />
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
