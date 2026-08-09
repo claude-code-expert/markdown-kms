@@ -202,6 +202,7 @@ Items acknowledged and carried forward from previous milestone close:
 | 4 | verification_deferred_human | /gsd-verify-work 4 | RestoreRootBanner 실제 렌더(부모 삭제 후 복원), ADMIN 완전삭제 클릭스루(시드 e2e가 EDITOR라 미검) (자동 4/4 must-haves·884 tests·e2e 20/20·code-review 1C/3W 수정) |
 | 5 | verification_deferred_human | /gsd-verify-work 5 | 다크 no-FOUC 새로고침 체감·패널 드래그 리사이즈 부드러움·툴바 300ms 툴팁·전체 crash-recovery 루프(편집→60s→새로고침→복구 다이얼로그) 실브라우저 4건 (자동 4/4 wired·930 tests·image-upload e2e live·code-review 2C/3W 수정+WR-02 문서화) |
 | 6 | verification_deferred_human | /gsd-verify-work 6 | TagBar 시각(3제한 disable·중복 에러·refresh 유지)·SearchBox 한국어 IME 타이밍 체감·실브라우저 .md/.zip 다운로드+압축해제 구조·한국어 파일명 3건 (자동 4/4 must-haves·986 tests·psql gin_trgm_ops 확인·code-review 1C[export DoS]/3W/1I 수정) |
+| 7 | verification_deferred_human | /gsd-verify-work 7 | 콘솔 링크 클릭→EDITOR 편입(2계정)·ADMIN vs VIEWER 멤버 페이지 섹션 노출·대시보드 참여신청→PENDING 목록(2계정) 3건 (자동 24/24 must-haves·1050 tests·pnpm build rbac 미유입·psql 토큰컬럼 없음 확인·code-review **1C[권한상승]**/3W 수정). ⚠ **설정 필요**: `.env.local`에 `AUTH_URL`(또는 NEXTAUTH_URL) 추가해야 초대 링크 origin 생성됨(WR-01 fail-closed). |
 
 ## Session Continuity
 
