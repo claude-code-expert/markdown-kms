@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { workspaceJoinRequest, workspaceMember } from "@/db/schema";
+import { workspace, workspaceJoinRequest, workspaceMember } from "@/db/schema";
 import { createJoinRequest } from "@/lib/join-requests";
 import { forbiddenResponse } from "@/lib/rbac";
 
@@ -21,6 +21,12 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
   const session = await auth();
   if (!session?.user?.id) return forbiddenResponse();
   const userId = session.user.id;
+
+  // WR-02: without this, a well-formed but nonexistent wsId falls straight through to
+  // createJoinRequest's INSERT, which violates the workspace_id FK and surfaces as a 500 (and
+  // a status-code oracle for workspace existence).
+  const [ws] = await db.select({ id: workspace.id }).from(workspace).where(eq(workspace.id, wsId));
+  if (!ws) return Response.json({ error: "존재하지 않는 워크스페이스예요." }, { status: 404 });
 
   const [existingMember] = await db
     .select()

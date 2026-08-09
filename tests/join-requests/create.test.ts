@@ -80,4 +80,12 @@ describe("POST /api/workspaces/:id/join-requests", () => {
     const res = await callRoute("not-a-uuid");
     expect(res.status).toBe(400);
   });
+
+  it("WR-02: rejects a well-formed but nonexistent workspace id (404, not a 500 FK leak)", async () => {
+    const applicant = await createTestUser("jr-post-no-such-ws");
+    mockSessionFor(applicant.id);
+
+    const res = await callRoute("00000000-0000-0000-0000-000000000000");
+    expect(res.status).toBe(404);
+  });
 });
