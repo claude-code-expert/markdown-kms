@@ -242,11 +242,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Owner or Admin can approve or reject a pending join request.
   3. Owner or Admin can search members and send an invite email; clicking the signed, one-time, expiring link admits the invitee as EDITOR.
 
-**Plans**: 5 plans
+**Plans**: 1/5 plans executed
 
 **Wave 1**
 
-- [ ] 07-01-PLAN.md — Foundation: invitation/workspace_join_request 스키마 + 마이그레이션(one-way 게이트) + HMAC 토큰 encode/verify 순수 헬퍼
+- [x] 07-01-PLAN.md — Foundation: invitation/workspace_join_request 스키마 + 마이그레이션(one-way 게이트) + HMAC 토큰 encode/verify 순수 헬퍼
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -288,5 +288,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
-| 7. Workspace Collaboration (Join & Invite) | 0/5 | Not started | - |
+| 7. Workspace Collaboration (Join & Invite) | 1/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |

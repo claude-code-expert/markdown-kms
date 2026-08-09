@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 06
-current_phase_name: tags-search-export
-status: verifying
-stopped_at: Completed 06-04-PLAN.md (export .md/.zip, Phase 6 complete)
-last_updated: "2026-08-08T10:43:50.206Z"
-last_activity: 2026-08-08
-last_activity_desc: Phase 06 execution started
+current_phase: 07
+current_phase_name: workspace-collaboration-join-invite
+status: executing
+stopped_at: Completed 07-01-PLAN.md (invitation/workspace_join_request schema + migration + invitation-token HMAC helper)
+last_updated: "2026-08-09T03:35:01.924Z"
+last_activity: 2026-08-09
+last_activity_desc: Phase 07 execution started
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 6
-  total_plans: 32
-  completed_plans: 32
+  total_plans: 37
+  completed_plans: 33
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-01)
 
 **Core value:** 에디터에 입력하면 60ms 안에 미리보기에 정확히(CommonMark 0.31.2 + GFM 3종) 렌더링되는 문서 작성 경험.
-**Current focus:** Phase 06 — tags-search-export
+**Current focus:** Phase 07 — workspace-collaboration-join-invite
 
 ## Current Position
 
-Phase: 06 (tags-search-export) — EXECUTING
-Plan: 4 of 4
-Status: Phase complete — ready for verification
-Last activity: 2026-08-08 — Phase 06 execution started
+Phase: 07 (workspace-collaboration-join-invite) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-09 — Phase 07 execution started
 
-Progress: [██████████] 100%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
@@ -86,6 +86,7 @@ Progress: [██████████] 100%
 | Phase 06 P02 | 15min | 2 tasks | 9 files |
 | Phase 06 P03 | 22min | 2 tasks | 8 files |
 | Phase 06 P04 | 15min | 3 tasks | 10 files |
+| Phase 07 P01 | 8min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -160,6 +161,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-03: 태그 매칭은 EXISTS 서브쿼리, 태그 목록 반환은 상관 서브쿼리(array_agg)로 분리 — WHERE로 필터된 LEFT JOIN 하나만 쓰면 title/content 매칭 문서의 태그 일부가 누락됨
 - [Phase ?]: 06-03: SearchResultsList/useSearchResults를 SearchBox.tsx 한 파일에서 함께 export — 검색 입력과 결과 패널이 FolderTree DOM상 비인접이라 상태를 부모로 끌어올리되 신규 파일은 늘리지 않음
 - [Phase ?]: archiver 8.0.0 dropped the archiver(format,opts) factory function assumed by RESEARCH/PATTERNS — switched to the ZipArchive class export (Rule 1 auto-fix)
+- [Phase ?]: 07-01: FK cascade policy follows TRD §3 DDL literally (createdBy/decidedBy: no cascade) — matches folder.parentId precedent
+- [Phase ?]: 07-01: No DB partial unique index for duplicate-PENDING join requests — deferred to app-level WHERE guard in 07-03 (RESEARCH Alternatives, TRD DDL unchanged)
+- [Phase ?]: 07-01: One-way invitation/workspace_join_request migration checkpoint pre-approved by user via orchestrator (2026-08-09), same precedent as 03-01/04-01/06-01
 
 ### Pending Todos
 
@@ -191,6 +195,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-08T10:43:50.197Z
-Stopped at: Completed 06-04-PLAN.md (export .md/.zip, Phase 6 complete)
+Last session: 2026-08-09T03:35:01.906Z
+Stopped at: Completed 07-01-PLAN.md (invitation/workspace_join_request schema + migration + invitation-token HMAC helper)
 Resume file: None

@@ -47,9 +47,9 @@ v1 = R1(P0) + R2(P1) + R3(P2) 전체. P2도 v1에 포함하되 후순위 (REQUIR
 
 - [x] **WS-01** (P0, FR-W1/W2): Owner/Admin/Editor/Viewer 권한 매트릭스(PRD §3)대로 서버가 검증하고 위반 시 403을 반환한다
 - [x] **WS-02** (P0, PRD §2-1): 회원은 워크스페이스를 생성할 수 있고 생성자가 OWNER가 된다. 워크스페이스 삭제는 OWNER만 가능하다
-- [ ] **WS-03** (P1, FR-W3): 회원은 워크스페이스에 가입 신청할 수 있다
-- [ ] **WS-04** (P1, FR-W4): Owner·Admin은 가입 신청을 승인·거절할 수 있다
-- [ ] **WS-05** (P1, FR-W5/NFR-3.3): Owner·Admin은 회원을 검색해 초대 메일을 발송하고, 수락 링크(서명·일회성·만료)를 클릭한 회원은 EDITOR로 편입된다
+- [x] **WS-03** (P1, FR-W3): 회원은 워크스페이스에 가입 신청할 수 있다
+- [x] **WS-04** (P1, FR-W4): Owner·Admin은 가입 신청을 승인·거절할 수 있다
+- [x] **WS-05** (P1, FR-W5/NFR-3.3): Owner·Admin은 회원을 검색해 초대 메일을 발송하고, 수락 링크(서명·일회성·만료)를 클릭한 회원은 EDITOR로 편입된다
 
 ### Export (EXP)
 
@@ -107,9 +107,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOC-04 | Phase 6 | Complete |
 | EXP-01 | Phase 6 | Complete |
 | EXP-02 | Phase 6 | Complete |
-| WS-03 | Phase 7 | Pending |
-| WS-04 | Phase 7 | Pending |
-| WS-05 | Phase 7 | Pending |
+| WS-03 | Phase 7 | Complete |
+| WS-04 | Phase 7 | Complete |
+| WS-05 | Phase 7 | Complete |
 | PRES-01 | Phase 8 | Pending |
 | PRES-02 | Phase 8 | Pending |
 | AUTH-04 | Phase 8 | Pending |
