@@ -1,0 +1,44 @@
+/* Reuses login/page.module.css's centered-card shell (UI-SPEC Invitation-Accept Result Contract:
+   "로그인 페이지와 동일 .page + Card") — only new rules are the icon/title/body vertical rhythm,
+   all values from the existing space/color tokens (no new hex/px values). */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-md);
+  background: var(--bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.iconAccent {
+  color: var(--accent);
+  margin-bottom: var(--space-md);
+}
+
+.iconDestructive {
+  color: var(--destructive);
+  margin-bottom: var(--space-md);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 var(--space-sm);
+}
+
+.body {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 var(--space-md);
+}
