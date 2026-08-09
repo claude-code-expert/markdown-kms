@@ -6,7 +6,8 @@ import { describe, expect, it, vi } from "vitest";
 import { db } from "@/db";
 import { workspaceJoinRequest, workspaceMember } from "@/db/schema";
 import { AlreadyDecidedError, createJoinRequest, decideJoinRequest } from "@/lib/join-requests";
-import { addMember, createTestUser, createTestWorkspace } from "../rbac/helpers";
+import { PATCH } from "@/app/api/workspaces/[id]/join-requests/[reqId]/route";
+import { addMember, createTestUser, createTestWorkspace, mockSessionFor } from "../rbac/helpers";
 
 // tests/rbac/helpers.ts imports @/auth transitively — first-applied precedent in
 // tests/invitations/accept.test.ts, same reason (next-auth fails to resolve next/server under
@@ -19,6 +20,17 @@ async function isMember(workspaceId: string, userId: string) {
     .from(workspaceMember)
     .where(and(eq(workspaceMember.workspaceId, workspaceId), eq(workspaceMember.userId, userId)));
   return row ?? null;
+}
+
+function callPatchRoute(wsId: string, reqId: string, body: unknown) {
+  return PATCH(
+    new Request(`http://localhost/api/workspaces/${wsId}/join-requests/${reqId}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+    { params: Promise.resolve({ id: wsId, reqId }) },
+  );
 }
 
 describe("createJoinRequest / decideJoinRequest", () => {
@@ -125,5 +137,80 @@ describe("createJoinRequest / decideJoinRequest", () => {
       .from(workspaceMember)
       .where(and(eq(workspaceMember.workspaceId, ws.id), eq(workspaceMember.userId, applicant.id)));
     expect(rows).toHaveLength(1); // second approve never re-inserts
+  });
+});
+
+describe("PATCH /api/workspaces/:id/join-requests/:reqId", () => {
+  it.each(["VIEWER", "EDITOR"] as const)("RBAC: %s cannot decide (403)", async (role) => {
+    const member = await createTestUser(`jr-patch-${role.toLowerCase()}`);
+    const applicant = await createTestUser(`jr-patch-target-${role.toLowerCase()}`);
+    const ws = await createTestWorkspace(`jr-patch-rbac-${role}`);
+    await addMember(ws.id, member.id, role);
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(member.id);
+
+    const res = await callPatchRoute(ws.id, created.id, { decision: "APPROVED" });
+    expect(res.status).toBe(403);
+
+    const [row] = await db.select().from(workspaceJoinRequest).where(eq(workspaceJoinRequest.id, created.id));
+    expect(row.status).toBe("PENDING");
+  });
+
+  it("RBAC: non-member cannot decide (403)", async () => {
+    const outsider = await createTestUser("jr-patch-outsider");
+    const applicant = await createTestUser("jr-patch-target-outsider");
+    const ws = await createTestWorkspace("jr-patch-rbac-nonmember");
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(outsider.id);
+
+    const res = await callPatchRoute(ws.id, created.id, { decision: "APPROVED" });
+    expect(res.status).toBe(403);
+  });
+
+  it("rejects an out-of-enum decision value (400)", async () => {
+    const admin = await createTestUser("jr-patch-admin-baddecision");
+    const applicant = await createTestUser("jr-patch-target-baddecision");
+    const ws = await createTestWorkspace("jr-patch-bad-decision");
+    await addMember(ws.id, admin.id, "ADMIN");
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(admin.id);
+
+    const res = await callPatchRoute(ws.id, created.id, { decision: "MAYBE" });
+    expect(res.status).toBe(400);
+  });
+
+  it("rejects a nonexistent reqId (409)", async () => {
+    const admin = await createTestUser("jr-patch-admin-nosuchreq");
+    const ws = await createTestWorkspace("jr-patch-no-such-req");
+    await addMember(ws.id, admin.id, "ADMIN");
+    mockSessionFor(admin.id);
+
+    const res = await callPatchRoute(ws.id, "00000000-0000-0000-0000-000000000000", { decision: "APPROVED" });
+    expect(res.status).toBe(409);
+  });
+
+  it("rejects deciding an already-decided reqId (409)", async () => {
+    const admin = await createTestUser("jr-patch-admin-already");
+    const applicant = await createTestUser("jr-patch-target-already");
+    const ws = await createTestWorkspace("jr-patch-already");
+    await addMember(ws.id, admin.id, "ADMIN");
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(admin.id);
+
+    const first = await callPatchRoute(ws.id, created.id, { decision: "APPROVED" });
+    expect(first.status).toBe(200);
+
+    const second = await callPatchRoute(ws.id, created.id, { decision: "REJECTED" });
+    expect(second.status).toBe(409);
+  });
+
+  it("rejects a non-uuid reqId (400)", async () => {
+    const admin = await createTestUser("jr-patch-admin-baduuid");
+    const ws = await createTestWorkspace("jr-patch-bad-reqid-uuid");
+    await addMember(ws.id, admin.id, "ADMIN");
+    mockSessionFor(admin.id);
+
+    const res = await callPatchRoute(ws.id, "not-a-uuid", { decision: "APPROVED" });
+    expect(res.status).toBe(400);
   });
 });
