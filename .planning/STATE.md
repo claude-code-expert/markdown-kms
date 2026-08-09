@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 07
 current_phase_name: workspace-collaboration-join-invite
-status: executing
-stopped_at: "Completed 07-04-PLAN.md (member data + search: member-search.ts searchUsersForInvite + members/search route ADMIN + members.ts getWorkspaceMembers/getPendingJoinRequests)"
-last_updated: "2026-08-09T03:55:02.791Z"
+status: verifying
+stopped_at: "Completed 07-05-PLAN.md (UI integration: members page RSC + MembersView/MemberRow/PendingRequestRow + InviteSearch + dashboard JoinWorkspaceInput + FolderTree members link — Phase 7 fully executed, ready for /gsd-verify-work 7)"
+last_updated: "2026-08-09T04:06:01.597Z"
 last_activity: 2026-08-09
 last_activity_desc: Phase 07 execution started
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 37
-  completed_plans: 36
+  completed_plans: 37
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 
 Phase: 07 (workspace-collaboration-join-invite) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-09 — Phase 07 execution started
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Progress: [██████████] 97%
 | Phase 07 P02 | 7min | 3 tasks | 8 files |
 | Phase 07 P03 | 6min | 3 tasks | 5 files |
 | Phase 07 P04 | 25min | 2 tasks | 5 files |
+| Phase 07 P05 | 45min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -171,6 +172,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 07-03: join-requests.ts reuses 07-02's guard-update-transaction admission idiom verbatim (WHERE status='PENDING' + onConflictDoNothing EDITOR insert) — no new pattern
 - [Phase ?]: 07-03: PATCH join-requests/:reqId AlreadyDecidedError->409 folds both already-decided and nonexistent reqId into one response (no existence oracle), matching invitations.ts's invalid-signature fold
 - [Phase ?]: member-search 라우트는 normalizeNFC를 호출하지 않는다 -- search.ts의 경계-정규화 관례를 유지하되, email/name 조회는 documents.title의 Hangul NFC/NFD 충돌 케이스가 적용되지 않아 계획이 재량으로 남긴 대로 생략.
+- [Phase ?]: 07-05: InviteSearch shipped as a Task-1 compile stub, fully implemented in Task 2 (plan's own file-list split created the ordering dependency)
+- [Phase ?]: 07-05: MemberRowData.role typed as plain string, not rbac.ts's Role union — keeps client component fully decoupled from @/lib/rbac (even type-only imports avoided)
 
 ### Pending Todos
 
@@ -202,6 +205,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T03:55:02.780Z
-Stopped at: Completed 07-04-PLAN.md (member data + search: member-search.ts searchUsersForInvite + members/search route ADMIN + members.ts getWorkspaceMembers/getPendingJoinRequests)
+Last session: 2026-08-09T04:06:01.587Z
+Stopped at: Completed 07-05-PLAN.md (UI integration: members page RSC + MembersView/MemberRow/PendingRequestRow + InviteSearch + dashboard JoinWorkspaceInput + FolderTree members link — Phase 7 fully executed, ready for /gsd-verify-work 7)
 Resume file: None

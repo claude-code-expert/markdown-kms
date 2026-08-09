@@ -242,7 +242,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Owner or Admin can approve or reject a pending join request.
   3. Owner or Admin can search members and send an invite email; clicking the signed, one-time, expiring link admits the invitee as EDITOR.
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans executed
 
 **Wave 1**
 
@@ -259,7 +259,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Wave 4** *(blocked on Wave 3)*
 
-- [ ] 07-05-PLAN.md — UI 통합: 멤버 페이지(승인/거절·초대) + 대시보드 참여 신청 + FolderTree 멤버 링크 [WS-03, WS-04, WS-05]
+- [x] 07-05-PLAN.md — UI 통합: 멤버 페이지(승인/거절·초대) + 대시보드 참여 신청 + FolderTree 멤버 링크 [WS-03, WS-04, WS-05]
 
 ### Phase 8: Presentation Mode & Google Sign-In
 
@@ -288,5 +288,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
-| 7. Workspace Collaboration (Join & Invite) | 4/5 | In Progress|  |
+| 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
