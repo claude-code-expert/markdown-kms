@@ -242,7 +242,24 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Owner or Admin can approve or reject a pending join request.
   3. Owner or Admin can search members and send an invite email; clicking the signed, one-time, expiring link admits the invitee as EDITOR.
 
-**Plans**: TBD
+**Plans**: 5 plans
+
+**Wave 1**
+
+- [ ] 07-01-PLAN.md — Foundation: invitation/workspace_join_request 스키마 + 마이그레이션(one-way 게이트) + HMAC 토큰 encode/verify 순수 헬퍼
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 07-02-PLAN.md — TRACER: 초대 발급→콘솔 메일→수락→EDITOR 편입 스파인 (mailer + invitations.ts 5-상태 + POST 라우트 + accept RSC) [WS-05]
+
+**Wave 3** *(blocked on Wave 2, parallel)*
+
+- [ ] 07-03-PLAN.md — 가입 신청 백엔드: join-requests.ts + POST(회원 신청) + PATCH(ADMIN 승인/거절 EDITOR 편입) [WS-03, WS-04]
+- [ ] 07-04-PLAN.md — 회원 검색/데이터: member-search.ts(ILIKE·isMember) + members.ts(멤버/PENDING 목록) + members/search 라우트 [WS-05]
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 07-05-PLAN.md — UI 통합: 멤버 페이지(승인/거절·초대) + 대시보드 참여 신청 + FolderTree 멤버 링크 [WS-03, WS-04, WS-05]
 
 ### Phase 8: Presentation Mode & Google Sign-In
 
@@ -271,5 +288,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Documents, Autosave & 3-Pane Workspace | 5/5 | In Progress|  |
 | 5. Editor Enhancements & Personalization | 7/7 | In Progress|  |
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
-| 7. Workspace Collaboration (Join & Invite) | 0/TBD | Not started | - |
+| 7. Workspace Collaboration (Join & Invite) | 0/5 | Not started | - |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
