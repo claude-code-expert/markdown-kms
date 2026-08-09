@@ -146,8 +146,10 @@ export const documentTag = pgTable(
 );
 
 // TRD §3 (WS-03/WS-04): 워크스페이스 가입 신청. status는 PENDING/APPROVED/REJECTED만
-// 허용(workspaceMember.role CHECK와 동일 관례). 중복 PENDING 방지는 애플리케이션 레벨
-// WHERE 가드로 처리(RESEARCH Alternatives — DB partial unique index 미도입, TRD DDL 무변경).
+// 허용(workspaceMember.role CHECK와 동일 관례). 중복 PENDING 방지는 애플리케이션 레벨 SELECT
+// 가드(빠른 실패용)와 DB partial unique index(workspace_id, user_id) WHERE status='PENDING'
+// 둘 다로 처리 — 후자가 실제 동시성 가드(WR-03, drizzle/0008_join_request_pending_unique.sql
+// custom SQL 마이그레이션. pg_trgm 선례처럼 이 DSL에는 없음).
 export const workspaceJoinRequest = pgTable(
   "workspace_join_request",
   {

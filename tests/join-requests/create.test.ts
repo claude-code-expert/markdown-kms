@@ -5,6 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { describe, expect, it, vi } from "vitest";
 import { db } from "@/db";
 import { workspaceJoinRequest } from "@/db/schema";
+import { DuplicatePendingRequestError, createJoinRequest as createJoinRequestLib } from "@/lib/join-requests";
 import { POST } from "@/app/api/workspaces/[id]/join-requests/route";
 import { addMember, createTestUser, createTestWorkspace, mockSessionFor } from "../rbac/helpers";
 
@@ -87,5 +88,19 @@ describe("POST /api/workspaces/:id/join-requests", () => {
 
     const res = await callRoute("00000000-0000-0000-0000-000000000000");
     expect(res.status).toBe(404);
+  });
+
+  it("WR-03: concurrent double-submit past the app-level SELECT guard hits the DB partial unique index", async () => {
+    // Bypasses the route's SELECT-then-INSERT pre-check entirely (that's the TOCTOU window this
+    // proves is now closed at the DB level) by calling createJoinRequest directly twice for the
+    // same (workspace, user) pair, as if two concurrent requests both passed the pre-check SELECT.
+    const applicant = await createTestUser("jr-post-race");
+    const ws = await createTestWorkspace("jr-post-race-ws");
+
+    await createJoinRequestLib(ws.id, applicant.id);
+    await expect(createJoinRequestLib(ws.id, applicant.id)).rejects.toThrow(DuplicatePendingRequestError);
+
+    const rows = await findRequest(ws.id, applicant.id);
+    expect(rows).toHaveLength(1); // the DB constraint, not app code, blocked the second row
   });
 });

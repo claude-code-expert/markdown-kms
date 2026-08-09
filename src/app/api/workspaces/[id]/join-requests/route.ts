@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { workspace, workspaceJoinRequest, workspaceMember } from "@/db/schema";
-import { createJoinRequest } from "@/lib/join-requests";
+import { DuplicatePendingRequestError, createJoinRequest } from "@/lib/join-requests";
 import { forbiddenResponse } from "@/lib/rbac";
 
 export const runtime = "nodejs";
@@ -50,6 +50,16 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
     return Response.json({ error: "이미 멤버이거나 이미 신청한 워크스페이스예요." }, { status: 400 });
   }
 
-  const created = await createJoinRequest(wsId, userId);
-  return Response.json({ id: created.id }, { status: 201 });
+  try {
+    const created = await createJoinRequest(wsId, userId);
+    return Response.json({ id: created.id }, { status: 201 });
+  } catch (err) {
+    // WR-03: the pre-check SELECTs above are a fast path, not the guard — a concurrent submission
+    // can still race past them and hit the partial unique index (drizzle/0008), same 400 as the
+    // pre-check for a consistent response.
+    if (err instanceof DuplicatePendingRequestError) {
+      return Response.json({ error: "이미 멤버이거나 이미 신청한 워크스페이스예요." }, { status: 400 });
+    }
+    throw err;
+  }
 }

@@ -10,16 +10,42 @@ type DbClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 // specific status code (409 — the decision has already been made, not a validation failure).
 export class AlreadyDecidedError extends Error {}
 
+// WR-03: mirrors signup/route.ts's isUniqueViolation — postgres.js surfaces Postgres error codes
+// on `.code`, drizzle wraps the driver error as DrizzleQueryError with the original on `.cause`.
+function pgErrorCode(err: unknown): string | undefined {
+  if (typeof err !== "object" || err === null) return undefined;
+  const code = (err as { code?: string }).code;
+  if (code) return code;
+  return pgErrorCode((err as { cause?: unknown }).cause);
+}
+
+function isUniqueViolation(err: unknown): boolean {
+  return pgErrorCode(err) === "23505";
+}
+
+// documents.ts's TagLimitError analog again: the route catches this and maps it to the same
+// 400 already used for the pre-check (existingPending). Backed by drizzle/0008's partial unique
+// index (workspace_id, user_id) WHERE status='PENDING' — the route's SELECT-then-INSERT pre-check
+// is now a fast-path UX improvement, not the only thing standing between two concurrent
+// submissions and a duplicate PENDING row (WR-03).
+export class DuplicatePendingRequestError extends Error {}
+
 // Requester identity comes from the caller's session (route enforces this, see Task 2) — this
 // function trusts its userId argument, it never re-derives it. No transaction needed: a single
-// INSERT with the schema's default('PENDING') status. Duplicate/already-member checks are the
-// route's responsibility (RESEARCH: app-level guard, not a DB constraint).
+// INSERT with the schema's default('PENDING') status. The route's existingMember/existingPending
+// SELECTs give a friendly early exit; the partial unique index is what actually prevents a
+// duplicate PENDING row under concurrent submission (WR-03).
 export async function createJoinRequest(workspaceId: string, userId: string, client: DbClient = db) {
-  const [created] = await client
-    .insert(workspaceJoinRequest)
-    .values({ workspaceId, userId })
-    .returning();
-  return created;
+  try {
+    const [created] = await client
+      .insert(workspaceJoinRequest)
+      .values({ workspaceId, userId })
+      .returning();
+    return created;
+  } catch (err) {
+    if (isUniqueViolation(err)) throw new DuplicatePendingRequestError();
+    throw err;
+  }
 }
 
 // RESEARCH Pattern 2 / Pitfall 4: the WHERE status='PENDING' guard lives on the UPDATE itself,
