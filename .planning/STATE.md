@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 07
 current_phase_name: workspace-collaboration-join-invite
 status: executing
-stopped_at: Completed 07-01-PLAN.md (invitation/workspace_join_request schema + migration + invitation-token HMAC helper)
-last_updated: "2026-08-09T03:35:01.924Z"
+stopped_at: "Completed 07-02-PLAN.md (invitation security spine: mailer + invitations.ts acceptInvitation 5-state + POST invitations route + accept RSC page)"
+last_updated: "2026-08-09T03:43:38.167Z"
 last_activity: 2026-08-09
 last_activity_desc: Phase 07 execution started
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 37
-  completed_plans: 33
+  completed_plans: 34
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 ## Current Position
 
 Phase: 07 (workspace-collaboration-join-invite) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-09 — Phase 07 execution started
 
-Progress: [█████████░] 89%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -87,6 +87,7 @@ Progress: [█████████░] 89%
 | Phase 06 P03 | 22min | 2 tasks | 8 files |
 | Phase 06 P04 | 15min | 3 tasks | 10 files |
 | Phase 07 P01 | 8min | 3 tasks | 4 files |
+| Phase 07 P02 | 7min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -164,6 +165,7 @@ Recent decisions affecting current work:
 - [Phase ?]: 07-01: FK cascade policy follows TRD §3 DDL literally (createdBy/decidedBy: no cascade) — matches folder.parentId precedent
 - [Phase ?]: 07-01: No DB partial unique index for duplicate-PENDING join requests — deferred to app-level WHERE guard in 07-03 (RESEARCH Alternatives, TRD DDL unchanged)
 - [Phase ?]: 07-01: One-way invitation/workspace_join_request migration checkpoint pre-approved by user via orchestrator (2026-08-09), same precedent as 03-01/04-01/06-01
+- [Phase ?]: 07-02: tests/invitations/accept.test.ts and create.test.ts both need vi.mock("@/auth", ...) even though accept.test.ts never calls auth() — tests/rbac/helpers.ts imports @/auth transitively, first applied under tests/invitations/
 
 ### Pending Todos
 
@@ -195,6 +197,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T03:35:01.906Z
-Stopped at: Completed 07-01-PLAN.md (invitation/workspace_join_request schema + migration + invitation-token HMAC helper)
+Last session: 2026-08-09T03:43:38.156Z
+Stopped at: Completed 07-02-PLAN.md (invitation security spine: mailer + invitations.ts acceptInvitation 5-state + POST invitations route + accept RSC page)
 Resume file: None
