@@ -141,6 +141,37 @@ describe("createJoinRequest / decideJoinRequest", () => {
 });
 
 describe("PATCH /api/workspaces/:id/join-requests/:reqId", () => {
+  // T-07-03-ADMIN full 4-role matrix (matrix.test.ts convention: each feature test file owns its
+  // own RBAC assertions rather than adding rows to the shared tests/rbac/matrix.test.ts).
+  it.each([
+    { role: "OWNER", expectedStatus: 200 },
+    { role: "ADMIN", expectedStatus: 200 },
+    { role: "EDITOR", expectedStatus: 403 },
+    { role: "VIEWER", expectedStatus: 403 },
+  ] as const)("4-role matrix: $role -> $expectedStatus", async ({ role, expectedStatus }) => {
+    const decider = await createTestUser(`jr-matrix-${role.toLowerCase()}`);
+    const applicant = await createTestUser(`jr-matrix-target-${role.toLowerCase()}`);
+    const ws = await createTestWorkspace(`jr-matrix-${role}`);
+    await addMember(ws.id, decider.id, role);
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(decider.id);
+
+    const res = await callPatchRoute(ws.id, created.id, { decision: "APPROVED" });
+    expect(res.status).toBe(expectedStatus);
+  });
+
+  it("unauthenticated request is rejected (403)", async () => {
+    const admin = await createTestUser("jr-matrix-admin-for-anon");
+    const applicant = await createTestUser("jr-matrix-target-anon");
+    const ws = await createTestWorkspace("jr-matrix-anon");
+    await addMember(ws.id, admin.id, "ADMIN");
+    const created = await createJoinRequest(ws.id, applicant.id);
+    mockSessionFor(null);
+
+    const res = await callPatchRoute(ws.id, created.id, { decision: "APPROVED" });
+    expect(res.status).toBe(403);
+  });
+
   it.each(["VIEWER", "EDITOR"] as const)("RBAC: %s cannot decide (403)", async (role) => {
     const member = await createTestUser(`jr-patch-${role.toLowerCase()}`);
     const applicant = await createTestUser(`jr-patch-target-${role.toLowerCase()}`);
