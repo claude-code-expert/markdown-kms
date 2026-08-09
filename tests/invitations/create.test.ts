@@ -2,7 +2,7 @@
 // (no real console noise, and lets us assert the exact link shape). Committed before
 // src/app/api/workspaces/[id]/invitations/route.ts exists (TDD RED first).
 import { eq } from "drizzle-orm";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/db";
 import { invitation } from "@/db/schema";
 import { parseInvitationToken } from "@/lib/invitation-token";
@@ -13,6 +13,10 @@ vi.mock("@/auth", () => ({ auth: vi.fn() }));
 vi.mock("@/lib/mailer", () => ({ sendInvitationEmail: vi.fn().mockResolvedValue(undefined) }));
 
 import { sendInvitationEmail } from "@/lib/mailer";
+
+// WR-01: the accept link's origin comes from the trusted AUTH_URL env var, not the request's
+// Host header — stub a fixed trusted origin so every test in this file has one configured.
+const TRUSTED_ORIGIN = "http://localhost:3000";
 
 function createRequest(body: unknown) {
   return new Request("http://localhost/api/workspaces/test/invitations", {
@@ -35,8 +39,13 @@ function callRoute(wsId: string, body: unknown) {
 }
 
 describe("POST /api/workspaces/:id/invitations", () => {
+  beforeEach(() => {
+    vi.stubEnv("AUTH_URL", TRUSTED_ORIGIN);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it("ADMIN success: creates invitation row + sends exactly the right accept link", async () => {
@@ -63,6 +72,26 @@ describe("POST /api/workspaces/:id/invitations", () => {
     const token = new URL(linkArg).searchParams.get("token")!;
     const parsed = parseInvitationToken(token);
     expect(parsed?.invitationId).toBe(row.id);
+  });
+
+  it("WR-01: accept link uses the configured AUTH_URL origin, not a spoofed request Host", async () => {
+    const admin = await createTestUser("inv-admin-spoof");
+    const invitee = await createTestUser("inv-invitee-spoof");
+    const ws = await createTestWorkspace("invitations-spoofed-host");
+    await addMember(ws.id, admin.id, "ADMIN");
+    mockSessionFor(admin.id);
+
+    const spoofedReq = new Request("http://evil.example.com/api/workspaces/test/invitations", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ inviteeId: invitee.id }),
+    });
+    const res = await POST(spoofedReq, { params: Promise.resolve({ id: ws.id }) });
+    expect(res.status).toBe(201);
+
+    const [, linkArg] = vi.mocked(sendInvitationEmail).mock.calls[0];
+    expect(linkArg.startsWith(TRUSTED_ORIGIN)).toBe(true);
+    expect(linkArg).not.toContain("evil.example.com");
   });
 
   it.each(["VIEWER", "EDITOR"] as const)("RBAC: %s cannot invite (403, no row created)", async (role) => {

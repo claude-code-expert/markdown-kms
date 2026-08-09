@@ -57,7 +57,14 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
   const secret = process.env.AUTH_SECRET;
   if (!secret) throw new Error("AUTH_SECRET is not configured"); // RESEARCH Pitfall 7
   const token = encodeInvitationToken(created.id, created.expiresAt, secret);
-  const origin = new URL(req.url).origin; // A3: no new env var, request origin builds the link
+  // WR-01: req.url's origin reflects the request's Host header, which an untrusted reverse proxy
+  // (or a directly-exposed Node server) can't be relied on to protect — an attacker-controlled
+  // Host would poison the link mailed to the invitee. Use the deployment's own configured origin
+  // instead, and fail closed (not a silent Host fallback) if it isn't set, same convention as the
+  // AUTH_SECRET check just above.
+  const authUrl = process.env.AUTH_URL ?? process.env.NEXTAUTH_URL;
+  if (!authUrl) throw new Error("AUTH_URL (or NEXTAUTH_URL) is not configured");
+  const origin = new URL(authUrl).origin;
   await sendInvitationEmail(invitee.email, `${origin}/invitations/accept?token=${token}`);
 
   return Response.json({ id: created.id }, { status: 201 });
