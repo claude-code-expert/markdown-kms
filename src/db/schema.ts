@@ -144,3 +144,48 @@ export const documentTag = pgTable(
   },
   (table) => [primaryKey({ columns: [table.documentId, table.tag] })],
 );
+
+// TRD §3 (WS-03/WS-04): 워크스페이스 가입 신청. status는 PENDING/APPROVED/REJECTED만
+// 허용(workspaceMember.role CHECK와 동일 관례). 중복 PENDING 방지는 애플리케이션 레벨
+// WHERE 가드로 처리(RESEARCH Alternatives — DB partial unique index 미도입, TRD DDL 무변경).
+export const workspaceJoinRequest = pgTable(
+  "workspace_join_request",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    status: text("status").notNull().default("PENDING"),
+    decidedBy: uuid("decided_by").references(() => user.id),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+  },
+  (table) => [
+    check(
+      "workspace_join_request_status_check",
+      sql`${table.status} IN ('PENDING','APPROVED','REJECTED')`,
+    ),
+  ],
+);
+
+// TRD §3 / §9 (WS-05, NFR-3.3): 초대. 토큰 원문·mac은 저장하지 않는다 — id·expiresAt만
+// 보관하고 서명은 검증 시점에 src/lib/invitation-token.ts가 재계산한다. createdBy는 TRD
+// DDL 리터럴대로 onDelete 미지정(folder.parentId 선례처럼 cascade 없이 그대로 준수).
+export const invitation = pgTable("invitation", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => workspace.id, { onDelete: "cascade" }),
+  inviteeId: uuid("invitee_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => user.id),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
