@@ -50,6 +50,13 @@
       "when": 1786183534848,
       "tag": "0006_pg_trgm_search_index",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786246204956,
+      "tag": "0007_tricky_selene",
+      "breakpoints": true
     }
   ]
 }
