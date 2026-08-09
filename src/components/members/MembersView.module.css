@@ -1,0 +1,120 @@
+/* UI-SPEC Members Page Contract — page shell ported verbatim from TrashList.module.css's .wrap
+   (no host padding of its own from layout.module.css's .main). */
+.wrap {
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-xl);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 var(--space-lg) 0;
+}
+
+.section {
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.empty {
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Row shell shared by MemberRow and PendingRequestRow — TrashList.module.css's .row rhythm. */
+.row {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+}
+
+.row:hover {
+  background: var(--surface-2);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.identity {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.requestedAt {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-right: var(--space-md);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* Role badge — Phase 6 chip exception reuse (24px/999px), never accent (UI-SPEC Color
+   "Accent를 쓰지 않는 것"). */
+.badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--space-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.errorText {
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--destructive);
+  margin: var(--space-xs) 0 0 0;
+}
