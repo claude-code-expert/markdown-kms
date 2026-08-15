@@ -455,3 +455,30 @@ handoff 문서 어디에 저장한거야
 
 feature/gsd 브랜치를 만들고 푸시해줘
 
+### 72. 2026-08-15
+
+https://github.com/aidenybai/react-grab 을 읽어서 dev 모드일 때 설치해서 디버깅에 사용할 수 있게 해줘
+
+### 73. 2026-08-15
+
+dev 실행시 이전 프로세스는 죽이고 3000 번 포트를 지정해서 띄울 수 있도록  조정해줘
+
+### 74. 2026-08-15
+
+[<div class="FolderTree_tree..." /> in FolderTree (at src/components/tree/FolderTree.tsx:507:99) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:38:7) key: "c"] 
+
+폴더 생성시 2건의 폴더가 생성되는 버그가 있고, 문서 생성시에도 2건의 문서가 생성되고 있어. 실제 데이터 저장 로직을 점검하고 왜 이런 버그가 있는지 원인을 분석한 뒤 수정해
+
+### 75. 2026-08-15
+
+[<div class="FolderTree_tree..." /> in FolderTree (at src/components/tree/FolderTree.tsx:509:99) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:38:7) key: "c"] 
+폴더 생성시 한번에 두개의 폴더, 문서 생성시 한번에 두개의 문서가 생성되는 버그가 있어 원인을 분석해서 패치 해주고 테스트 케이스 점검해
+
+### 76. 2026-08-15
+
+/model
+
+### 77. 2026-08-15
+
+feature/gsd 브랜치를 만들고 푸시해줘
+
