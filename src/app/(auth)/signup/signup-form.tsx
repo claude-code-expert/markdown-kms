@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { signupSchema } from "@/lib/validation";
 import { Form, FormField, FormLabel, FormError, FormSubmit } from "@/components/ui/Form";
 import { Input } from "@/components/ui/Input";
+import styles from "./page.module.css";
 
 const GENERIC_ERROR = "일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요.";
 
@@ -92,6 +93,12 @@ export function SignupForm() {
       {error && <FormError>{error}</FormError>}
 
       <FormSubmit disabled={submitting}>{submitting ? "가입하는 중…" : "가입하기"}</FormSubmit>
+
+      {/* UI-SPEC Copywriting Contract "Google 로그인 placeholder" — 비활성
+          전용, onClick/signIn 프로바이더 호출 없음(Phase 8 descope 유지). */}
+      <button type="button" disabled className={styles.googleButton}>
+        Google로 계속하기
+      </button>
     </Form>
   );
 }
