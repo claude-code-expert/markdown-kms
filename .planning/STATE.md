@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 07
-current_phase_name: workspace-collaboration-join-invite
+current_phase: 09
+current_phase_name: design-system-application
 status: executing
-stopped_at: Phase 09 UI-SPEC approved
-last_updated: "2026-08-15T14:26:02.644Z"
-last_activity: 2026-08-09
-last_activity_desc: Phase 07 execution started
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-08-15T15:20:44.160Z"
+last_activity: 2026-08-16
+last_activity_desc: Phase 09 execution started
 progress:
   total_phases: 8
   completed_phases: 7
   total_plans: 41
-  completed_plans: 37
+  completed_plans: 38
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-01)
 
 **Core value:** 에디터에 입력하면 60ms 안에 미리보기에 정확히(CommonMark 0.31.2 + GFM 3종) 렌더링되는 문서 작성 경험.
-**Current focus:** Phase 07 — workspace-collaboration-join-invite
+**Current focus:** Phase 09 — design-system-application
 
 ## Current Position
 
-Phase: 07 (workspace-collaboration-join-invite) — EXECUTING
-Plan: 5 of 5
+Phase: 09 (design-system-application) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-08-09 — Phase 07 execution started
+Last activity: 2026-08-16 — Phase 09 execution started
 
-Progress: [██████████] 100%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -91,6 +91,7 @@ Progress: [██████████] 100%
 | Phase 07 P03 | 6min | 3 tasks | 5 files |
 | Phase 07 P04 | 25min | 2 tasks | 5 files |
 | Phase 07 P05 | 45min | 3 tasks | 12 files |
+| Phase 09 P01 | 40min | 3 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -178,6 +179,9 @@ Recent decisions affecting current work:
 - [Phase ?]: member-search 라우트는 normalizeNFC를 호출하지 않는다 -- search.ts의 경계-정규화 관례를 유지하되, email/name 조회는 documents.title의 Hangul NFC/NFD 충돌 케이스가 적용되지 않아 계획이 재량으로 남긴 대로 생략.
 - [Phase ?]: 07-05: InviteSearch shipped as a Task-1 compile stub, fully implemented in Task 2 (plan's own file-list split created the ordering dependency)
 - [Phase ?]: 07-05: MemberRowData.role typed as plain string, not rbac.ts's Role union — keeps client component fully decoupled from @/lib/rbac (even type-only imports avoided)
+- [Phase ?]: 09-01: layout.tsx 폰트 로더를 next/font/google -> next/font/local로 교체하되 CSS 변수명(--font-ibm-plex-sans/mono)은 유지 — 09-01 파일 스코프 밖 CSS Modules 무수정
+- [Phase ?]: 09-01: 인증 카드 타이틀 20px->16px(Heading), footer 13px->14px(Body)로 UI-SPEC Typography 4사이즈 상한에 정렬
+- [Phase ?]: 09-01: Google 계속하기 placeholder 스타일은 Form.module.css 대신 각 화면 page.module.css의 .googleButton으로 분리(Task 파일 스코프 준수)
 
 ### Pending Todos
 
@@ -210,6 +214,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-15T13:55:24.517Z
-Stopped at: Phase 09 UI-SPEC approved
-Resume file: .planning/phases/09-design-system-application/09-UI-SPEC.md
+Last session: 2026-08-15T15:20:44.145Z
+Stopped at: Completed 09-01-PLAN.md
+Resume file: None

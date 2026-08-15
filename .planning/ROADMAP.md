@@ -290,7 +290,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
 | 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
-| 9. Design System Application | 0/TBD | Not started | - |
+| 9. Design System Application | 1/4 | In Progress|  |
 
 ### Phase 9: Design System Application
 
@@ -304,11 +304,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
   3. 문서 에디터 화면이 `docs/images/write-form-wireframe.svg` 구성(사이드바 폴더 트리+검색·상단 브레드크럼/제목/저장·삭제·서식 툴바·보기모드 4버튼·분할 에디터/프리뷰·상태바)대로 재구성되고, 기존 에디터 기능(서식/자동저장/저장 버튼/미리보기)이 회귀 없이 동작한다.
   4. 로그인부터 워크스페이스 생성/가입, 폴더 생성, 문서 생성/수정/삭제까지 전체 플로우가 새 UI에서 매 단계 vitest+playwright 회귀 테스트로 검증된다.
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 **Wave 1**
 
-- [ ] 09-01-PLAN.md — TRACER: 토큰 파운데이션(폰트 자체호스팅·전역 반경/모션 토큰·다크 팔레트 전면교체) + UI 프리미티브 토큰 스왑 + 랜딩(로그인/회원가입) 리스킨 + Google placeholder [AUTH-01, AUTH-02]
+- [x] 09-01-PLAN.md — TRACER: 토큰 파운데이션(폰트 자체호스팅·전역 반경/모션 토큰·다크 팔레트 전면교체) + UI 프리미티브 토큰 스왑 + 랜딩(로그인/회원가입) 리스킨 + Google placeholder [AUTH-01, AUTH-02]
 
 **Wave 2** *(blocked on Wave 1, parallel — 파일 겹침 없음)*
 
