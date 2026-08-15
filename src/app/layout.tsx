@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
+import Script from "next/script";
 import "./globals.css";
 
 // UI-SPEC Design System: IBM Plex Sans (본문), IBM Plex Mono (코드·숫자 라벨) — docs/ui-kit.html.
@@ -49,6 +50,17 @@ export default async function RootLayout({
       data-theme={theme}
       suppressHydrationWarning
     >
+      <head>
+        {/* dev 전용 디버그 도구 — UI 엘리먼트 선택 시 컴포넌트 소스 위치를 클립보드로 복사
+            (⌘C/Ctrl+C). https://github.com/aidenybai/react-grab */}
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
+      </head>
       <body>{children}</body>
     </html>
   );
