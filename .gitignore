@@ -2,7 +2,9 @@
 .env
 .env.*
 !.env.example
-.planning/*
+
+# .planning/ 은 GSD 산출물로 전부 추적 대상 — 리서치 API 응답 캐시만 로컬 전용.
+.planning/research/.cache/
 
 # Dependencies
 node_modules/
