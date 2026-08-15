@@ -38,10 +38,12 @@
   align-items: center;
   justify-content: center;
   border: none;
+  border-radius: var(--radius-sm);
   background: none;
   padding: 0;
   color: var(--muted);
   cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-fluid);
 }
 
 .headerButton:hover {
@@ -63,6 +65,8 @@
   align-items: center;
   gap: var(--space-xs);
   padding-right: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .node:hover {
@@ -85,6 +89,7 @@
 
 .chevronOpen {
   transform: rotate(90deg);
+  transition: transform var(--duration-standard) var(--ease-fluid);
 }
 
 .chevronSpace {
@@ -98,7 +103,7 @@
 }
 
 .name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -110,15 +115,16 @@
 .inlineInput {
   flex: 1;
   border: none;
+  border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   padding: 2px 4px;
   font-family: inherit;
 }
 
 .empty {
   padding: 0 var(--space-sm);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--muted);
 }
@@ -135,10 +141,11 @@
   padding: 0 var(--space-sm);
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .trashLink:hover {
@@ -160,10 +167,11 @@
   padding: 0 var(--space-sm);
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
+  transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .membersLink:hover {
@@ -196,7 +204,7 @@
 .exportErrorText {
   flex: 1;
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--destructive);
@@ -214,6 +222,7 @@
   padding: 0;
   color: var(--muted);
   cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-fluid);
 }
 
 .exportErrorClose:hover {

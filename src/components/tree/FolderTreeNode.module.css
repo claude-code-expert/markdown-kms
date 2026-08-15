@@ -4,7 +4,9 @@
   align-items: center;
   gap: var(--space-xs);
   padding-right: var(--space-sm);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .node:hover {
@@ -15,6 +17,7 @@
   opacity: 1;
 }
 
+/* UI-SPEC Accent reserved — 현재 활성/선택된 폴더·문서 노드 */
 .selected {
   background: var(--accent-weak);
 }
@@ -34,7 +37,7 @@
 /* UI-SPEC Tree Node Contract — drag-over rejected (cycle) target; cursor itself comes from
    the browser's native "forbidden" cursor (dragover doesn't call preventDefault — Pattern 6) */
 .dropRejected {
-  background: #fef2f2;
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
 }
 
 /* UI-SPEC Tree Node Contract — mutation in flight, server-confirmed UI only */
@@ -59,6 +62,7 @@
 
 .chevronOpen {
   transform: rotate(90deg);
+  transition: transform var(--duration-standard) var(--ease-fluid);
 }
 
 .chevronSpace {
@@ -84,7 +88,7 @@
 }
 
 .name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -103,11 +107,15 @@
   align-items: center;
   justify-content: center;
   border: none;
+  border-radius: var(--radius-sm);
   background: none;
   padding: 0;
   color: var(--muted);
   cursor: pointer;
   opacity: 0;
+  transition:
+    opacity var(--duration-fast) var(--ease-fluid),
+    color var(--duration-fast) var(--ease-fluid);
 }
 
 .kebab:hover {
@@ -118,8 +126,9 @@
   flex: 1;
   min-width: 0;
   border: none;
+  border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   padding: 2px 4px;
   font-family: inherit;
 }
