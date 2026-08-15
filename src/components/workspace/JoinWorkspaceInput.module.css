@@ -11,9 +11,10 @@
   flex: 1;
 }
 
+/* UI-SPEC Typography — Body role (14px/400/1.5), 4사이즈 상한 준수(기존 13px 흡수). */
 .feedback {
   margin: var(--space-xs) 0 0 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
 }

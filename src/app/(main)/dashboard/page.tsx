@@ -21,23 +21,30 @@ export default async function DashboardPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>내 워크스페이스</h1>
-        <CreateWorkspaceButton />
-      </div>
-      <div className={styles.grid}>
-        {memberships.map((membership) => (
-          <WorkspaceCard
-            key={membership.id}
-            id={membership.id}
-            name={membership.name}
-            role={membership.role}
-          />
-        ))}
-      </div>
-      <div className={styles.joinSection}>
-        <span className={styles.joinLabel}>워크스페이스 참여 신청</span>
-        <JoinWorkspaceInput />
+      {/* UI-SPEC Visual Hierarchy — 워크스페이스 카드 리스트(680px 중앙 정렬 컨테이너)가 1차 앵커 */}
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>내 워크스페이스</h1>
+          <CreateWorkspaceButton />
+        </div>
+        <div className={styles.grid}>
+          {memberships.map((membership) => (
+            <WorkspaceCard
+              key={membership.id}
+              id={membership.id}
+              name={membership.name}
+              role={membership.role}
+              ownerName={membership.ownerName}
+              createdAt={membership.createdAt}
+              docCount={membership.docCount}
+              folderCount={membership.folderCount}
+            />
+          ))}
+        </div>
+        <div className={styles.joinSection}>
+          <span className={styles.joinLabel}>워크스페이스 참여 신청</span>
+          <JoinWorkspaceInput />
+        </div>
       </div>
     </main>
   );

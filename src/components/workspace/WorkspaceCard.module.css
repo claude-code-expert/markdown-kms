@@ -6,22 +6,41 @@
   gap: var(--space-sm);
 }
 
+.body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* UI-SPEC Typography — Heading role (16px/600/1.3), 카드 제목. 1줄 말줄임 유지. */
 .name {
   display: block;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  flex: 1;
   color: inherit;
   text-decoration: none;
 }
 
 .name:hover {
   text-decoration: underline;
+}
+
+/* UI-SPEC Typography — Label role (12px/600/1.4), muted. Phase 9 D-08 워크스페이스 카드 메타 라인. */
+.meta {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .deleteButton {

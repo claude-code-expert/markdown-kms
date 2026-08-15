@@ -12,6 +12,15 @@ interface WorkspaceCardProps {
   id: string;
   name: string;
   role: string;
+  ownerName: string | null;
+  createdAt: Date | string;
+  docCount: number;
+  folderCount: number;
+}
+
+function formatCreatedAt(createdAt: Date | string): string {
+  const date = createdAt instanceof Date ? createdAt : new Date(createdAt);
+  return date.toISOString().slice(0, 10);
 }
 
 // E3/E5 — one card per membership. Title truncates to one line with an ellipsis
@@ -21,15 +30,22 @@ interface WorkspaceCardProps {
 // authorization boundary is the server's requireRole gate on DELETE (CLAUDE.md, T-05-01).
 // The seeded default workspace has no OWNER (D-09, all members are EDITOR), so it never
 // shows this affordance without any extra isDefault check.
-export function WorkspaceCard({ id, name, role }: WorkspaceCardProps) {
+// Phase 9 D-08: meta line is real DB data (listMembershipsForUser), never a hardcoded
+// placeholder — a brand-new workspace renders "문서 0개 · 폴더 0개", not an empty/hidden line.
+export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, folderCount }: WorkspaceCardProps) {
   const router = useRouter();
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <Card className={styles.card}>
-      <Link href={`/w/${id}`} className={styles.name}>
-        {name}
-      </Link>
+      <div className={styles.body}>
+        <Link href={`/w/${id}`} className={styles.name}>
+          {name}
+        </Link>
+        <p className={styles.meta}>
+          소유자 {ownerName ?? "-"} · 생성일 {formatCreatedAt(createdAt)} · 문서 {docCount}개 · 폴더 {folderCount}개
+        </p>
+      </div>
       {role === "OWNER" && (
         <>
           <button

@@ -2,6 +2,13 @@
   padding: var(--space-xl);
 }
 
+/* UI-SPEC Visual Hierarchy — 워크스페이스 카드 리스트(680px 중앙 정렬 컨테이너)가 1차 앵커.
+   와이어프레임의 centered list composition. */
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -10,25 +17,30 @@
   margin: 0 0 var(--space-lg);
 }
 
+/* UI-SPEC Typography — Display role (24px/600/1.2), 페이지 타이틀. */
 .title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
 }
 
+/* UI-SPEC Radius Scale — radius-lg(18px)는 페이지 레벨 컨테이너(워크스페이스 리스트 컨테이너)용.
+   개별 카드는 Card 컴포넌트의 radius-md를 그대로 쓴다(변경 없음). */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-md);
 }
 
 /* UI-SPEC Dashboard Join-Request Contract "위치" — separated from .grid with a divider, kept as
    a secondary/bottom action so it never competes with "워크스페이스 만들기" (Phase 1 Visual
-   Hierarchy). max-width caps the input row at a readable line length instead of stretching full
-   page width. */
+   Hierarchy). Width now follows .container's 680px band instead of its own cap. */
 .joinSection {
-  max-width: 400px;
   margin-top: var(--space-xl);
   padding-top: var(--space-lg);
   border-top: 1px solid var(--border);
