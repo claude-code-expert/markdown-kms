@@ -7,7 +7,7 @@
 
 ---
 
-## 클로드 REQUIREMENT.md 생성 프롬프트 
+## 클로드 REQUIREMENT.md 생성 프롬프트 (클로드 데스크탑 앱에서 작업)
 https://www.markdownguide.org/basic-syntax/#code-blocks
 
 https://spec.commonmark.org/0.31.2/
@@ -393,4 +393,65 @@ h1 헤딩 태그, 리스트, 인용문에는 커서가 삽입된 태그 앞에 �
 ### 56. 2026-08-02
 
 수정 내역 별도 브랜치에 커밋하고 다음단계 알려줘
+
+### 57. 2026-08-07
+
+확인  다 됐고 지금까지 작업한거 handoff 만들어서 이후 연결해서 진행할 수 있도록 해
+
+### 58. 2026-08-08
+
+handoff 문서 어디에 저장한거야
+
+### 59. 2026-08-08
+
+@.planning/phases/02-markdown-rendering-editor-formatting/02-UAT.md는 한글로 다시 변환하고, 각 문서가 영문으로 작성되는 경우가 있는데 CLAUDE.md에 한글 작성을 명시해줘
+
+### 60. 2026-08-08
+
+전체 마크다운 태그를 다 활용하는 샘플 md를 만들어줘 @.planning/phases/02-markdown-rendering-editor-formatting/02-UAT.md 에 있는 내용을 검증할 수 있어야 해
+
+### 61. 2026-08-08
+
+@.handoff.md 문서를 읽고 다음 단계를 알려줘. @02-UAT.md 는 다 체크 되었어
+
+### 62. 2026-08-08
+
+다음 단계부터는 한단계씩 구현한뒤 테스트 하는 방식이 아니라 전체 phase 를 순차적으로 다 구현한 뒤 테스트 할 수 있도로 해줘
+
+### 63. 2026-08-08
+
+/gsd-autonomous --from 4
+
+### 64. 2026-08-08
+
+/gsd-autonomous --from 5
+
+### 65. 2026-08-08
+
+/gsd-autonomous --from 6 --to 7
+
+### 66. 2026-08-08
+
+/gsd-autonomous --only 7
+
+### 67. 2026-08-09
+
+.handoff.md 를 읽어보고, 디버깅이 많은데 디버깅을 먼저해야 할지 아니면 디자인 시스템을 적용해서 화면 디자인을 먼저 적용해야 하는지 어떤 작업이 우선순위가 높은지 알려줘
+
+### 68. 2026-08-15
+
+@Prompt.md 에 57 이후 프롬프트가 안쌓이는데, 점검해서 이후 프롬프트 기록해줘
+
+### 69. 2026-08-15
+
+전체 마크다운 태그를 다 활용하는 샘플 md를 만들어줘 @.planning/phases/02-markdown-rendering-editor-formatting/02-UAT.md 에 있는 내용을 검증할 수 있어야 해
+ 이걸로 나온 파일이 뭐가 있지?
+
+### 70. 2026-08-15
+
+/model
+
+### 71. 2026-08-15
+
+feature/gsd 브랜치를 만들고 푸시해줘
 

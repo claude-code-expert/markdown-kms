@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" font-family="'Helvetica Neue',Arial,sans-serif">
+  <defs>
+    <style>
+      .panel{fill:#f6f6f4;stroke:#c7c7c2;stroke-width:1.5}
+      .box{fill:#ffffff;stroke:#b9b9b3;stroke-width:1.5}
+      .btn{fill:#eeeeea;stroke:#a9a9a3;stroke-width:1.5}
+      .btnp{fill:#dfe6f7;stroke:#7f9ae0;stroke-width:1.5}
+      .t{fill:#3a3a36;font-size:13px}
+      .tm{fill:#8f8f88;font-size:12px}
+      .tb{fill:#26261f;font-size:15px;font-weight:700}
+      .tt{fill:#26261f;font-size:24px;font-weight:700}
+      .lbl{fill:#8f8f88;font-size:10px;letter-spacing:1px}
+      .ic{fill:none;stroke:#6a6a63;stroke-width:1.6}
+      .line{stroke:#e4e4de;stroke-width:1.4}
+    </style>
+  </defs>
+
+  <rect width="1280" height="820" fill="#f8f7f4"/>
+
+  <!-- ===== SLIM TOP BAR (folder tree 없음) ===== -->
+  <rect x="0" y="0" width="1280" height="56" fill="#ffffff" stroke="#c7c7c2" stroke-width="1.5"/>
+  <rect x="28" y="18" width="20" height="20" rx="4" class="btnp"/>
+  <text x="58" y="34" class="tb">Markdown-KMS</text>
+  <circle cx="1240" cy="28" r="14" class="box"/><text x="1234" y="33" class="t">A</text>
+
+  <!-- ===== CENTERED WORKSPACE LIST (max 680px) ===== -->
+  <!-- page header -->
+  <text x="300" y="132" class="tt">워크스페이스</text>
+  <text x="301" y="158" class="tm" font-size="14">팀과 함께 지식을 관리하세요</text>
+  <rect x="790" y="112" width="190" height="40" rx="8" class="btnp"/>
+  <line x1="812" y1="132" x2="826" y2="132" class="ic"/><line x1="819" y1="125" x2="819" y2="139" class="ic"/>
+  <text x="836" y="137" class="t">워크스페이스 만들기</text>
+
+  <!-- list container -->
+  <rect x="300" y="190" width="680" height="288" rx="12" class="box"/>
+  <line x1="300" y1="286" x2="980" y2="286" class="line"/>
+  <line x1="300" y1="382" x2="980" y2="382" class="line"/>
+
+  <!-- ROW 1 -->
+  <rect x="316" y="214" width="44" height="44" rx="8" fill="#eef1f8" stroke="#c7d2ee" stroke-width="1.5"/>
+  <rect x="330" y="228" width="16" height="16" rx="3" class="btnp"/>
+  <text x="376" y="232" class="tb" font-size="15">Markdown-KMS Dev</text>
+  <rect x="546" y="219" width="52" height="20" rx="10" fill="#f3edfb" stroke="#d6c3f0"/><text x="556" y="233" fill="#7c3aed" font-size="11">소유자</text>
+  <text x="376" y="254" class="tm">소유자 남정민   ·   생성일 2026-01-12   ·   문서 24개   ·   폴더 6개</text>
+  <rect x="812" y="222" width="60" height="30" rx="6" class="btnp"/><text x="828" y="242" class="t">문서</text>
+  <rect x="884" y="222" width="34" height="30" rx="6" class="box"/><text x="895" y="242" class="tm">⚙</text>
+
+  <!-- ROW 2 -->
+  <rect x="316" y="310" width="44" height="44" rx="8" fill="#f0f0ec" stroke="#cfcfc8" stroke-width="1.5"/>
+  <rect x="330" y="324" width="16" height="16" rx="3" fill="#dfe6f7" stroke="#a9b6dd"/>
+  <text x="376" y="328" class="tb" font-size="15">디자인 시스템</text>
+  <rect x="510" y="315" width="52" height="20" rx="10" fill="#eefaf1" stroke="#bfe6cb"/><text x="520" y="329" fill="#16a34a" font-size="11">편집자</text>
+  <text x="376" y="350" class="tm">소유자 김디자인   ·   생성일 2026-02-03   ·   문서 8개   ·   폴더 2개</text>
+  <rect x="812" y="318" width="60" height="30" rx="6" class="btnp"/><text x="828" y="338" class="t">문서</text>
+  <rect x="884" y="318" width="34" height="30" rx="6" class="box"/><text x="895" y="338" class="tm">⚙</text>
+
+  <!-- ROW 3 -->
+  <rect x="316" y="406" width="44" height="44" rx="8" fill="#f0f0ec" stroke="#cfcfc8" stroke-width="1.5"/>
+  <rect x="330" y="420" width="16" height="16" rx="3" fill="#eeeeea" stroke="#b9b9b3"/>
+  <text x="376" y="424" class="tb" font-size="15">팀 위키</text>
+  <rect x="480" y="411" width="44" height="20" rx="10" fill="#f0f0ec" stroke="#cfcfc8"/><text x="490" y="425" fill="#8f8f88" font-size="11">뷰어</text>
+  <rect x="534" y="411" width="42" height="20" rx="10" class="box"/><text x="544" y="425" class="tm">공개</text>
+  <text x="376" y="446" class="tm">소유자 박팀장   ·   생성일 2025-11-20   ·   문서 52개   ·   폴더 11개</text>
+  <rect x="812" y="414" width="60" height="30" rx="6" class="btnp"/><text x="828" y="434" class="t">문서</text>
+  <rect x="884" y="414" width="34" height="30" rx="6" class="box"/><text x="895" y="434" class="tm">⚙</text>
+
+  <!-- row → 클릭 시 해당 워크스페이스 문서 목록으로 이동 (폴더 트리는 여기서 등장) -->
+  <text x="300" y="512" class="tm" font-style="italic">행 클릭 → 워크스페이스 진입(/{ws}/doc). 좌측 폴더 트리는 진입 이후 화면에서 표시됨.</text>
+
+  <!-- 하단 가입 신청 패널 (아코디언, 접힘) -->
+  <rect x="300" y="540" width="680" height="48" rx="10" class="panel"/>
+  <text x="320" y="569" class="t">공개 워크스페이스 가입 신청</text>
+  <text x="956" y="569" class="tm">▾</text>
+
+  <!-- caption -->
+  <text x="16" y="800" class="tm">와이어프레임 · 워크스페이스 메인 (워크스페이스 선택 리스트) · 폴더 트리 없음 · /workspaces</text>
+</svg>
