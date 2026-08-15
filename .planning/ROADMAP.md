@@ -290,7 +290,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
 | 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
-| 9. Design System Application | 1/4 | In Progress|  |
+| 9. Design System Application | 2/4 | In Progress|  |
 
 ### Phase 9: Design System Application
 
@@ -304,7 +304,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
   3. 문서 에디터 화면이 `docs/images/write-form-wireframe.svg` 구성(사이드바 폴더 트리+검색·상단 브레드크럼/제목/저장·삭제·서식 툴바·보기모드 4버튼·분할 에디터/프리뷰·상태바)대로 재구성되고, 기존 에디터 기능(서식/자동저장/저장 버튼/미리보기)이 회귀 없이 동작한다.
   4. 로그인부터 워크스페이스 생성/가입, 폴더 생성, 문서 생성/수정/삭제까지 전체 플로우가 새 UI에서 매 단계 vitest+playwright 회귀 테스트로 검증된다.
 
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 
 **Wave 1**
 
@@ -312,7 +312,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 **Wave 2** *(blocked on Wave 1, parallel — 파일 겹침 없음)*
 
-- [ ] 09-02-PLAN.md — 워크스페이스 메인 리스킨 + 카드 실측 데이터 확장(listMembershipsForUser: 소유자/생성일/문서수/폴더수) [WS-01, WS-02]
+- [x] 09-02-PLAN.md — 워크스페이스 메인 리스킨 + 카드 실측 데이터 확장(listMembershipsForUser: 소유자/생성일/문서수/폴더수) [WS-01, WS-02]
 - [ ] 09-03-PLAN.md — 에디터 글쓰기 화면 리스킨(사이드바·툴바·보기모드·분할·상태바, 순수 스타일링, seq-guard/트리 로직 무접촉) [DOC-01, DOC-02]
 
 **Wave 3** *(blocked on Wave 2)*
