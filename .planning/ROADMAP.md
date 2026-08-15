@@ -290,7 +290,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
 | 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
-| 9. Design System Application | 3/4 | In Progress|  |
+| 9. Design System Application | 4/4 | In Progress|  |
 
 ### Phase 9: Design System Application
 
@@ -304,7 +304,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
   3. 문서 에디터 화면이 `docs/images/write-form-wireframe.svg` 구성(사이드바 폴더 트리+검색·상단 브레드크럼/제목/저장·삭제·서식 툴바·보기모드 4버튼·분할 에디터/프리뷰·상태바)대로 재구성되고, 기존 에디터 기능(서식/자동저장/저장 버튼/미리보기)이 회귀 없이 동작한다.
   4. 로그인부터 워크스페이스 생성/가입, 폴더 생성, 문서 생성/수정/삭제까지 전체 플로우가 새 UI에서 매 단계 vitest+playwright 회귀 테스트로 검증된다.
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans executed
 
 **Wave 1**
 
@@ -317,4 +317,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 09-04-PLAN.md — 전체 플로우 통합 e2e 회귀(로그인→워크스페이스→폴더→문서 CRUD) + CLAUDE.md 토큰 원천 갱신 + changelog
+- [x] 09-04-PLAN.md — 전체 플로우 통합 e2e 회귀(로그인→워크스페이스→폴더→문서 CRUD) + CLAUDE.md 토큰 원천 갱신 + changelog

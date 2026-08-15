@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 09
 current_phase_name: design-system-application
-status: executing
-stopped_at: Completed 09-03-PLAN.md
-last_updated: "2026-08-15T15:51:00.749Z"
+status: verifying
+stopped_at: Completed 09-04-PLAN.md (Phase 9 전체 완료)
+last_updated: "2026-08-15T16:00:53.528Z"
 last_activity: 2026-08-16
 last_activity_desc: Phase 09 execution started
 progress:
   total_phases: 8
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 41
-  completed_plans: 40
+  completed_plans: 41
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-01)
 
 Phase: 09 (design-system-application) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-16 — Phase 09 execution started
 
-Progress: [██████████] 98%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -94,6 +94,7 @@ Progress: [██████████] 98%
 | Phase 09 P01 | 40min | 3 tasks | 18 files |
 | Phase 09 P02 | 15min | 2 tasks | 6 files |
 | Phase 09 P03 | 35min | 2 tasks | 13 files |
+| Phase 09 P04 | 15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -189,6 +190,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase ?]: 09-03: layout.tsx(Task 1)/page.module.css(Task 2, 신규파일)는 files_modified 표기 오차로 판단해 미변경 — '에디터 셸 프레임 radius-lg'는 대신 DocumentWorkspace.module.css의 기존 .body에 적용(05-08 edge-to-edge 계약 유지)
 - [Phase ?]: [Phase ?]: 09-03: SaveStatusBar '저장됨' accent 배지를 .tsx 무수정으로 구현 — .iconMuted:has(+ .textMuted) CSS 셀렉터로 저장중 스피너와 CSS-only 구분(EDIT-07 카피 100% 불변)
 - [Phase ?]: [Phase ?]: 09-03: FolderTreeNode .dropRejected 하드코딩 #fef2f2를 color-mix(in srgb, var(--destructive) 12%, transparent)로 교체 — 신규 전역 변수 없이 다크 테마 자동 대응
+- [Phase ?]: 09-04: 문서 생성은 워크스페이스 루트에서 수행(폴더 하위 아님) — 플랜 문구가 순차 단계만 명시, 기존 3개 e2e 스펙과 셀렉터 재사용 극대화
+- [Phase ?]: 09-04: 휴지통 단계는 가시성 확인까지만 검증 — 복원/완전삭제는 04-04/04-05가 이미 증명, 이 플랜 목적은 신규 UI 여정 무결성 증명
 
 ### Pending Todos
 
@@ -221,6 +224,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-15T15:51:00.738Z
-Stopped at: Completed 09-03-PLAN.md
+Last session: 2026-08-15T16:00:53.517Z
+Stopped at: Completed 09-04-PLAN.md (Phase 9 전체 완료)
 Resume file: None
