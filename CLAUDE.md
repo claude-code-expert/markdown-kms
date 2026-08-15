@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 1. `docs/REQUIREMENT.md` — 원 요구사항 (FR/NFR/US, CommonMark 0.31.2 기준)
 2. `docs/PRD.md` — **REQUIREMENT의 공백 9건에 대한 해석 확정(§2)**, 최종 권한 매트릭스(§3), 릴리스 단위 R1(P0)/R2(P1)/R3(P2). REQUIREMENT와 충돌 시 PRD 우선
 3. `docs/TRD.md` — 스택·DDL·API·프로토콜 확정. 스키마 변경은 TRD §3 갱신 후 마이그레이션
-4. `docs/ui-kit.html` — 디자인 토큰 원천 (IBM Plex Sans/Mono, accent `#2563eb`, lucide, 순수 CSS 변수). 새 UI는 이 토큰을 이식해 쓴다
+4. `docs/ui-kit.html` — **라이트 모드** 색상 토큰 원천(accent `#2563eb`, lucide, 순수 CSS 변수). Phase 9(design-system-application, D-06)부터 다크 모드는 별도 파생 팔레트(`docs/design_system/`의 Dracula 스크랩에서 토큰만 추출 — 카피/이미지는 브랜드 자체가 아니므로 미사용)로 전면 교체됐고, 타이포(DM Sans/DM Mono 자체호스팅)·반경(`--radius-sm/md/lg`)·모션(`--duration-*`/`--ease-*`)은 라이트/다크 공통 전역 토큰이다. 새 UI는 **라이트=ui-kit.html 색상 + 신규 전역 타입/반경/모션, 다크=신규 Dracula 파생 색상(`--accent #7359f8` 등) + 동일 전역 타입/반경/모션**을 이식해 쓴다
 
 기능 질문이 생기면 PRD §2 표부터 확인한다. 요구사항의 모호점은 전부 거기서 이미 결정됐다.
 

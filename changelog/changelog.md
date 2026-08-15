@@ -1,5 +1,11 @@
 # Changelog — 결정 기록 (append-only, 최신이 위)
 
+## 2026-08-16 — 디자인 시스템 적용: 폰트 IBM Plex → DM Sans/Mono, 다크 팔레트 전면 교체, 전역 radius/motion 토큰 도입 (Phase 9)
+- **결정**: (1) 폰트를 `next/font/google`의 IBM Plex Sans/Mono에서 `docs/design_system/fonts/*.woff2`(DM Sans 400/500/600/700, DM Mono 400)를 이식한 `next/font/local` 자체호스팅으로 교체(D-03) — CSS 변수명(`--font-ibm-plex-sans/mono`)은 하위 CSS Modules 호환을 위해 그대로 유지. (2) `[data-theme="dark"]` + `@media prefers-color-scheme` 다크 팔레트를 기존 blue-accent(`--accent: #3b82f6`)에서 Dracula 파생 팔레트(`--accent: #7359f8`, `--bg: #0e0d11` 등)로 전면 교체, 라이트 `:root` 색상은 무변경(D-04). (3) `--radius-sm/md/lg`(squircle 6/12/18px), `--duration-fast/standard/slow`(180/240/300ms), `--ease-fluid/--ease-elastic` 8개 전역 토큰을 신설해 테마 무관 공통 적용(D-05).
+- **이유**: `docs/design_system/`(draculatheme.com 스크랩, 카피·이미지는 미사용하고 토큰만 추출) 룩앤필을 랜딩·워크스페이스 메인·에디터 3개 화면에 적용해 "이 페이지 뭘로 만들었지" 신선한 인상을 주려는 사용자 요구(09-CONTEXT.md 사용자 발화). 색상만 바꾸는 게 아니라 타입/반경/모션까지 전역 교체해야 그 인상이 성립한다는 판단.
+- **대안**: (1) 다크 팔레트만 교체하고 라이트도 유지 — 검토했으나 D-06에서 라이트는 `docs/ui-kit.html`을 색상 원천으로 계속 쓰기로 확정, 다크만 신규 파생. (2) Google Fonts CDN에서 DM Sans 직접 로드 — 자체호스팅(`public/fonts/`) 대신 CDN 왕복이 생겨 기각. (3) 반경/모션을 컴포넌트별 하드코딩 유지 — 전역 토큰 없이는 6개 UI 프리미티브 간 일관성이 깨져 기각.
+- **영향**: `src/app/layout.tsx`(폰트 로더 교체) · `src/app/globals.css`(다크 팔레트 전면 교체 + 전역 토큰 8개 신설) · `src/components/ui/*.module.css`(6개 프리미티브 토큰 소비) · 로그인/회원가입/대시보드/에디터 화면 CSS Modules 전체(09-01~09-03). `CLAUDE.md` §문서 체계의 `docs/ui-kit.html` 설명을 "라이트=ui-kit.html 색상 + 신규 전역 타입/반경/모션, 다크=신규 Dracula 파생 색상 + 동일 전역 타입/반경/모션"으로 갱신(D-06). 신규 백엔드 기능·API 계약 변경 없음 — AUTH-01/02·WS-01/02·DOC-01/02는 `e2e/design-system-flow.spec.ts` 통합 회귀로 무변경 확인.
+
 ## 2026-08-02 — 미리보기 줄바꿈: 단일 엔터 → `<br>` (CommonMark 0.31.2 이탈, remark-breaks 추가)
 - **결정**: 렌더 파이프라인에 `remark-breaks`를 추가해 단일 `\n`(엔터 1번)을 hard break `<br>`로 렌더. Phase 2 UAT 중 제품 오너 지시로 잠긴 CommonMark 0.31.2 soft-break 불변식(TRD §5)을 명시적으로 override. 적용 범위는 렌더 fork(`markdownProcessor`·`markdownProcessorReact`)뿐 — CommonMark 정합성 fork(`markdownProcessorPreSanitize`)는 순수 유지.
 - **이유**: 에디터 사용자는 엔터=줄바꿈을 기대하나 순수 CommonMark은 단일 soft break를 공백 처리해 "엔터가 미리보기에 반영 안 됨"으로 보였다(UAT 리포트).
