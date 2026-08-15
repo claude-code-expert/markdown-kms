@@ -278,7 +278,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -290,3 +290,31 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 6. Tags, Search & Export | 4/4 | In Progress|  |
 | 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
+| 9. Design System Application | 0/TBD | Not started | - |
+
+### Phase 9: Design System Application
+
+**Goal**: docs/design_system/의 브랜드 디자인 시스템(brand.json·DESIGN.md·DESIGN-HANDOFF.md·system/)을 랜딩(회원가입/로그인)·워크스페이스 메인·에디터 글쓰기 화면에 적용해 룩앤필을 재작업한다. 신규 백엔드 기능 없음 — 기존 기능(RBAC, autosave seq-guard, soft-delete, closure-table 폴더, 서식 플러그인 등) 100% 유지, 순수 프레젠테이션 레이어 리스킨 + 인터랙션 재작업. "Google로 계속하기" 버튼은 시각적 placeholder만(Auth.js Google provider 실연동 안 함 — Phase 8 descope 결정 유지).
+**Depends on**: Phase 1, Phase 3, Phase 4, Phase 6
+**Requirements**: 신규 FR 없음 — 기존 AUTH-01/02, WS-01/02, DOC-01/02 등 관련 화면의 프레젠테이션만 재작업, 동작 요구사항은 불변
+**Success Criteria** (what must be TRUE):
+
+  1. 랜딩 페이지가 docs/design_system 토큰(브랜드 컬러·타이포·컴포넌트)을 적용한 회원가입/로그인 폼(+Google 버튼 placeholder)을 보여준다.
+  2. 워크스페이스 메인이 `docs/images/workspace-main-wireframe.svg` 구성(슬림 탑바·폴더 트리 없는 중앙 정렬 카드 리스트·워크스페이스 만들기·행 클릭 진입)대로 실제 워크스페이스 데이터를 조회해 리스팅한다.
+  3. 문서 에디터 화면이 `docs/images/write-form-wireframe.svg` 구성(사이드바 폴더 트리+검색·상단 브레드크럼/제목/저장·삭제·서식 툴바·보기모드 4버튼·분할 에디터/프리뷰·상태바)대로 재구성되고, 기존 에디터 기능(서식/자동저장/저장 버튼/미리보기)이 회귀 없이 동작한다.
+  4. 로그인부터 워크스페이스 생성/가입, 폴더 생성, 문서 생성/수정/삭제까지 전체 플로우가 새 UI에서 매 단계 vitest+playwright 회귀 테스트로 검증된다.
+
+**Plans:** 4 plans
+
+**Wave 1**
+
+- [ ] 09-01-PLAN.md — TRACER: 토큰 파운데이션(폰트 자체호스팅·전역 반경/모션 토큰·다크 팔레트 전면교체) + UI 프리미티브 토큰 스왑 + 랜딩(로그인/회원가입) 리스킨 + Google placeholder [AUTH-01, AUTH-02]
+
+**Wave 2** *(blocked on Wave 1, parallel — 파일 겹침 없음)*
+
+- [ ] 09-02-PLAN.md — 워크스페이스 메인 리스킨 + 카드 실측 데이터 확장(listMembershipsForUser: 소유자/생성일/문서수/폴더수) [WS-01, WS-02]
+- [ ] 09-03-PLAN.md — 에디터 글쓰기 화면 리스킨(사이드바·툴바·보기모드·분할·상태바, 순수 스타일링, seq-guard/트리 로직 무접촉) [DOC-01, DOC-02]
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 09-04-PLAN.md — 전체 플로우 통합 e2e 회귀(로그인→워크스페이스→폴더→문서 CRUD) + CLAUDE.md 토큰 원천 갱신 + changelog
