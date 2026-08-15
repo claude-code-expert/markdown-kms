@@ -9,7 +9,7 @@
 }
 
 .state {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   text-align: center;
 }
@@ -80,15 +80,15 @@
 .pane :global(code) {
   background: var(--surface-2);
   padding: 2px 4px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .pane :global(pre) {
   background: var(--code-bg);
   padding: var(--space-md);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow-x: auto;
   margin-bottom: var(--space-md);
 }
@@ -96,8 +96,10 @@
 .pane :global(pre code) {
   background: transparent;
   padding: 0;
+  /* Fixed, theme-independent — --code-bg는 라이트/다크 모두 어두운 표면(NFR
+     Preview Pane Prose Contract 기존 예외), 코드 텍스트도 고정 밝은 색 유지. */
   color: #cbd5e1;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
 }
 

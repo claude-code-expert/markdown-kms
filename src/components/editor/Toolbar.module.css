@@ -1,5 +1,6 @@
 /* Toolbar Contract (UI-SPEC): 44px bar, 32px buttons/16px icons, exactly
-   default/hover states (no pressed state, no tooltip delay — both Phase 5). */
+   default/hover states (no pressed state, no tooltip delay — both Phase 5).
+   Phase 9 Visual Hierarchy: 무채색(surface-2)으로 눌러 본문에서 시선을 뺏지 않음. */
 .bar {
   position: sticky;
   top: 0;
@@ -10,7 +11,7 @@
   gap: var(--space-xs);
   height: 44px;
   padding: 6px var(--space-sm);
-  background: var(--surface);
+  background: var(--surface-2);
   border-bottom: 1px solid var(--border);
 }
 
@@ -40,13 +41,14 @@
   justify-content: center;
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   color: var(--text);
   cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .button:hover {
-  background: var(--surface-2);
+  background: var(--bg);
 }
 
 /* UI-SPEC Toolbar Interaction Contract "pressed" — momentary while the mouse
@@ -63,23 +65,23 @@
   transform: translateX(-50%);
   margin-top: 4px;
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   /* Fixed, theme-independent — var(--text) would go near-white in dark mode,
      making the tooltip invisible (white text on white bubble). UI-SPEC
      "알려진 예외". */
   background: #0f172a;
   color: #fff;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   opacity: 0;
   pointer-events: none;
   /* Hide immediately on hover-out; the hover rule below overrides this with
-     a 300ms show delay. Split so unhover never gets a stray delayed hide. */
+     a var(--duration-slow)(300ms) show delay — EDIT-10 값 불변, 토큰명만 부여. */
   transition: opacity 0s linear 0s;
 }
 
 .buttonWrap:hover .tooltip {
   opacity: 1;
-  transition: opacity 0s linear 300ms;
+  transition: opacity 0s linear var(--duration-slow);
 }

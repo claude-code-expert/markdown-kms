@@ -7,11 +7,12 @@
   color: var(--text);
 }
 
+/* UI-SPEC Typography "Body" 역할(에디터 소스 포함) — 14px/400/1.5 */
 .host :global(.cm-editor) {
   height: 100%;
   font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .host :global(.cm-scroller) {

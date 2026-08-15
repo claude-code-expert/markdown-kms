@@ -9,6 +9,7 @@
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
   border-bottom: 1px solid var(--border);
+  transition: border-color var(--duration-fast) var(--ease-fluid);
 }
 
 .bar:focus-within {
@@ -46,7 +47,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text);
 }
 
@@ -59,6 +60,7 @@
   padding: 0;
   cursor: pointer;
   color: var(--muted);
+  transition: color var(--duration-fast) var(--ease-fluid);
 }
 
 .chipRemove:hover {
@@ -72,7 +74,7 @@
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text);
 }
 

@@ -19,12 +19,14 @@
   gap: var(--space-sm);
   padding-right: var(--space-sm);
   border-bottom: 1px solid var(--border);
+  transition: border-color var(--duration-fast) var(--ease-fluid);
 }
 
 .titleRow:focus-within {
   border-bottom-color: var(--accent);
 }
 
+/* UI-SPEC Typography "Heading" 역할(문서 제목) — 16px/600/1.3 */
 .titleInput {
   height: 100%;
   flex: 1;
@@ -33,9 +35,9 @@
   outline: none;
   background: var(--bg);
   font-family: inherit;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
   padding: 0 0 0 var(--space-md);
 }
 
@@ -43,9 +45,15 @@
   color: var(--dim);
 }
 
+/* Phase 9 D-05 Radius Scale "페이지 레벨 컨테이너(에디터 셸 프레임)" — 툴바+분할
+   에디터/프리뷰를 감싸는 프레임만 radius-lg로 카드화한다. titleRow/TagBar/
+   SaveStatusBar는 기존 edge-to-edge 계약(05-08) 그대로 유지. */
 .body {
   flex: 1;
   min-height: 0;
+  margin: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
 /* 저장/수정/삭제 — visible TEXT buttons (Button.tsx, ui-kit #4), not icon-only: an icon-only

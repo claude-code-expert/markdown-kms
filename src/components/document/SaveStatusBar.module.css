@@ -39,14 +39,34 @@
 }
 
 .textMuted {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted);
 }
 
+/* UI-SPEC Visual Hierarchy "상단 저장 상태 배지('저장됨', accent 배경)" — CSS-only(:has()
+   + 인접 형제 결합자)로 "저장됨" 상태만 특정한다. .iconMuted는 저장중 스피너(.spinner)에는
+   안 붙고 Check 아이콘(saved)에만 붙으므로, ":has(+ .textMuted)"는 저장중과 정확히 구분된다.
+   SaveStatusBar.tsx 무수정(CSS-only, D-09 계열 원칙 준수). */
+.iconMuted:has(+ .textMuted) {
+  color: var(--accent);
+}
+
+.iconMuted:has(+ .textMuted) + .textMuted {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-weight: 600;
+  transition: background var(--duration-fast) var(--ease-fluid);
+}
+
 .textDestructive {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--destructive);
@@ -59,7 +79,7 @@
   border: none;
   background: none;
   padding: 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
   color: var(--destructive);
