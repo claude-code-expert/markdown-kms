@@ -1,6 +1,14 @@
 .card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-md); /* 폴백: 항상 적용 (UI-SPEC Radius Scale) */
   padding: var(--space-md);
+}
+
+/* Phase 9 UI-SPEC squircle progressive enhancement — 미지원 브라우저는 위
+   border-radius 폴백 그대로, 시각 회귀 없음. */
+@supports (corner-shape: squircle) {
+  .card {
+    corner-shape: squircle;
+  }
 }

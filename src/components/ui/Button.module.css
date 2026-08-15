@@ -1,12 +1,19 @@
 .btn {
   padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
   font-family: inherit;
-  transition: background-color 0.15s ease;
+  transition:
+    background-color var(--duration-fast) var(--ease-fluid),
+    transform var(--duration-fast) var(--ease-elastic);
+}
+
+/* Phase 9 UI-SPEC "Press 피드백" — 클릭 시 색상 플래시가 아니라 transform. */
+.btn:active:not(:disabled) {
+  transform: scale(0.98) translateY(1px);
 }
 
 .primary {

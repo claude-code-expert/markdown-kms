@@ -10,11 +10,19 @@
 
 .box {
   background: var(--bg);
-  border-radius: 10px;
+  border-radius: var(--radius-md); /* 폴백: 항상 적용 (UI-SPEC Radius Scale) */
   padding: var(--space-lg);
   width: 320px;
   max-width: calc(100vw - 32px);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+/* Phase 9 UI-SPEC squircle progressive enhancement — 미지원 브라우저는 위
+   border-radius 폴백 그대로, 시각 회귀 없음. */
+@supports (corner-shape: squircle) {
+  .box {
+    corner-shape: squircle;
+  }
 }
 
 .header {
