@@ -12,11 +12,12 @@ vi.mock("next/headers", () => ({
   }),
 }));
 
-// next/font/google relies on a Next.js build-time loader (webpack/SWC) that isn't
-// present under vitest — stub both fonts layout.tsx calls with plain functions.
-vi.mock("next/font/google", () => ({
-  IBM_Plex_Sans: () => ({ variable: "--font-ibm-plex-sans" }),
-  IBM_Plex_Mono: () => ({ variable: "--font-ibm-plex-mono" }),
+// next/font/local relies on a Next.js build-time loader (webpack/SWC) that isn't
+// present under vitest — stub the default export layout.tsx calls with a plain function.
+// Phase 9 D-05: layout.tsx swapped next/font/google (IBM Plex) for next/font/local (DM
+// Sans/Mono self-hosted), variable names kept unchanged.
+vi.mock("next/font/local", () => ({
+  default: (opts: { variable: string }) => ({ variable: opts.variable }),
 }));
 
 describe("RootLayout theme cookie -> data-theme", () => {

@@ -1,20 +1,32 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
 import Script from "next/script";
 import "./globals.css";
 
-// UI-SPEC Design System: IBM Plex Sans (본문), IBM Plex Mono (코드·숫자 라벨) — docs/ui-kit.html.
-const ibmPlexSans = IBM_Plex_Sans({
+// UI-SPEC Design System (Phase 9 D-05): DM Sans(본문)/DM Mono(코드·숫자 라벨),
+// docs/design_system/fonts 자체호스팅. 변수명은 --font-ibm-plex-sans/mono를
+// 그대로 유지(globals.css body 참조 + 타 화면 CSS Modules와 일치, 09-01 파일
+// 스코프 밖 파일은 미수정) — 소스만 IBM Plex → DM 으로 교체.
+// 500/700 웨이트 파일은 이식만 하고 이번 phase UI 크롬에서는 쓰지 않는다
+// (UI-SPEC Typography: 실사용은 400/600 2종뿐, 자산으로만 보유).
+const ibmPlexSans = localFont({
+  src: [
+    { path: "../../public/fonts/dm-sans-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/dm-sans-500.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/dm-sans-600.woff2", weight: "600", style: "normal" },
+    { path: "../../public/fonts/dm-sans-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-ibm-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "600"],
+  display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const ibmPlexMono = localFont({
+  src: "../../public/fonts/dm-mono-400.woff2",
+  weight: "400",
+  style: "normal",
   variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

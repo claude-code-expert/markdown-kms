@@ -22,45 +22,59 @@
   --space-xl: 32px;
   --space-2xl: 48px;
   --space-3xl: 64px;
+
+  /* Phase 9 D-05 — 전역(라이트/다크 공통) Radius/Motion 토큰. UI-SPEC "Radius
+     Scale"/"Motion Tokens" 원천, Dracula DESIGN.md Layout posture. */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --duration-fast: 180ms;
+  --duration-standard: 240ms;
+  --duration-slow: 300ms;
+  --ease-fluid: cubic-bezier(0.36, 0.66, 0.6, 1);
+  --ease-elastic: cubic-bezier(0.42, 0, 0.58, 1.8);
 }
 
-/* Dark palette (UI-SPEC "다크 ([data-theme="dark"] override)") — 12 token
-   re-declarations only, slate/blue scale, WCAG-verified. Components stay
-   var(--token) references, so this block alone flips the whole app dark. */
+/* Dark palette (UI-SPEC "다크 모드 CSS 변수 전체 매핑", Phase 9 D-04 전면 교체)
+   — Dracula 파생 팔레트(Void/Crypt/Hairline/Moth/Vampire Purple). 기존
+   slate/blue 스케일은 완전히 제거됨. Components stay var(--token) references,
+   so this block alone flips the whole app dark. */
 [data-theme="dark"] {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --surface-2: #334155;
-  --border: #475569;
-  --border-strong: #64748b;
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --dim: #64748b;
-  --accent: #3b82f6;
-  --accent-strong: #60a5fa;
-  --accent-weak: #1e2a44;
-  --destructive: #ef4444;
-  --code-bg: #020617;
+  --bg: #0e0d11;
+  --surface: #1c1b22;
+  --surface-2: #383645;
+  --border: #383645;
+  --border-strong: #514f60;
+  --text: #c2c0ce;
+  --heading-text: #d3d1db;
+  --muted: #b2afc0;
+  --dim: #757383;
+  --accent: #7359f8;
+  --accent-strong: #9580fa;
+  --accent-weak: #241f3d;
+  --destructive: #e5484d;
+  --code-bg: #1c1b22;
 }
 
 /* First visit (no theme cookie yet, so RSC hasn't set data-theme) falls back
    to the OS setting — CONTEXT lock "첫 방문은 prefers-color-scheme 따름".
-   Same 12 values as above, duplicated (server can't read OS preference). */
+   Same values as above, duplicated (server can't read OS preference). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface-2: #334155;
-    --border: #475569;
-    --border-strong: #64748b;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --dim: #64748b;
-    --accent: #3b82f6;
-    --accent-strong: #60a5fa;
-    --accent-weak: #1e2a44;
-    --destructive: #ef4444;
-    --code-bg: #020617;
+    --bg: #0e0d11;
+    --surface: #1c1b22;
+    --surface-2: #383645;
+    --border: #383645;
+    --border-strong: #514f60;
+    --text: #c2c0ce;
+    --heading-text: #d3d1db;
+    --muted: #b2afc0;
+    --dim: #757383;
+    --accent: #7359f8;
+    --accent-strong: #9580fa;
+    --accent-weak: #241f3d;
+    --destructive: #e5484d;
+    --code-bg: #1c1b22;
   }
 }
 
@@ -78,9 +92,10 @@ body {
   min-height: 100%;
   color: var(--text);
   background: var(--bg);
-  /* IBM Plex Sans (본문) — UI-SPEC Design System / Typography */
-  font-family: var(--font-ibm-plex-sans), "IBM Plex Sans", sans-serif;
-  font-size: 13px;
+  /* DM Sans (본문) — Phase 9 UI-SPEC Design System / Typography, D-05 전면 대체.
+     변수명 --font-ibm-plex-sans 유지(layout.tsx 참조), 폰트 소스만 DM Sans. */
+  font-family: var(--font-ibm-plex-sans), "DM Sans", sans-serif;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
