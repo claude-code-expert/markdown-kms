@@ -42,7 +42,10 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
         <Link href={`/w/${id}`} className={styles.name}>
           {name}
         </Link>
-        <p className={styles.meta}>
+        <p
+          className={styles.meta}
+          title={`소유자 ${ownerName ?? "-"} · 생성일 ${formatCreatedAt(createdAt)} · 문서 ${docCount}개 · 폴더 ${folderCount}개`}
+        >
           소유자 {ownerName ?? "-"} · 생성일 {formatCreatedAt(createdAt)} · 문서 {docCount}개 · 폴더 {folderCount}개
         </p>
       </div>
