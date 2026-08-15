@@ -492,16 +492,22 @@ function CreateRootInput({
   onCancel,
   error,
 }: {
-  onSubmit: (name: string) => void;
+  onSubmit: (name: string) => void | Promise<void>;
   onCancel: () => void;
   error: string | null;
 }) {
   const [value, setValue] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter" && value.trim()) {
+    // IME(한글 등) 조합 확정 Enter도 keydown "Enter"를 발생시켜, 체크 없으면 확정+제출 두 번 발화.
+    if (event.nativeEvent.isComposing) return;
+    if (event.key === "Enter" && value.trim() && !submitting) {
       const parsed = folderSchema.safeParse({ name: value });
-      if (parsed.success) onSubmit(parsed.data.name);
+      if (parsed.success) {
+        setSubmitting(true);
+        Promise.resolve(onSubmit(parsed.data.name)).finally(() => setSubmitting(false));
+      }
     }
     if (event.key === "Escape") onCancel();
   }
@@ -516,6 +522,7 @@ function CreateRootInput({
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
           onBlur={onCancel}
+          disabled={submitting}
           autoFocus
         />
       </div>
@@ -533,16 +540,21 @@ function CreateDocumentRootInput({
   onCancel,
   error,
 }: {
-  onSubmit: (title: string) => void;
+  onSubmit: (title: string) => void | Promise<void>;
   onCancel: () => void;
   error: string | null;
 }) {
   const [value, setValue] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter" && value.trim()) {
+    if (event.nativeEvent.isComposing) return;
+    if (event.key === "Enter" && value.trim() && !submitting) {
       const parsed = documentSchema.pick({ title: true }).safeParse({ title: value });
-      if (parsed.success) onSubmit(parsed.data.title);
+      if (parsed.success) {
+        setSubmitting(true);
+        Promise.resolve(onSubmit(parsed.data.title)).finally(() => setSubmitting(false));
+      }
     }
     if (event.key === "Escape") onCancel();
   }
@@ -558,6 +570,7 @@ function CreateDocumentRootInput({
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
           onBlur={onCancel}
+          disabled={submitting}
           autoFocus
         />
       </div>

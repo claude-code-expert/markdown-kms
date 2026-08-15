@@ -47,3 +47,20 @@
   flex: 1;
   min-height: 0;
 }
+
+/* 저장/수정/삭제 — visible TEXT buttons (Button.tsx, ui-kit #4), not icon-only: an icon-only
+   affordance here didn't read as "a button" at a glance. Always in titleRow, no hover-reveal
+   (unlike FolderTreeNode's row-scoped .kebab — these are the document's own primary actions). */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.error {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--destructive);
+  margin: var(--space-xs) 0 0;
+}

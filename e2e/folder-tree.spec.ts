@@ -82,9 +82,9 @@ test("renames a folder inline after the server confirms", async ({ page }) => {
 
   await page.getByText(folderName).click({ button: "right" });
   await page.getByRole("menuitem", { name: "이름 변경" }).click();
-  // Scoped to the sidebar — the page also hosts the CodeMirror editor, which exposes its
-  // own role="textbox" contenteditable div (Phase 2 EditorPreviewLayout).
-  const input = page.getByRole("navigation", { name: "폴더 트리" }).getByRole("textbox");
+  // Named lookup (not a bare role="textbox" scope) — the sidebar also hosts SearchBox's
+  // "문서 검색" input (06-03) in the same <nav>, which would otherwise strict-mode-collide here.
+  const input = page.getByRole("textbox", { name: "이름 변경" });
   await expect(input).toHaveValue(folderName);
   await input.fill(renamedName);
   await input.press("Enter");

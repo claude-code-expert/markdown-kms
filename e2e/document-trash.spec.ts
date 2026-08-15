@@ -36,7 +36,7 @@ async function deleteDocumentFromTree(page: Page, title: string) {
   await page.reload();
   await page.getByText(title).click({ button: "right" });
   await page.getByRole("menuitem", { name: "삭제" }).click();
-  await page.getByRole("button", { name: "삭제", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "삭제", exact: true }).click();
 }
 
 // The seeded default workspace is shared across every signup (D-08) — trash items from other

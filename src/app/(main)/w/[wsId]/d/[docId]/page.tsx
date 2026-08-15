@@ -3,7 +3,7 @@
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
 import { notFound } from "next/navigation";
 import { getDocument, getDraft, getTags, isDraftNewer } from "@/lib/documents";
-import { ForbiddenError, requireRole } from "@/lib/rbac";
+import { ForbiddenError, ROLE_RANK, requireRole } from "@/lib/rbac";
 import { DocumentWorkspace } from "@/components/document/DocumentWorkspace";
 import type { LayoutMode } from "@/components/layout/EditorPreviewLayout";
 
@@ -16,12 +16,17 @@ interface DocumentPageProps {
 export default async function DocumentPage({ params }: DocumentPageProps) {
   const { wsId, docId } = await params;
 
+  let role: Awaited<ReturnType<typeof requireRole>>["role"];
   try {
-    await requireRole(wsId, "VIEWER");
+    ({ role } = await requireRole(wsId, "VIEWER"));
   } catch (err) {
     if (err instanceof ForbiddenError) notFound();
     throw err;
   }
+  // T-DOC-DELETE-BTN-IDOR: server computes the boolean, client never sees the raw role (mirrors
+  // trash/page.tsx's canRestore/canPermanentDelete) — hiding the button is UX only, the DELETE
+  // route's own requireRole(wsId,"EDITOR") remains the actual enforcement.
+  const canDelete = ROLE_RANK[role] >= ROLE_RANK.EDITOR;
 
   // getDocument scopes by workspaceId as well as documentId (RESEARCH Pitfall 6 / T-04-02-IDOR)
   // — a docId belonging to a different workspace 404s here, never leaking cross-workspace
@@ -53,6 +58,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
     <DocumentWorkspace
       key={doc.id}
       docId={doc.id}
+      workspaceId={wsId}
       initialTitle={doc.title}
       initialContent={doc.content}
       initialSeq={doc.savedSeq}
@@ -61,6 +67,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
       hasNewerDraft={hasNewerDraft}
       draftContent={draftContent}
       initialTags={tags}
+      canDelete={canDelete}
     />
   );
 }

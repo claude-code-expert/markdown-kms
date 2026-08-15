@@ -102,14 +102,82 @@ test("deletes the open document via the tree menu, confirms, and navigates to th
   // hard reload (same /d/docId route, still "open") deterministically shows the new leaf.
   await page.reload();
   await page.getByText(docTitle).click({ button: "right" });
-  // Document menu is exactly 1 item — no rename/move entries (unlike the folder's 4-item menu).
-  await expect(page.getByRole("menuitem")).toHaveCount(1);
+  // Document menu is 2 items (".md 내보내기" + "삭제") — no rename/move entries (unlike the
+  // folder's 4-item menu). Stale assertion fixed: this was `toHaveCount(1)` from before EXP-01
+  // (Phase 6) added the export entry to the same docMenuItems array (FolderTree.tsx).
+  await expect(page.getByRole("menuitem")).toHaveCount(2);
   await page.getByRole("menuitem", { name: "삭제" }).click();
   await expect(page.getByText(`'${docTitle}' 문서를 삭제할까요?`)).toBeVisible();
-  await page.getByRole("button", { name: "삭제", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "삭제", exact: true }).click();
 
   // Currently-open document was the delete target — navigates back to the empty index.
   await expect(page).toHaveURL(`${workspaceUrl}`);
   await expect(page.getByText("문서를 선택해 주세요")).toBeVisible();
   await expect(page.getByText(docTitle)).toHaveCount(0);
+});
+
+// Manual save button (titleRow) — ALWAYS visible for EDITOR+, on a brand-new document and an
+// already-saved one alike (no new-vs-existing label switching — that split caused real user
+// confusion in practice, since most documents users open have already been saved at least
+// once). Clicking it hits the real PUT /api/documents/:id route immediately (not waiting the
+// 1s debounce), proving the button itself triggers the save.
+test("shows 저장 on a brand-new document; clicking it saves immediately and the content persists after a reload", async ({
+  page,
+}) => {
+  const seed = `${Date.now()}-save-btn`;
+  const docTitle = `E2E Save Btn Doc ${seed}`;
+  const bodyText = `수동 저장 본문 ${seed}`;
+
+  await signupAndOpenWorkspace(page, seed);
+
+  await page.getByRole("button", { name: "새 문서" }).click();
+  await page.getByPlaceholder("새 문서").fill(docTitle);
+  await page.getByPlaceholder("새 문서").press("Enter");
+  await expect(page).toHaveURL(/\/w\/[^/]+\/d\/[^/]+$/);
+
+  // 저장/수정/삭제 all present from the very first render, brand-new document or not.
+  await expect(page.getByRole("button", { name: "저장" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "수정" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "삭제", exact: true })).toBeVisible();
+
+  const editor = page.locator(".cm-content");
+  await editor.click();
+  await editor.pressSequentially(bodyText);
+
+  // Rename before saving — proves the left tree (server-rendered FolderTree) picks up the new
+  // title via router.refresh() right after a successful manual save, no page reload needed.
+  const renamedTitle = `${docTitle} (수정됨)`;
+  await page.getByLabel("문서 제목").fill(renamedTitle);
+  await page.getByRole("button", { name: "저장" }).click();
+  await expect(page.getByText("저장됨")).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(renamedTitle, { exact: true })).toBeVisible();
+
+  // DB round-trip proof: reload discards all local React state, so a value that survives can
+  // only have come from the server (RSC re-fetches via lib/documents.getDocument).
+  await page.reload();
+  await expect(page.locator(".cm-content")).toContainText(bodyText);
+  await expect(page.getByRole("button", { name: "저장" })).toBeVisible();
+});
+
+// Document-view delete button (titleRow, next to LayoutModeToggle) — a second entry point to
+// the same DELETE /api/documents/:id route as the tree menu's "삭제" item above, for deleting
+// without leaving the editor. Present immediately, no prior save required.
+test("deletes the open document via the document-view delete button", async ({ page }) => {
+  const seed = `${Date.now()}-delete-btn`;
+  const docTitle = `E2E Delete Btn Doc ${seed}`;
+
+  await signupAndOpenWorkspace(page, seed);
+
+  await page.getByRole("button", { name: "새 문서" }).click();
+  await page.getByPlaceholder("새 문서").fill(docTitle);
+  await page.getByPlaceholder("새 문서").press("Enter");
+  await expect(page).toHaveURL(/\/w\/[^/]+\/d\/[^/]+$/);
+  const workspaceUrl = page.url().replace(/\/d\/[^/]+$/, "");
+
+  await page.getByRole("button", { name: "삭제", exact: true }).click();
+  await expect(page.getByText(`'${docTitle}' 문서를 삭제할까요?`)).toBeVisible();
+  await page.getByRole("dialog").getByRole("button", { name: "삭제", exact: true }).click();
+
+  await expect(page).toHaveURL(workspaceUrl);
+  await expect(page.getByText("문서를 선택해 주세요")).toBeVisible();
 });

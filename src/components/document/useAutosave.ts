@@ -39,5 +39,10 @@ export function useAutosave(docId: string, initialSeq: number) {
     return () => controller.dispose();
   }, [controller, initialSeq]);
 
-  return { status, scheduleSave: controller.scheduleSave, retry: controller.retry };
+  return {
+    status,
+    scheduleSave: controller.scheduleSave,
+    saveNow: controller.saveNow,
+    retry: controller.retry,
+  };
 }

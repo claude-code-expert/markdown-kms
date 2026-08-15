@@ -28,7 +28,7 @@ export interface FolderTreeNodeCtx {
   onDragEnd: () => void;
   onDropOn: (targetId: string) => void;
   creatingChildOf: string | null;
-  onSubmitCreateChild: (parentId: string, name: string) => void;
+  onSubmitCreateChild: (parentId: string, name: string) => void | Promise<void>;
   onCancelCreateChild: () => void;
   onOpenMenu: (event: MouseEvent, folderId: string, folderName: string) => void;
   // 04-03 — separate trigger for the document leaf's 1-item menu (folders and documents render
@@ -229,6 +229,7 @@ function RenameInput({
       ref={inputRef}
       className={styles.inlineInput}
       value={value}
+      aria-label="이름 변경"
       onClick={(event) => event.stopPropagation()}
       onChange={(event) => setValue(event.target.value)}
       onKeyDown={onKeyDown}
@@ -245,14 +246,19 @@ function CreateInlineRow({
   onCancel,
 }: {
   depth: number;
-  onSubmit: (name: string) => void;
+  onSubmit: (name: string) => void | Promise<void>;
   onCancel: () => void;
 }) {
   const [value, setValue] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const paddingLeft = 8 + 16 * depth;
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter" && value.trim()) onSubmit(value);
+    if (event.nativeEvent.isComposing) return;
+    if (event.key === "Enter" && value.trim() && !submitting) {
+      setSubmitting(true);
+      Promise.resolve(onSubmit(value)).finally(() => setSubmitting(false));
+    }
     if (event.key === "Escape") onCancel();
   }
 
@@ -267,6 +273,7 @@ function CreateInlineRow({
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={onKeyDown}
         onBlur={onCancel}
+        disabled={submitting}
         autoFocus
       />
     </div>

@@ -54,6 +54,55 @@ describe("createAutosaveController — debounce", () => {
   });
 });
 
+describe("createAutosaveController — saveNow (explicit manual-save button)", () => {
+  it("fires immediately, without waiting for the 1000ms debounce", () => {
+    const send = vi.fn(() => new Promise<{ ok: boolean }>(() => {}));
+    const controller = createAutosaveController({ initialSeq: 0, send, onStatus: vi.fn() });
+
+    controller.saveNow("content", "title");
+
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith("content", "title", 1);
+  });
+
+  it("cancels a pending debounce timer so the debounced call doesn't ALSO fire a duplicate save", () => {
+    const send = vi.fn(() => new Promise<{ ok: boolean }>(() => {}));
+    const controller = createAutosaveController({ initialSeq: 0, send, onStatus: vi.fn() });
+
+    controller.scheduleSave("typed content", "title");
+    vi.advanceTimersByTime(300); // debounce timer still pending (needs 1000ms)
+    controller.saveNow("typed content", "title");
+    expect(send).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(1000); // the cleared debounce timer must NOT also fire
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it("bumps seq on every call, same as scheduleSave — a later saveNow's response is authoritative", async () => {
+    const deferredBySeq = new Map<number, ReturnType<typeof deferred<{ ok: boolean }>>>();
+    const send = vi.fn((_content: string, _title: string, seq: number) => {
+      const d = deferred<{ ok: boolean }>();
+      deferredBySeq.set(seq, d);
+      return d.promise;
+    });
+    const statuses: SaveStatus[] = [];
+    const controller = createAutosaveController({ initialSeq: 0, send, onStatus: (s) => statuses.push(s) });
+
+    controller.saveNow("v1", "title"); // seq=1
+    controller.saveNow("v2", "title"); // seq=2
+
+    deferredBySeq.get(2)!.resolve({ ok: true });
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(statuses).toEqual(["saving", "saving", "saved"]);
+
+    deferredBySeq.get(1)!.resolve({ ok: true }); // stale — must not flip status
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(statuses).toEqual(["saving", "saving", "saved"]);
+  });
+});
+
 describe("createAutosaveController — stale response is ignored (core EDIT-07 correctness)", () => {
   it("send A then send B (newer); A resolves late — A's response does not change status", async () => {
     const deferredBySeq = new Map<number, ReturnType<typeof deferred<{ ok: boolean }>>>();
