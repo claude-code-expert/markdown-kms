@@ -11,6 +11,8 @@
 // order; GROUP_SIZES below carves it into the 4 flat groups rendered after the
 // heading dropdown, each separated by a 1px divider.
 import type { EditorView } from "@codemirror/view";
+import { LayoutModeToggle } from "../layout/LayoutModeToggle";
+import type { LayoutMode } from "../layout/EditorPreviewLayout";
 import { HeadingDropdown } from "./HeadingDropdown";
 import { plugins } from "./plugins";
 import styles from "./Toolbar.module.css";
@@ -21,6 +23,10 @@ interface ToolbarProps {
   // it opens EditorPreviewLayout's hidden file input instead. Optional so any other Toolbar
   // caller (if one ever exists) keeps working without this prop.
   onImageButtonClick?: () => void;
+  // 보기 모드(분할/에디터만/미리보기만) 세그먼트 — 에디터+프리뷰를 합친 이 통합 툴바의
+  // 우측 끝에 함께 둔다(기존엔 titleRow에 별도로 있었음). 둘 다 없으면 렌더하지 않는다.
+  layoutMode?: LayoutMode;
+  onLayoutModeChange?: (next: LayoutMode) => void;
 }
 
 const GROUP_SIZES = [4, 3, 3, 3];
@@ -34,7 +40,7 @@ function buildGroups() {
   });
 }
 
-export function Toolbar({ getView, onImageButtonClick }: ToolbarProps) {
+export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeChange }: ToolbarProps) {
   const groups = buildGroups();
 
   return (
@@ -76,6 +82,11 @@ export function Toolbar({ getView, onImageButtonClick }: ToolbarProps) {
           {groupIndex < groups.length - 1 && <div className={styles.divider} />}
         </div>
       ))}
+      {layoutMode && onLayoutModeChange && (
+        <div className={styles.modeToggleWrap}>
+          <LayoutModeToggle mode={layoutMode} onChange={onLayoutModeChange} />
+        </div>
+      )}
     </div>
   );
 }

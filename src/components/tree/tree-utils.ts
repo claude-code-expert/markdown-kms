@@ -33,6 +33,25 @@ export function buildTree(folders: FolderRow[]): FolderTreeNode[] {
   return roots;
 }
 
+// 문서 브레드크럼용 — folderId부터 parentId 체인을 루트까지 올라가며 경로를 만든다
+// (루트가 배열 첫 원소). 순환 방어: 이미 방문한 id를 다시 만나면 멈춘다(서버 데이터는
+// 사이클이 없지만, 방어적으로 무한루프를 막는다).
+export function getAncestorPath(folders: FolderRow[], folderId: string | null): FolderRow[] {
+  const byId = new Map(folders.map((f) => [f.id, f]));
+  const path: FolderRow[] = [];
+  const visited = new Set<string>();
+  let current = folderId;
+  while (current) {
+    if (visited.has(current)) break;
+    visited.add(current);
+    const node = byId.get(current);
+    if (!node) break;
+    path.unshift(node);
+    current = node.parentId;
+  }
+  return path;
+}
+
 // 03-05: client-side cycle pre-judgment for DnD/move-modal UX only — NOT a trust boundary.
 // The server (moveFolder, 03-03/03-04) re-validates inside the same transaction as the
 // rewiring (T-03-05-CLIENTTRUST). rootId === candidateId is treated as "descendant-or-self"

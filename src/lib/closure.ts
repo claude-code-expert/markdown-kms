@@ -131,6 +131,22 @@ export async function moveFolder(folderId: string, newParentId: string | null, c
   });
 }
 
+// moveFolder의 문서 버전 — document는 closure table에 없는 leaf라 사이클 체크·재배선이
+// 필요 없다. newFolderId가 문서와 같은 workspace의 활성 폴더인지만 검증(moveFolder와 동일한
+// CrossWorkspaceError 재사용, 새 에러 타입 안 만듦).
+export async function moveDocument(documentId: string, newFolderId: string | null, client: DbClient = db) {
+  return client.transaction(async (tx) => {
+    if (newFolderId) {
+      const doc = await resolveWorkspaceIdForDocument(documentId, tx);
+      const newFolder = await resolveActiveWorkspaceId(newFolderId, tx);
+      if (!doc || !newFolder || newFolder.workspaceId !== doc.workspaceId) {
+        throw new CrossWorkspaceError("Cannot move a document into a different workspace.");
+      }
+    }
+    await tx.update(document).set({ folderId: newFolderId, updatedAt: new Date() }).where(eq(document.id, documentId));
+  });
+}
+
 // TRD §4 "폴더 삭제" / RESEARCH Pattern 5: cascade soft-delete. getSubtree(folderId, tx) reads
 // the subtree id list inside the same transaction as the UPDATE (RESEARCH Pitfall 4, read-skew
 // avoidance) — the whole subtree gets is_deleted=true/deleted_at, only the delete target gets

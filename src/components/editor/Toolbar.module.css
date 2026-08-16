@@ -28,6 +28,12 @@
   background: var(--border);
 }
 
+/* 보기 모드 토글을 이 통합 툴바의 오른쪽 끝으로 미는 flexbox 관용구 —
+   별도 spacer 엘리먼트 없이 margin-left:auto 하나로 해결. */
+.modeToggleWrap {
+  margin-left: auto;
+}
+
 .buttonWrap {
   position: relative;
   display: inline-flex;

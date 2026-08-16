@@ -12,11 +12,12 @@ import {
   type EditorPreviewLayoutHandle,
   type LayoutMode,
 } from "@/components/layout/EditorPreviewLayout";
-import { LayoutModeToggle } from "@/components/layout/LayoutModeToggle";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Modal } from "@/components/ui/Modal";
+import type { FolderRow } from "@/components/tree/tree-utils";
 import { DraftRecoveryDialog } from "./DraftRecoveryDialog";
+import { FolderPathPicker } from "./FolderPathPicker";
 import { SaveStatusBar } from "./SaveStatusBar";
 import { TagBar } from "./TagBar";
 import { useAutosave } from "./useAutosave";
@@ -55,6 +56,10 @@ interface DocumentWorkspaceProps {
   initialTitle: string;
   initialContent: string;
   initialSeq: number;
+  // 상위 폴더 브레드크럼 드롭다운(FolderPathPicker)에 그대로 전달 — 사이드바 FolderTree와
+  // 같은 flat 목록(getWorkspaceFolders, 1 SQL) 재사용, 별도 API 없음.
+  initialFolderId: string | null;
+  folders: FolderRow[];
   // RSC (d/[docId]/page.tsx) reads these from cookies for no-FOUC first render
   // (05-08 Task 3) — default here covers any other/older caller.
   initialLayoutMode?: LayoutMode;
@@ -79,6 +84,8 @@ export function DocumentWorkspace({
   initialTitle,
   initialContent,
   initialSeq,
+  initialFolderId,
+  folders,
   initialLayoutMode = "split",
   initialSplitRatio = 50,
   hasNewerDraft = false,
@@ -173,6 +180,7 @@ export function DocumentWorkspace({
   return (
     <div className={styles.workspace}>
       <div className={styles.titleRow}>
+        <FolderPathPicker documentId={docId} folders={folders} initialFolderId={initialFolderId} />
         <input
           className={styles.titleInput}
           value={title}
@@ -180,7 +188,6 @@ export function DocumentWorkspace({
           placeholder="제목 없음"
           aria-label="문서 제목"
         />
-        <LayoutModeToggle mode={layoutMode} onChange={setLayoutMode} />
         {canDelete && (
           <div className={styles.actions}>
             {/* 저장/수정 both call the same saveNow — this editor has no separate edit-mode
@@ -205,6 +212,7 @@ export function DocumentWorkspace({
           initialContent={initialContent}
           onChange={handleContentChange}
           layoutMode={layoutMode}
+          onLayoutModeChange={setLayoutMode}
           initialSplitRatio={initialSplitRatio}
         />
       </div>

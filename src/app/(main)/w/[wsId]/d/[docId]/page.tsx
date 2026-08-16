@@ -3,6 +3,7 @@
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
 import { notFound } from "next/navigation";
 import { getDocument, getDraft, getTags, isDraftNewer } from "@/lib/documents";
+import { getWorkspaceFolders } from "@/lib/closure";
 import { ForbiddenError, ROLE_RANK, requireRole } from "@/lib/rbac";
 import { DocumentWorkspace } from "@/components/document/DocumentWorkspace";
 import type { LayoutMode } from "@/components/layout/EditorPreviewLayout";
@@ -33,7 +34,12 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
   // content to a member of wsId. getDraft is fetched in the SAME Promise.all so isDraftNewer's
   // comparison uses two timestamps read in the same request context (05-05 Pitfall 7 — no
   // client-clock-skew exposure, the client only ever sees the boolean result below).
-  const [doc, draft, tags] = await Promise.all([getDocument(docId, wsId), getDraft(docId), getTags(docId)]);
+  const [doc, draft, tags, folders] = await Promise.all([
+    getDocument(docId, wsId),
+    getDraft(docId),
+    getTags(docId),
+    getWorkspaceFolders(wsId),
+  ]);
   if (!doc) notFound();
 
   const hasNewerDraft = isDraftNewer(draft, doc);
@@ -62,6 +68,8 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
       initialTitle={doc.title}
       initialContent={doc.content}
       initialSeq={doc.savedSeq}
+      initialFolderId={doc.folderId}
+      folders={folders}
       initialLayoutMode={layoutMode}
       initialSplitRatio={splitRatio}
       hasNewerDraft={hasNewerDraft}

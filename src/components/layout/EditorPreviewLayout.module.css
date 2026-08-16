@@ -1,7 +1,17 @@
 /* D-P2-01/03: height:100% only — 100vh is declared ONLY at the host route
    (app/(main)/w/[wsId]/page.tsx), never inside this assemblable component. */
-.grid {
+.wrapper {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* 툴바 한 줄을 뺀 나머지 높이를 그리드가 채운다(flex:1) — 툴바는 이제 editorPane
+   안이 아니라 이 wrapper의 형제로 승격되어 전체 폭을 그대로 쓴다. */
+.grid {
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-areas: "editor preview";

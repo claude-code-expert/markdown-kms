@@ -236,6 +236,7 @@ export interface EditorPlugin {
 | GET `/api/workspaces/:id/tree` | 트리 전체 (2쿼리, §4) | VIEWER |
 | POST/PATCH/DELETE `/api/folders*` | 폴더 생성·이름변경·이동 / 소프트 삭제 | EDITOR |
 | POST/PUT/DELETE `/api/documents*` | 문서 생성·저장(§7) / 소프트 삭제 | EDITOR |
+| POST `/api/documents/:id/move` | 상위 폴더 재지정 (`folders/:id/move`와 동일 패턴, cross-workspace 400) | EDITOR |
 | PUT `/api/documents/:id/tags` | 태그 교체, 서버에서 3개 초과 400 | EDITOR |
 | POST `/api/trash/:type/:id/restore` | 복원 (cascade, §4) | EDITOR |
 | DELETE `/api/trash/:type/:id` | 완전 삭제 (물리 삭제) | ADMIN |

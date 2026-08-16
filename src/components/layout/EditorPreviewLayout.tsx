@@ -44,12 +44,13 @@ interface EditorPreviewLayoutProps {
   initialContent?: string;
   onChange?: (content: string) => void;
   layoutMode?: LayoutMode;
+  onLayoutModeChange?: (next: LayoutMode) => void;
   initialSplitRatio?: number;
 }
 
 export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorPreviewLayoutProps>(
   function EditorPreviewLayout(
-    { initialContent, onChange, layoutMode = "split", initialSplitRatio = 50 },
+    { initialContent, onChange, layoutMode = "split", onLayoutModeChange, initialSplitRatio = 50 },
     ref,
   ) {
     const [content, setContent] = useState(initialContent ?? "");
@@ -148,44 +149,57 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
           : { gridTemplateColumns: "1fr", gridTemplateAreas: '"preview"' };
 
     return (
-      <div className={styles.grid} style={gridStyle} ref={gridRef}>
-        {showEditor && (
-          <div
-            className={styles.editorPane}
-            onDragEnter={handleDragEnter}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <Toolbar getView={getView} onImageButtonClick={openFilePicker} />
-            {/* content (not the initialContent prop) so toggling out of and back into
-                preview-only re-mounts EditorHost with the latest doc, not the stale
-                first-mount value (EditorHost is uncontrolled/mount-once, RESEARCH Pitfall 3) */}
-            <EditorHost ref={hostRef} initialContent={content} onChange={handleChange} />
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/gif,image/webp"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              aria-label="이미지 파일 선택"
-            />
-            {isDraggingFile && <ImageDropzone />}
-            {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}
-            {layoutMode === "split" && (
-              <div
-                className={styles.resizeHandle}
-                onMouseDown={handleResizeMouseDown}
-                aria-hidden="true"
+      <div className={styles.wrapper}>
+        {/* 에디터+프리뷰 전체 폭을 쓰는 단일 툴바 — split 모드에서 좁은 editorPane 폭에
+            갇혀 아이콘이 프리뷰 영역까지 넘치던 문제를 없앤다. layoutMode와 무관하게 항상
+            렌더한다 — 보기모드 토글이 이 안에 있어서, showEditor에 묶어두면 preview-only로
+            전환한 뒤 되돌아올 토글 자체가 사라지는 막다른 상태가 된다. preview-only에서는
+            EditorHost가 없어 getView()가 null이라 서식 버튼 클릭은 조용히 무시된다(플러그인
+            onClick의 기존 null 가드, Toolbar.tsx). */}
+        <Toolbar
+          getView={getView}
+          onImageButtonClick={openFilePicker}
+          layoutMode={layoutMode}
+          onLayoutModeChange={onLayoutModeChange}
+        />
+        <div className={styles.grid} style={gridStyle} ref={gridRef}>
+          {showEditor && (
+            <div
+              className={styles.editorPane}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {/* content (not the initialContent prop) so toggling out of and back into
+                  preview-only re-mounts EditorHost with the latest doc, not the stale
+                  first-mount value (EditorHost is uncontrolled/mount-once, RESEARCH Pitfall 3) */}
+              <EditorHost ref={hostRef} initialContent={content} onChange={handleChange} />
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/gif,image/webp"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                aria-label="이미지 파일 선택"
               />
-            )}
-          </div>
-        )}
-        {showPreview && (
-          <div className={styles.previewPane}>
-            <PreviewPane content={content} />
-          </div>
-        )}
+              {isDraggingFile && <ImageDropzone />}
+              {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}
+              {layoutMode === "split" && (
+                <div
+                  className={styles.resizeHandle}
+                  onMouseDown={handleResizeMouseDown}
+                  aria-hidden="true"
+                />
+              )}
+            </div>
+          )}
+          {showPreview && (
+            <div className={styles.previewPane}>
+              <PreviewPane content={content} />
+            </div>
+          )}
+        </div>
       </div>
     );
   },
