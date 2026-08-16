@@ -769,3 +769,84 @@ Continue the conversation from where it left off without asking the user any fur
 
 /gsd-plan-phase 9
 
+### 94. 2026-08-15
+
+/clear
+
+### 95. 2026-08-15
+
+/gsd-execute-phase 9
+
+### 96. 2026-08-15
+
+/clear
+
+### 97. 2026-08-15
+
+/gsd-verify-work 9
+
+### 98. 2026-08-16
+
+@Prompt.md 에 나머지 명령어들이 이어져서 출력되어야 하는데 안나오고 있어. 이후 명령어들 출력해줘
+
+### 98. 2026-08-16
+
+@Prompt.md 에 나머지 명령어들이 이어져서 출력되어야 하는데 안나오고 있어. 이후 명령어들 출력해줘
+
+### 99. 2026-08-16
+
+도메인 입력시 랜딩 페이지가 먼저 나오고 상단에 로그인 버튼과 사인업 버튼이 위치해야 해 Hero  영역 및 간단한 프로젝트의 특징, 워크스페이스 개설과 가입, 마크다운 지식관리 시스템 사용방법을 소개해주는 랜딩 페이지 만들고, 좌측 상단에는 Markdown KMS 로고를 만들어주고 상단 로고 영역은 페이지가 전환되어도 항상 유지되어서 클릭시 대시보드로 이동되게끔 해줘야 해, 사인업이나 로그인 이후에는 대시보드로 동선이 이동되어야 해
+
+### 100. 2026-08-16
+
+pass
+
+### 101. 2026-08-16
+
+다른 작업들 보다 랜딩 페이지 부터 작업을 진행해줘
+
+### 102. 2026-08-16
+
+gsd 를 사용하지 않고 랜딩페이지 작업을 진행할거야. 랜딩 페이지 요건은 지시한 내용을 따라서 작업을 진행해줘
+
+### 103. 2026-08-16
+
+[<section class="page_hero__S..." /> in LandingPage (at src/app/page.tsx:64:96) in Root] 상단 히어로 섹션을 이미지화 해서 디자인 시스템의 컬러를 입혀주고, 전체 렌딩페이지도 컬러감을 줬으면 좋겠어
+
+### 104. 2026-08-16
+
+[<section class="page_hero__S..." /> in LandingPage (at src/app/page.tsx:64:96) in Root] 상단 히어로 섹션을 이미지화 해서 디자인 시스템의 컬러를 입혀주고, 전체 렌딩페이지도 컬러감을 줬으면 좋겠어, 히어로 영역의 너비를 풀로 사용해야해
+
+### 105. 2026-08-16
+
+지금 상태가 좋은데 다음의 추가 사항을 진행해줘 
+
+- 메인 랜딩 페이지에 문구들이 와이드인데도 두줄로 출력되는데 한줄로 출력되게 전체 사이즈를 사용할 것 
+- 대시보드, 에디터 메인 영역에 상단 로고 영역 유지 및 우측 상단 영역에 로그 아웃 버튼 유지(로그아웃 시 랜딩으로 이동)
+
+### 106. 2026-08-16
+
+히어로 섹션은 유지 되어야 하는데 히어로 섹션이 바뀐거 같아. 히어로 섹션 되돌리고 나머지 하단  [<section class="page_section..." /> in LandingPage (at src/app/page.tsx:237:104) in Root] 이 영역과 [<section class="page_section..." /> in LandingPage (at src/app/page.tsx:286:104) in Root] 이 영역만 풀 사이즈로 쓰게끔 해야해
+
+### 107. 2026-08-16
+
+[<div class="Toolbar_bar_..." /> in Toolbar (at src/components/editor/Toolbar.tsx:31:87) in EditorPreviewLayout (at src/components/layout/EditorPreviewLayout.tsx:154:96) in DocumentWorkspace (at src/components/document/DocumentWorkspace.tsx:235:102)] 에디터 툴바 영역은 에디터 영역과  미리보기 영역을 다 합쳐서 하나의 섹션 툴바 영역으로 통합해주고 그 밑에 각각 에디터 페이지, 미리보기 페이지로 나누도록 해줘 , 지금 에디터영역에만 툴바가 나오기 때문에 페이지가 줄어들면 에디터 영역의 각 마크다운 에디터 아이콘이 미리보기 영역까지 벗어나서 위치하는 UI구조인데 미리보기 상단에까지 에디터 툴바가 위치하면 이런 문제가 없을거야
+
+### 108. 2026-08-16
+
+모든 문서는 저장시 상위 폴더를 지정해서 저장할 수 있어야 해 [<input class="DocumentWork..." aria-label="문서 제목" placeholder="제목 없음" value="샘플문서작성 - 수정" /> in DocumentWorkspace (at src/components/document/DocumentWorkspace.tsx:161:96) in DocumentPage (at src/app/(main)/w/[wsId]/d/[docId]/page.tsx:58:5) selector: [aria-label="문서 제목"]] 이 영역 앞단에 폴더 리스트를 브래드 크럼 형태로 만들어서 드롭다운 버튼을 만들고, 저장시 해당 폴더 하위에 문서가 저장되도록 변경해
+
+### 109. 2026-08-16
+
+[<div class="LayoutModeTo..." /> in LayoutModeToggle (at src/components/layout/LayoutModeToggle.tsx:41:87) in DocumentWorkspace (at src/components/document/DocumentWorkspace.tsx:172:96) in DocumentPage (at src/app/(main)/w/[wsId]/d/[docId]/page.tsx:58:5)] 이 보기 모드 옵션 버튼들은 에디터 툴바 안에 위치해서 오른쪽으로 정렬해줘
+
+### 110. 2026-08-16
+
+[<div class="SiteHeader_i..." /> in SiteHeader (at src/components/site/SiteHeader.tsx:39:94) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:39:7) key: "c"]
+
+전체 페이지 사이즈를 사용해서 로고는 좌측으로,  로그아웃 버튼은 우측으로 정렬해줘
+
+### 111. 2026-08-16
+
+미리보기 클릭시 에디터 툴바가 다 사라져서 이전 상태를 볼 수 없는 버그가 있는데 이때에도 에디터 툴바는  그대로 유지해야해
+
