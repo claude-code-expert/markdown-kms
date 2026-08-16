@@ -278,7 +278,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -291,6 +291,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 7. Workspace Collaboration (Join & Invite) | 5/5 | In Progress|  |
 | 8. Presentation Mode & Google Sign-In | 0/TBD | Not started | - |
 | 9. Design System Application | 4/4 | In Progress|  |
+| 10. Landing Page | 0/TBD | Not started | - |
 
 ### Phase 9: Design System Application
 
@@ -319,18 +320,21 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 - [x] 09-04-PLAN.md — 전체 플로우 통합 e2e 회귀(로그인→워크스페이스→폴더→문서 CRUD) + CLAUDE.md 토큰 원천 갱신 + changelog
 
-## Backlog
+### Phase 10: 랜딩 페이지
 
-### Phase 999.1: 랜딩 페이지 신설 (BACKLOG)
+**Goal**: 도메인 접속 시 대시보드 전에 마케팅 랜딩 페이지를 보여준다. 상단 고정 헤더(좌측 Markdown KMS 로고, 우측 로그인/사인업 버튼)는 페이지 전환에도 유지되는 공용 레이아웃이며, 로고 클릭 시 로그인 상태면 대시보드로 이동한다. Hero + 기능 소개 + 워크스페이스 개설/가입 안내 + 마크다운 지식관리 사용법 섹션을 포함하고, 로그인/사인업 완료 후 대시보드로 리다이렉트한다.
+**Depends on**: Phase 9 (디자인 시스템 토큰·타이포·컴포넌트를 그대로 이식)
+**Requirements**: TBD — /gsd-discuss-phase 10 에서 확정
+**Success Criteria** (what must be TRUE):
 
-**Goal:** [Captured for future planning]
-**Requirements:** TBD
-**Plans:** 0 plans
+  1. 미인증 사용자가 도메인 루트(`/`)에 접속하면 랜딩 페이지가 보이고, 대시보드로 즉시 리다이렉트되지 않는다.
+  2. 상단 고정 헤더가 모든 페이지(랜딩·로그인·사인업·대시보드 등)에서 동일한 공용 레이아웃으로 유지되고, 로고 클릭 시 인증 상태에 따라 로그인 또는 대시보드로 이동한다.
+  3. 로그인/사인업 완료 후 사용자가 대시보드로 리다이렉트된다.
+  4. 랜딩 페이지가 Hero·기능 소개·워크스페이스 개설/가입 안내·마크다운 지식관리 사용법 섹션을 포함하고, Phase 9 디자인 토큰(타이포·색상·반경·모션)을 사용한다.
 
-Plans:
-- [ ] TBD (promote with /gsd-review-backlog when ready)
+**Plans**: TBD
 
-**캡처된 요청 원문:**
+**참고 — Phase 9와의 관계:** Phase 9(Design System Application)의 "랜딩(회원가입/로그인)" 리스킨은 인증 폼 자체 재스킨이며, 마케팅용 소개 랜딩(Hero·기능소개·가입 안내)은 포함하지 않았다 — 이 phase가 그 신규 페이지를 담당한다.
+
+**캡처된 요청 원문 (2026-08-16):**
 도메인 접속 시 대시보드 전에 랜딩 페이지 노출. 상단 고정 헤더에 좌측 Markdown KMS 로고(클릭 시 로그인 후엔 대시보드로 이동)와 우측 로그인/사인업 버튼. Hero 영역 + 프로젝트 특징 소개 + 워크스페이스 개설/가입 안내 + 마크다운 지식관리 사용법 소개 섹션. 로그인/사인업 완료 후 대시보드로 리다이렉트. 헤더 로고 영역은 페이지 전환 시에도 항상 유지(공용 레이아웃).
-
-**Phase 9와의 관계:** Phase 9(Design System Application)의 "랜딩(회원가입/로그인)" 리스킨은 인증 폼 자체 재스킨이며, 마케팅용 소개 랜딩(Hero·기능소개·가입 안내)은 포함하지 않음 — 별도 신규 페이지.
