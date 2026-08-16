@@ -2,7 +2,7 @@
    "로그인 페이지와 동일 .page + Card") — only new rules are the icon/title/body vertical rhythm,
    all values from the existing space/color tokens (no new hex/px values). */
 .page {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-h));
   display: flex;
   align-items: center;
   justify-content: center;

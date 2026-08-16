@@ -33,6 +33,10 @@
   --duration-slow: 300ms;
   --ease-fluid: cubic-bezier(0.36, 0.66, 0.6, 1);
   --ease-elastic: cubic-bezier(0.42, 0, 0.58, 1.8);
+
+  /* 공용 SiteHeader 높이 — 헤더가 있는 화면(랜딩·로그인·사인업·대시보드)의
+     100vh 기반 레이아웃이 헤더 높이만큼 뺄 때 이 값을 재사용한다. */
+  --header-h: 64px;
 }
 
 /* Dark palette (UI-SPEC "다크 모드 CSS 변수 전체 매핑", Phase 9 D-04 전면 교체)

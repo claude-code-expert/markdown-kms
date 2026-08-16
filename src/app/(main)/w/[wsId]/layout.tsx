@@ -7,6 +7,7 @@ import { ForbiddenError, requireRole } from "@/lib/rbac";
 import { getWorkspaceFolders } from "@/lib/closure";
 import { getWorkspaceDocuments } from "@/lib/documents";
 import { FolderTree } from "@/components/tree/FolderTree";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import styles from "./layout.module.css";
 
 interface WorkspaceLayoutProps {
@@ -34,9 +35,12 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
   const [folders, documents] = await Promise.all([getWorkspaceFolders(wsId), getWorkspaceDocuments(wsId)]);
 
   return (
-    <div className={styles.page}>
-      <FolderTree folders={folders} documents={documents} workspaceId={wsId} />
-      <main className={styles.main}>{children}</main>
-    </div>
+    <>
+      <SiteHeader />
+      <div className={styles.page}>
+        <FolderTree folders={folders} documents={documents} workspaceId={wsId} />
+        <main className={styles.main}>{children}</main>
+      </div>
+    </>
   );
 }
