@@ -318,3 +318,19 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 **Wave 3** *(blocked on Wave 2)*
 
 - [x] 09-04-PLAN.md — 전체 플로우 통합 e2e 회귀(로그인→워크스페이스→폴더→문서 CRUD) + CLAUDE.md 토큰 원천 갱신 + changelog
+
+## Backlog
+
+### Phase 999.1: 랜딩 페이지 신설 (BACKLOG)
+
+**Goal:** [Captured for future planning]
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with /gsd-review-backlog when ready)
+
+**캡처된 요청 원문:**
+도메인 접속 시 대시보드 전에 랜딩 페이지 노출. 상단 고정 헤더에 좌측 Markdown KMS 로고(클릭 시 로그인 후엔 대시보드로 이동)와 우측 로그인/사인업 버튼. Hero 영역 + 프로젝트 특징 소개 + 워크스페이스 개설/가입 안내 + 마크다운 지식관리 사용법 소개 섹션. 로그인/사인업 완료 후 대시보드로 리다이렉트. 헤더 로고 영역은 페이지 전환 시에도 항상 유지(공용 레이아웃).
+
+**Phase 9와의 관계:** Phase 9(Design System Application)의 "랜딩(회원가입/로그인)" 리스킨은 인증 폼 자체 재스킨이며, 마케팅용 소개 랜딩(Hero·기능소개·가입 안내)은 포함하지 않음 — 별도 신규 페이지.
