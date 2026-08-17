@@ -1048,3 +1048,11 @@ Continue the conversation from where it left off without asking the user any fur
 
 좌측 사이드바에 [<div class="FolderTree_t..." /> in FolderTree (at src/components/tree/FolderTree.tsx:566:99) in WorkspaceShell (at src/components/layout/WorkspaceShell.tsx:93:114) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:52:9) selector: [aria-label="폴더 트리"]]  최소 너비 리사이즈가 될 때 아이콘만 노출되도록 해주고, 최대 너비는 400px 로 되도록 해줘. 스크롤이 생길 경우 룩앤필에 맞는 컬러 보더 스크롤로 지정해줘야 해
 
+### 125. 2026-08-17
+
+[<div class="page_joinSec..." /> in DashboardPage (at src/app/(main)/dashboard/page.tsx:81:92) in Root]  워크스페이스는 아이디 체계가 복잡하니까 이름으로 찾아서 가입 신청 할 수 있게 해줘야 해 markdown 이라는 워크스페이스 검색 하면 해당 워크스페이스 가입 신청으로 프로세스 변경해
+
+### 126. 2026-08-17
+
+현재 프로젝트를 새롭게 디자인을 하기 위해 전체 구조와 디자인 의뢰를 위한 피처, 레이아웃 구조, 버튼 등의 와이어 프레임 설명을 만들어줘. 이걸 바탕으로 클로드 코드 디자인에게 새롭게 전체 사이트 디자인을 의뢰할거야. 내부 코드 베이스 검수하고 디자인 시스템으로 전체 사이트 개편할 수 있도록 관련 파일들을 만들어서 알려줘
+
