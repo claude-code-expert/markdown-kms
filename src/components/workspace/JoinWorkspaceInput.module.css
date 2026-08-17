@@ -1,18 +1,50 @@
-/* UI-SPEC Dashboard Join-Request Contract — inline input row, not a modal. Section chrome
-   (border-top divider, section margins) lives in dashboard/page.module.css; this file only
-   owns the input+button row and the feedback line. */
-.row {
+/* UI-SPEC Dashboard Join-Request Contract (WS-03 개정) — 검색 입력 + 결과 목록. 섹션 크롬
+   (border-top divider, section margins)은 dashboard/page.module.css가 소유, 이 파일은
+   입력창/결과 리스트/행별 피드백 줄만 담당한다. */
+.results {
+  list-style: none;
+  margin: var(--space-sm) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.resultRow {
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.resultMain {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
 }
 
-.input {
-  flex: 1;
+.resultName {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: var(--space-sm) 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 /* UI-SPEC Typography — Body role (14px/400/1.5), 4사이즈 상한 준수(기존 13px 흡수). */
-.feedback {
+.feedbackSuccess,
+.feedbackError {
   margin: var(--space-xs) 0 0 0;
   font-size: 14px;
   font-weight: 400;
