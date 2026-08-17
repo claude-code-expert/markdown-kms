@@ -847,3 +847,204 @@ gsd 를 사용하지 않고 랜딩페이지 작업을 진행할거야. 랜딩 �
 
 main 에 커밋 푸시해줘
 
+### 115. 2026-08-17
+
+feature/design-system 브랜치만들어줘
+
+### 116. 2026-08-17
+
+@docs/design_system/ 폴더를 읽어서 우리 사이트에 적합한 랜딩용 디자인 구성 design.md와  색상 color.json 파일을 만들고 현재 만들어진 랜딩 페이지 부터 개선해줘
+
+### 117. 2026-08-17
+
+이걸 기준으로 디자인 요소들을 첨부해서 전체 사이트 디자인 구조를 개선해. 루트 랜딩 페이지, 로그인 페이지, 가입 페이지, 스페이스 메인 페이지, 마크다운 에디터 페이지 전체 변경이 필요하고, 룩앤필, 버튼 컬러, 폰트, 배경색, 레이아웃에서 어색한 요소들을 추려내고 디자인 시스템 샘플 html 들을 활용해서 재 디자인 작업을 진행해줘
+
+### 118. 2026-08-17
+
+상단 로고를 비롯한 헤더 영역이 밋밋하므로 전체적인 컬러감 있는 테마 색상을 적용하고, 에디터를 제외한 각 아이콘들도 디자인 시스템 상의 컬러값을 적용해서 전체적으로 밋밋한 디자인을 개선해야해
+
+### 119. 2026-08-17
+
+[<div class="FolderTree_t..." /> in FolderTree (at src/components/tree/FolderTree.tsx:507:99) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:41:9) key: "c"]  사이드 바에 두가지 기능이 추가 되어야 해 
+
+1. 사이드바 너비 리사이즈 - 최소 20px, 최대 280px 로 리사이즈 가능해야 하고 접기/펼치기 기능을 통해 슬라이드 효과를 줘서 리사이즈 핸들 드래그 기능까지 추가
+2. 사이드바의 모든 문서와 폴더는 Drag and Drop 을 통해 폴더 하위에 포함하거나 폴더 밖 기본 루트 위치로 빠져나올 수 있어야 해 
+
+기능 구현 계획부터 세우고 패치 진행해줘
+
+### 120. 2026-08-17
+
+## Error Type
+Runtime Error
+
+## Error Message
+Attempted to call clampSidebarWidth() from the server but clampSidebarWidth is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.
+
+
+    at WorkspaceLayout (src/app/(main)/w/[wsId]/layout.tsx:42:72)
+
+## Code Frame
+  40 |   const cookieStore = await cookies();
+  41 |   const widthCookie = Number(cookieStore.get("sidebarWidth")?.value);
+> 42 |   const initialWidth = Number.isFinite(widthCookie) ? clampSidebarWidth(widthCookie) : 260;
+     |                                                                        ^
+  43 |   const initialCollapsed = cookieStore.get("sidebarCollapsed")?.value === "true";
+  44 |
+  45 |   return (
+
+Next.js version: 15.5.22 (Webpack)
+
+### 121. 2026-08-17
+
+/compact
+
+### 122. 2026-08-17
+
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+   이 세션은 매우 다층적이다. 최근 작업 흐름만 보면: 사용자가 "1) 사이드바 너비 리사이즈(최소 20px, 최대 280px)와 접기/펼치기(슬라이드 효과+드래그 핸들) 2) 사이드바의 모든 문서/폴더가 Drag and Drop으로 폴더 안에 포함되거나 루트로 빠져나올 수 있어야 함. 기능 구현 계획부터 세우고 패치 진행해줘"라고 요청했고, 계획 제시 후 즉시 구현했다. 구현 완료 후 사용자가 방금 실제 브라우저에서 발생한 런타임 에러(`clampSidebarWidth()` 서버/클라이언트 경계 위반)를 보고했고, 그 원인 진단과 수정을 막 끝낸 상태다. 이 세션 전체를 관통하는 사용자 의도: (a) GSD 없이 직접 반복적으로 UI/기능을 다듬어달라는 것(여러 라운드의 랜딩 페이지·헤더·에디터 툴바·사이드바 수정 요청), (b) `docs/design_system/`(Dracula 스크랩)의 디자인 요소를 "기준"으로 삼아 색상·아이콘 등을 일관되게 적용해달라는 것, (c) 매 변경마다 실제로 검증(타입체크·린트·테스트)하고 발견된 버그는 근본 원인까지 고쳐달라는 것.
+
+2. Key Technical Concepts:
+   - Next.js 15 App Router — Server Component(RSC)와 "use client" 경계: **"use client" 파일의 모든 export(컴포넌트뿐 아니라 순수 함수까지)는 서버 코드에서 직접 호출 불가** — 이 프로젝트의 기존 확립된 회피 패턴: 클램프 함수는 클라이언트 컴포넌트 자신의 `useState(() => clamp(initial))`에서만 호출하고, RSC는 원값(cookie parse 결과)만 넘긴다(`EditorPreviewLayout`의 `clampRatio` 선례, 이번에 `WorkspaceShell`의 `clampSidebarWidth`도 동일하게 수정).
+   - no-FOUC 쿠키 패턴: RSC(`layout.tsx`/`page.tsx`)가 `cookies()`로 초기값을 읽어 클라이언트 컴포넌트에 `initialX` prop으로 넘기고, 클라이언트가 자체 클램프/검증(splitRatio, layoutMode, theme, sidebarWidth/sidebarCollapsed 전부 이 패턴).
+   - 리사이즈 드래그 표준 패턴(`EditorPreviewLayout`/`WorkspaceShell` 공통): `window.addEventListener("mousemove"/"mouseup", ...)`(6px 핏 영역을 벗어난 빠른 드래그도 포착), ref로 stale-closure 방지(`widthRef.current = width`), mouseup 시점에만 쿠키 1회 기록, 드래그 중엔 CSS transition을 `"none"`으로 꺼서 값이 밀리지 않게.
+   - CSS `overflow:hidden`이 자식 요소의 `position:absolute; right:-Npx`(경계 밖으로 튀어나온 히트 영역)를 함께 잘라낼 수 있다는 함정 — 클리핑 레이어와 오버레이(핸들/버튼) 레이어를 분리해야 함.
+   - HTML5 네이티브 Drag & Drop(폴더/문서 공용): `DraggedItem = {id, type:"folder"|"document"}` 상태로 소스 타입을 함께 들고 다녀야 드롭 핸들러가 `moveFolder`/`moveDocument` 중 뭘 부를지, 사이클 체크(폴더만 필요)를 할지 안다.
+   - Playwright e2e 특성: 조건부 마운트가 드래그 도중 레이아웃을 시프트하면 좌표 기반 `dragTo()`가 깨진다 → 항상 렌더 + `visibility` 토글로 레이아웃 안정성 확보. `getByRole("button",{name})`는 기본 substring 매치라 라벨 겹침에 취약. `page.evaluate(() => document.elementFromPoint(x,y))`로 실제 히트테스트 대상을 직접 확인하는 디버깅 기법.
+   - Next.js `router.push()`/`router.refresh()` 순서 경합: `refresh()`를 `push()`보다 먼저 부르면 뒤이은 네비게이션이 RSC 재조회를 가로채 유실시킨다 — "push 먼저, refresh 나중"이 이 코드베이스의 확립된 해법(`confirmDeleteDocument`에 이미 문서화, `submitCreateDocument`에도 이번에 적용).
+   - anti-slop 디자인 원칙(세션 전반에 걸쳐 적용): 그라데이션/컬러 글로우/장식 모션 금지, 큰 면적은 저채도(`--accent-weak`)·작은 면적(버튼/아이콘/강조줄)만 고채도(`--accent`), 톤 스텝으로 깊이 표현(그림자 아님), 한 화면엔 액센트 하나(콘텐츠 정체성 글리프인 폴더/문서 아이콘은 예외로 항상 accent).
+   - CSS Modules 클래스 우선순위 회피: 헤더 컨텍스트 전용 버튼 색은 `buttonStyles.primary`를 아예 안 쓰고 `buttonStyles.btn`(모양만)+로컬 색 클래스(`.ctaOnAccent`)만 조합해서 두 모듈 간 우선순위 다툼 자체를 피함.
+   - Squircle 점진 향상: `@supports (corner-shape: squircle) { ... }` 패턴, 미지원 브라우저는 기존 `border-radius` 폴백.
+
+3. Files and Code Sections:
+   - **`src/components/layout/WorkspaceShell.tsx`**(신규) — 사이드바 리사이즈(20~280px)+접기/펼치기 소유. `export function clampSidebarWidth(px)` (MIN=20, MAX=280로 clamp) — **"use client" 파일이라 서버에서 직접 호출 불가**한 게 이번 버그의 원인. 최종 구조:
+     ```tsx
+     return (
+       <div className={styles.shell} ref={shellRef}>
+         <div className={styles.sidebarWrap} style={{ width: collapsed?0:width, transition: resizing?"none":undefined }}>
+           <div className={styles.sidebarClip}>
+             <div className={styles.sidebarInner} style={{ width, visibility: collapsed?"hidden":"visible" }}>
+               <FolderTree folders={folders} documents={documents} workspaceId={workspaceId} />
+             </div>
+           </div>
+           {!collapsed && (
+             <>
+               <div className={styles.resizeHandle} onMouseDown={handleResizeMouseDown} aria-hidden="true" />
+               <button type="button" className={styles.collapseToggle} onClick={toggleCollapsed} aria-label="사이드바 숨기기">
+                 <ChevronLeft size={14} />
+               </button>
+             </>
+           )}
+         </div>
+         {collapsed && (
+           <button type="button" className={styles.expandToggle} onClick={toggleCollapsed} aria-label="사이드바 보이기">
+             <ChevronRight size={14} />
+           </button>
+         )}
+         <main className={styles.main}>{children}</main>
+       </div>
+     );
+     ```
+     `handleResizeMouseDown`은 `shellRef.current.getBoundingClientRect().left` 기준으로 `moveEvent.clientX - rect.left`를 클램프해 width 계산, mouseup 시 `document.cookie="sidebarWidth=..."` 기록.
+
+   - **`src/components/layout/WorkspaceShell.module.css`**(신규) — 핵심: `.sidebarWrap`엔 `overflow:hidden`을 걸지 않고(리사이즈 핸들이 잘리는 버그의 원인이었음), `.sidebarClip`(신규, `overflow:hidden`)이 `.sidebarInner`만 감싸 콘텐츠만 클리핑. `.resizeHandle`(`right:-3px; width:6px`), `.collapseToggle`(`top: var(--space-sm)` — 수직 중앙에 두면 resizeHandle의 풀하이트 히트영역과 겹쳐서 클릭을 가로채는 버그가 있었어서 위쪽 구석으로 옮김).
+
+   - **`src/app/(main)/w/[wsId]/layout.tsx`** — **이번 턴에서 마지막으로 수정한 파일**. `clampSidebarWidth` import 제거, `initialWidth`를 원값 그대로 넘기도록 변경:
+     ```tsx
+     import { WorkspaceShell } from "@/components/layout/WorkspaceShell"; // clampSidebarWidth 제거됨
+     ...
+     // no-FOUC: RSC가 쿠키로 초기 폭/접힘 상태를 읽어 첫 렌더부터 반영한다(splitRatio/layoutMode와
+     // 동일한 관례, EditorPreviewLayout 참고). 값이 없거나 손상됐으면 기본값(260px, 펼침)으로 폴백.
+     // clampSidebarWidth는 "use client" 파일(WorkspaceShell.tsx)의 export라 서버에서 직접 호출할
+     // 수 없다(splitRatio도 같은 이유로 RSC는 안 부르고 클라이언트가 재클램프) — 원값만 넘기고
+     // 범위 보정은 WorkspaceShell의 useState 초기화가 그대로 맡는다.
+     const cookieStore = await cookies();
+     const widthCookie = Number(cookieStore.get("sidebarWidth")?.value);
+     const initialWidth = Number.isFinite(widthCookie) ? widthCookie : 260;
+     const initialCollapsed = cookieStore.get("sidebarCollapsed")?.value === "true";
+
+     return (
+       <>
+         <SiteHeader />
+         <div className={styles.page}>
+           <WorkspaceShell folders={folders} documents={documents} workspaceId={wsId}
+             initialWidth={initialWidth} initialCollapsed={initialCollapsed}>
+             {children}
+           </WorkspaceShell>
+         </div>
+       </>
+     );
+     ```
+     이 수정 후 `pnpm exec tsc --noEmit`(클린), `pnpm exec eslint "src/app/(main)/w/[wsId]/layout.tsx"`(클린), curl로 `/w/00000000-...` 렌더 확인(에러 문자열 없음), `playwright test e2e/folder-tree.spec.ts -g "creates a folder"`(1/1 통과) — **모두 확인 완료했지만, 이 수정에 대한 vitest 전체 재실행과 e2e folder-tree.spec.ts 전체 재실행, 사용자 보고는 아직 안 함**.
+
+   - **`src/components/tree/FolderTree.tsx`** — `DraggedItem` 타입으로 확장, `moveDocumentTo()` 추가, 루트 드롭존을 `.header` 바로 아래(항상 렌더, `dragged ? styles.rootDropZoneVisible : ""`로 visibility 토글)에 배치. `submitCreateDocument`에서 `router.push()`를 `router.refresh()`보다 먼저 호출하도록 순서 변경(경합 버그 수정).
+   - **`src/components/tree/FolderTreeNode.tsx`** — ctx 타입에 `dragged: DraggedItem|null`, `onDragStart: (item:DraggedItem)=>void`. 사이클 체크는 `ctx.dragged.type === "folder"`일 때만. `.dragging` 클래스로 드래그 중 소스 행 투명도 낮춤.
+   - **`src/components/tree/DocumentTreeLeaf.tsx`** — 전면 재작성, `draggable` + `onDragStart`/`onDragEnd`/`error` prop 추가(드롭 타겟 아님, 소스만).
+   - **`src/components/tree/tree-utils.ts`** — `export interface DraggedItem { id: string; type: "folder" | "document"; }` 추가. (이전 턴엔 `getAncestorPath`도 추가됨, 문서 폴더 이동 기능용.)
+   - **`src/components/tree/FolderTree.module.css`** — `.rootDropZone`(`visibility:hidden` 기본), `.rootDropZoneVisible`(`visibility:visible`), `.rootDropZoneActive`(accent 강조).
+   - **`src/components/tree/FolderTreeNode.module.css`** — `.dragging { opacity:0.4; }`, `.folderIcon`을 `var(--muted)`→`var(--accent)`로 변경(이전 턴, 헤더 색감 작업).
+   - **`e2e/folder-tree.spec.ts`** — 4개 신규 테스트 추가: "moves a document into a folder via drag and drop", "moves a nested folder back to the workspace root via the root drop zone", "collapses and expands the sidebar via the toggle button", "resizes the sidebar by dragging the resize handle". `createRootDocument` 헬퍼 신규 추가.
+   - **`src/components/site/SiteHeader.tsx`/`.module.css`** — (이전 턴) 배경 `var(--accent)`, 로고 아이콘 배지, `.ctaOnAccent` 반전 버튼.
+   - **`docs/design.md`/`docs/color.json`** — (이전 턴) Dracula 스크랩에서 토큰만 추출한 근거 문서, 여러 라운드에 걸쳐 §1~§6까지 누적 기록.
+   - **`src/lib/closure.ts`** — (이전 턴) `moveDocument(documentId, newFolderId, client)` 추가.
+   - **`src/app/api/documents/[id]/move/route.ts`**(신규, 이전 턴) — `POST`, EDITOR+, `folders/[id]/move`와 동일 IDOR-safe 패턴.
+
+4. Errors and fixes:
+   - **`aria-label` 부분 문자열 충돌**: "사이드바 접기"가 폴더 셰브런의 "접기"와 Playwright `getByRole(name:)` 기본 substring 매치로 충돌 → "사이드바 숨기기"/"사이드바 보이기"로 개명해 해결.
+   - **드래그 시 레이아웃 시프트로 dragTo 좌표 어긋남**: 루트 드롭존을 `{dragged && ...}`로 조건부 마운트하면 드래그 시작 순간 트리가 그 높이만큼 밀려 e2e `dragTo()`가 엉뚱한 곳에 드롭됨(30초 타임아웃) → 항상 렌더 + `visibility`로만 토글해 레이아웃 안정성 확보.
+   - **리사이즈 핸들이 실제로 안 눌림**: `.sidebarWrap`의 `overflow:hidden`이 `right:-3px`로 경계 밖까지 튀어나온 리사이즈 핸들의 절반을 히트테스트에서 잘라냄. `page.evaluate(() => document.elementFromPoint(x,y))`로 그 좌표에서 실제로 `.main`의 `EmptyState` div가 잡히는 걸 직접 확인해 원인 확정. `.sidebarClip`(신규, overflow:hidden 전담)으로 클리핑 레이어를 분리하고 resizeHandle/collapseToggle은 안 잘리는 sidebarWrap 직계 자식으로 옮겨 해결.
+   - **리사이즈 핸들과 접기 버튼의 히트 영역 겹침**: `.collapseToggle`이 수직 중앙(`top:50%`)에 있어 리사이즈 핸들의 풀하이트 히트 영역과 겹쳐 z-index가 높은 버튼이 클릭을 가로챔 → `.collapseToggle`을 `top: var(--space-sm)`(위쪽 구석)로 옮겨 실질적 겹침 해소.
+   - **접기 상태가 Playwright `toBeHidden()`을 통과 못함 + 실제 접근성 결함**: `overflow:hidden` 클리핑만으론 요소가 여전히 실제 크기를 가진 채 화면 밖에 있을 뿐이라 Playwright의 가시성 판정(그리고 키보드 포커스/스크린리더)을 통과시킴 → `.sidebarInner`에 `visibility: collapsed ? "hidden" : "visible"` 인라인 스타일 추가해 진짜로 비활성화(포커스 불가·hit-test 제외)되도록 수정 — 테스트 우회가 아니라 실제 접근성 버그 수정.
+   - **`router.refresh()`/`router.push()` 순서 경합**(기존 버그, 새 e2e 테스트로 발견): `submitCreateDocument`에서 `refresh()`가 `push()`보다 먼저 호출돼 방금 만든 루트 문서가 사이드바에 안 보임 → 같은 파일 `confirmDeleteDocument`의 기존 주석/패턴("push 먼저, refresh 나중")을 그대로 적용해 수정.
+   - **Postgres 커넥션 소진**(이 세션 두 번째, 코드 문제 아님): `too many clients already` → `brew services restart postgresql@16`로 복구. 두 번 모두 명확히 "코드 문제 아니라 반복 테스트 실행에 의한 환경 이슈"로 구분해서 사용자에게 보고함.
+   - **[가장 최근, 진행 중] `clampSidebarWidth()` server/client 경계 에러**: 사용자가 브라우저에서 실제로 겪은 런타임 에러. 원인: `WorkspaceShell.tsx`가 `"use client"`라 그 export를 RSC(`layout.tsx`)에서 직접 호출 불가. 이 프로젝트의 기존 확립된 회피 패턴(`EditorPreviewLayout`의 `clampRatio`를 RSC가 안 부르고 클라이언트 자신이 재클램프)을 그대로 적용해 `layout.tsx`에서 `clampSidebarWidth` import 및 호출 제거, 원값만 넘기도록 수정 완료. tsc/eslint/curl/부분 e2e(1개 테스트)까지는 확인했으나 **전체 재검증과 사용자 보고는 아직 안 함**.
+
+5. Problem Solving:
+   위 "Errors and fixes"에 열거된 5건의 버그(라벨 충돌, 레이아웃 시프트, 리사이즈 핸들 클리핑, 핸들-버튼 겹침, 접힘 접근성)를 전부 실제 실행(e2e 실패 로그, `elementFromPoint` 직접 조회)으로 근본 원인까지 추적해서 수정했고, 매번 재실행으로 그린 확인함. 방금 보고된 `clampSidebarWidth` 서버/클라이언트 경계 에러도 원인을 정확히 진단하고 수정을 적용했으나, 이 마지막 수정에 대한 **전체 검증 사이클(vitest 전체, e2e 전체, 최종 사용자 보고)이 아직 완료되지 않은 상태**로 대화가 끊겼다.
+
+6. All user messages:
+   - "[<div class="FolderTree_t..." /> in FolderTree (at src/components/tree/FolderTree.tsx:507:99) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:41:9) key: "c"]  사이드 바에 두가지 기능이 추가 되어야 해 \n\n1. 사이드바 너비 리사이즈 - 최소 20px, 최대 280px 로 리사이즈 가능해야 하고 접기/펼치기 기능을 통해 슬라이드 효과를 줘서 리사이즈 핸들 드래그 기능까지 추가\n2. 사이드바의 모든 문서와 폴더는 Drag and Drop 을 통해 폴더 하위에 포함하거나 폴더 밖 기본 루트 위치로 빠져나올 수 있어야 해 \n\n기능 구현 계획부터 세우고 패치 진행해줘"
+   - (컨텍스트 압축 트리거 직전, 마지막 실제 사용자 메시지) "## Error Type\nRuntime Error\n\n## Error Message\nAttempted to call clampSidebarWidth() from the server but clampSidebarWidth is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.\n\n\n    at WorkspaceLayout (src/app/(main)/w/[wsId]/layout.tsx:42:72)\n\n## Code Frame\n  40 |   const cookieStore = await cookies();\n  41 |   const widthCookie = Number(cookieStore.get(\"sidebarWidth\")?.value);\n> 42 |   const initialWidth = Number.isFinite(widthCookie) ? clampSidebarWidth(widthCookie) : 260;\n     |                                                                        ^\n  43 |   const initialCollapsed = cookieStore.get(\"sidebarCollapsed\")?.value === \"true\";\n\nNext.js version: 15.5.22 (Webpack)"
+
+7. Pending Tasks:
+   - 방금 수정한 `clampSidebarWidth` 서버/클라이언트 경계 버그에 대해 **전체 검증**(vitest 전체 재실행, `e2e/folder-tree.spec.ts` 전체 10개 재실행 — 특히 리사이즈/접기 관련 4개 신규 테스트가 이 수정 이후에도 여전히 통과하는지)을 마무리해야 함.
+   - 검증 완료 후 사용자에게 수정 완료 보고.
+   - (사용자가 명시적으로 요청하지 않는 한) 커밋/푸시는 하지 않음 — 이번 사이드바 리사이즈+D&D 작업과 방금의 버그 수정은 아직 `feature/gsd` 브랜치 워킹트리에 커밋되지 않은 상태로 추정됨(마지막 커밋은 이전 턴의 main 브랜치 push, 786fd28/6b618eb/61d94c4).
+
+8. Current Work:
+   가장 최근 작업은 사용자가 보고한 런타임 에러 "Attempted to call clampSidebarWidth() from the server but clampSidebarWidth is on the client"를 진단하고 수정하는 것이었다. 원인은 `src/components/layout/WorkspaceShell.tsx`가 `"use client"` 디렉티브를 가진 파일이라, 그 안에서 export한 `clampSidebarWidth` 순수 함수를 서버 컴포넌트인 `src/app/(main)/w/[wsId]/layout.tsx`가 직접 호출할 수 없다는 것이었다(Next.js는 "use client" 파일의 모든 export를 클라이언트 레퍼런스로 취급). 이 프로젝트에는 이미 동일한 문제의 확립된 해결 패턴이 있었다 — `EditorPreviewLayout.tsx`의 `clampRatio` 역시 RSC(`d/[docId]/page.tsx`)가 직접 부르지 않고, 원값만 넘긴 뒤 클라이언트 컴포넌트 자신의 `useState(() => clampRatio(initialSplitRatio))`가 재클램프하는 방식이었다. 이 패턴을 그대로 적용해 `layout.tsx`를 다음과 같이 수정했다:
+   ```tsx
+   import { WorkspaceShell } from "@/components/layout/WorkspaceShell"; // clampSidebarWidth import 제거
+   ...
+   const cookieStore = await cookies();
+   const widthCookie = Number(cookieStore.get("sidebarWidth")?.value);
+   const initialWidth = Number.isFinite(widthCookie) ? widthCookie : 260; // clampSidebarWidth() 호출 제거, 원값만 전달
+   const initialCollapsed = cookieStore.get("sidebarCollapsed")?.value === "true";
+   ```
+   `WorkspaceShell.tsx` 자체는 수정하지 않았다(이미 `const [width, setWidth] = useState(() => clampSidebarWidth(initialWidth));`로 클라이언트 측 자체 클램프를 갖고 있었으므로).
+   수정 후 검증한 것: `pnpm exec tsc --noEmit`(에러 없음), `pnpm exec eslint "src/app/(main)/w/[wsId]/layout.tsx"`(에러 없음), `curl -s -o /tmp/w.html -w "status=%{http_code}\n" "http://localhost:3000/w/00000000-0000-0000-0000-000000000000"`(status=404, 정상 — 미인증이라 notFound, 에러 문자열 없음 확인), `pnpm exec playwright test e2e/folder-tree.spec.ts -g "creates a folder"`(1/1 통과, 이것이 대화 로그상 마지막 도구 실행 결과였다: "✓  1 e2e/folder-tree.spec.ts:29:5 › creates a folder from the sidebar and it appears in the tree (6.4s)\n\n  1 passed (9.0s)"). **이 시점에서 컨텍스트 압축 요청이 들어와 대화가 끊겼다** — vitest 전체 재실행, e2e 전체(특히 리사이즈/접기 신규 4개 테스트) 재실행, 그리고 사용자에게 수정 완료를 알리는 최종 보고는 아직 하지 않은 상태다.
+
+9. Optional Next Step:
+   직전까지 진행하던 작업을 그대로 이어서, `clampSidebarWidth` 수정에 대한 전체 검증을 마무리한다:
+   1. `pnpm vitest run` 전체 재실행(1074개 테스트가 여전히 통과하는지 확인).
+   2. `pnpm exec playwright test e2e/folder-tree.spec.ts` 전체 10개 재실행(특히 방금 만든 "collapses and expands the sidebar via the toggle button", "resizes the sidebar by dragging the resize handle" 두 테스트가 `layout.tsx` 수정 이후에도 여전히 통과하는지 — 서버가 보낸 `initialWidth`가 이제 클램프 안 된 원값이라는 게 클라이언트 로직에 실제로 문제없는지 실증).
+   3. 위 검증이 모두 그린이면, 사용자에게 "clampSidebarWidth 서버/클라이언트 경계 에러 수정 완료" 보고 — 원인(WorkspaceShell.tsx가 "use client"라 서버에서 직접 호출 불가)과 수정 방식(EditorPreviewLayout의 clampRatio와 동일한 기존 패턴 재사용 — RSC는 원값만 넘기고 클라이언트가 자체 재클램프)을 간결하게 설명.
+   이 작업은 사용자의 가장 최근 메시지("## Error Type\nRuntime Error\n... Attempted to call clampSidebarWidth() from the server...")에 대한 직접적인 후속 조치이며, 사용자가 명시적으로 요청한 것 이상으로 범위를 확장하지 않는다(예: 커밋/푸시는 요청 전까지 하지 않음).
+
+If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/codevillain/.claude/projects/-Users-codevillain-Claude-Code-Expert-markdown-kms/253045f3-512d-4b86-999c-0865b40db38a.jsonl
+Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+
+### 123. 2026-08-17
+
+[<input class="TagBar_input..." aria-label="태그 입력" placeholder="태그 추가 (Enter로 추가)" /> in TagBar (at src/components/document/TagBar.tsx:148:104) in DocumentWorkspace (at src/components/document/DocumentWorkspace.tsx:226:88) in DocumentPage (at src/app/(main)/w/[wsId]/d/[docId]/page.tsx:64:5) selector: [aria-label="태그 입력"]] 
+
+태그 영역은 50% 너비로 나눠서 좌측은 태그 입력 영역, 우측은 우측 정렬로 저장 수정 삭제 버튼이 노출되어야 해 
+
+새 문서의 경우 저장만 나오는거고, 문서 조회일 경우 수정 삭제 버튼이 노출되어야 해
+
+### 124. 2026-08-17
+
+좌측 사이드바에 [<div class="FolderTree_t..." /> in FolderTree (at src/components/tree/FolderTree.tsx:566:99) in WorkspaceShell (at src/components/layout/WorkspaceShell.tsx:93:114) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:52:9) selector: [aria-label="폴더 트리"]]  최소 너비 리사이즈가 될 때 아이콘만 노출되도록 해주고, 최대 너비는 400px 로 되도록 해줘. 스크롤이 생길 경우 룩앤필에 맞는 컬러 보더 스크롤로 지정해줘야 해
+
