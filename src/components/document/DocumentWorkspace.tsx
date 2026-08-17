@@ -104,6 +104,9 @@ export function DocumentWorkspace({
   // Body content is owned by EditorPreviewLayout's internal state (D-P2 uncontrolled editor) —
   // this ref just tracks the latest value so a title-only edit can still send the current body.
   const contentRef = useRef(initialContent);
+  // 리디자인(PAGE-ANALYSIS.md §0-2) — SaveStatusBar 글자수 카운터용. contentRef는 리렌더를
+  // 안 일으키는 ref라 별도 state로 둔다(매 키입력마다 handleContentChange에서 갱신).
+  const [charCount, setCharCount] = useState(initialContent.length);
   // Pitfall 6: DocumentWorkspace never imports CodeMirror/EditorView directly — this ref only
   // holds EditorPreviewLayout's forwardRef handle, and dispatch() is reached structurally through
   // getView()'s declared return type, no @codemirror/* import needed in this file.
@@ -113,6 +116,7 @@ export function DocumentWorkspace({
 
   function handleContentChange(next: string) {
     contentRef.current = next;
+    setCharCount(next.length);
     scheduleSave(next, title);
     draft.onContentChange(next);
   }
@@ -190,7 +194,7 @@ export function DocumentWorkspace({
         </Button>
       ) : (
         <>
-          <Button type="button" variant="secondary" onClick={handleSaveNow}>
+          <Button type="button" variant="primary" onClick={handleSaveNow}>
             수정
           </Button>
           <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
@@ -224,7 +228,7 @@ export function DocumentWorkspace({
           initialSplitRatio={initialSplitRatio}
         />
       </div>
-      <SaveStatusBar status={status} onRetry={retry} />
+      <SaveStatusBar status={status} onRetry={retry} charCount={charCount} />
       <DraftRecoveryDialog
         open={showRecovery}
         onRestore={handleRestore}

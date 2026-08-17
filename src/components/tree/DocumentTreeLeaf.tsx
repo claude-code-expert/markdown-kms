@@ -65,7 +65,7 @@ export function DocumentTreeLeaf({
       >
         <span className={styles.chevronSpace} />
         <Link href={href} className={styles.docLink}>
-          <FileText size={16} className={styles.folderIcon} />
+          <FileText size={15} className={styles.folderIcon} />
           <span className={styles.name}>{title}</span>
         </Link>
         <button

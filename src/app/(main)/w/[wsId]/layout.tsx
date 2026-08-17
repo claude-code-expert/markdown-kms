@@ -36,13 +36,13 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
   const [folders, documents] = await Promise.all([getWorkspaceFolders(wsId), getWorkspaceDocuments(wsId)]);
 
   // no-FOUC: RSC가 쿠키로 초기 폭/접힘 상태를 읽어 첫 렌더부터 반영한다(splitRatio/layoutMode와
-  // 동일한 관례, EditorPreviewLayout 참고). 값이 없거나 손상됐으면 기본값(260px, 펼침)으로 폴백.
-  // clampSidebarWidth는 "use client" 파일(WorkspaceShell.tsx)의 export라 서버에서 직접 호출할
-  // 수 없다(splitRatio도 같은 이유로 RSC는 안 부르고 클라이언트가 재클램프) — 원값만 넘기고
-  // 범위 보정은 WorkspaceShell의 useState 초기화가 그대로 맡는다.
+  // 동일한 관례, EditorPreviewLayout 참고). 값이 없거나 손상됐으면 기본값(236px, 펼침 —
+  // 리디자인 목업 기본폭)으로 폴백. clampSidebarWidth는 "use client" 파일(WorkspaceShell.tsx)의
+  // export라 서버에서 직접 호출할 수 없다(splitRatio도 같은 이유로 RSC는 안 부르고 클라이언트가
+  // 재클램프) — 원값만 넘기고 범위 보정은 WorkspaceShell의 useState 초기화가 그대로 맡는다.
   const cookieStore = await cookies();
   const widthCookie = Number(cookieStore.get("sidebarWidth")?.value);
-  const initialWidth = Number.isFinite(widthCookie) ? widthCookie : 260;
+  const initialWidth = Number.isFinite(widthCookie) ? widthCookie : 236;
   const initialCollapsed = cookieStore.get("sidebarCollapsed")?.value === "true";
 
   return (

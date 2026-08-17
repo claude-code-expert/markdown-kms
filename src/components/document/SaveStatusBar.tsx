@@ -11,9 +11,11 @@ import styles from "./SaveStatusBar.module.css";
 interface SaveStatusBarProps {
   status: SaveStatus;
   onRetry: () => void;
+  // 리디자인(PAGE-ANALYSIS.md §0-2) — 문서 본문 글자수, 상태와 무관하게 항상 우측 고정.
+  charCount: number;
 }
 
-export function SaveStatusBar({ status, onRetry }: SaveStatusBarProps) {
+export function SaveStatusBar({ status, onRetry, charCount }: SaveStatusBarProps) {
   return (
     <div className={styles.bar}>
       {status === "saving" && (
@@ -37,6 +39,7 @@ export function SaveStatusBar({ status, onRetry }: SaveStatusBarProps) {
           </button>
         </>
       )}
+      <span className={styles.charCount}>{charCount}자</span>
     </div>
   );
 }

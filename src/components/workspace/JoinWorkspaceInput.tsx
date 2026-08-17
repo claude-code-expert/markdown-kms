@@ -107,7 +107,12 @@ export function JoinWorkspaceInput() {
               <li key={ws.id} className={styles.resultRow}>
                 <div className={styles.resultMain}>
                   <span className={styles.resultName}>{ws.name}</span>
-                  <Button type="button" variant="secondary" disabled={disabled} onClick={() => submitJoin(ws)}>
+                  <Button
+                    type="button"
+                    variant={disabled ? "secondary" : "accentOutline"}
+                    disabled={disabled}
+                    onClick={() => submitJoin(ws)}
+                  >
                     {label}
                   </Button>
                 </div>

@@ -1,11 +1,14 @@
-/* docs/design.md — 헤더를 액센트 단색으로 채운다(넓은 면이지만 64px 얇은 띠라 히어로
-   밴드의 "넓은 면 저채도" 원칙과 별개로 다룬다 — 브랜드 존재감이 필요한 자리). */
+/* 디자인 시스템 색 배분 원칙(docs/design.md, markdown-kms-color-recipe) — 넓은 면은
+   저채도(--accent-weak), 좁은 면(로고 배지·primary 버튼)만 고채도(--accent). 헤더는
+   화면 전체 폭을 가로지르는 넓은 면이라 accent-weak 틴트를 채운다(순수 흰 배경도,
+   과거의 accent 단색 풀블리드도 아님). */
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
   height: var(--header-h);
-  background: var(--accent);
+  background: var(--accent-weak);
+  border-bottom: 1px solid var(--border);
 }
 
 .inner {
@@ -20,38 +23,39 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
+  gap: 10px;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
 }
 
-/* form.html 샘플의 "반투명 흰 배지 + 아이콘" 구조만 차용(장식 그림자·블롭은 미채택,
-   docs/design.md §5). */
 .logoMark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: var(--text-base);
+  font-weight: 600;
 }
 
 .actions {
   display: flex;
+  align-items: center;
   gap: var(--space-sm);
 }
 
-/* 헤더 배경이 이미 accent라 buttonStyles.primary(같은 accent)를 쓰면 버튼이 안 보인다 —
-   흰 배경 + accent 텍스트로 반전. */
-.ctaOnAccent {
-  background: #fff;
-  color: var(--accent);
-}
-
-.ctaOnAccent:hover:not(:disabled) {
-  background: var(--accent-weak);
+/* secondary 버튼의 기본 border-color(--border)가 헤더의 accent-weak 배경 위에서는
+   너무 흐리다 — 이 컨텍스트만 한 단계 진한 --border-strong으로 올린다(Button.module.css의
+   공용 secondary는 흰/surface 배경 다른 컨텍스트가 더 많아 그대로 둔다). !important —
+   서로 다른 CSS Module 파일의 단일 클래스 선택자끼리는 로드 순서가 보장되지 않는다. */
+.headerOutline {
+  border-color: var(--border-strong) !important;
 }

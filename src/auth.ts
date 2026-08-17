@@ -55,11 +55,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user: authedUser }) {
       if (authedUser) {
         token.id = authedUser.id;
+        // 리디자인(Avatar 이니셜 배지) — 헤더/멤버 목록이 표시 이름을 필요로 하게 되면서
+        // .id와 같은 방식으로 명시적으로 실어 나른다(프레임워크 기본 동작에 암묵적으로
+        // 기대지 않음, 이 파일의 기존 관례).
+        token.name = authedUser.name;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user && typeof token.id === "string") session.user.id = token.id;
+      if (session.user && typeof token.name === "string") session.user.name = token.name;
       return session;
     },
   },

@@ -5,7 +5,7 @@
 // (dialog stays open on failure), router.refresh() on success (no toast, no optimistic removal).
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail } from "lucide-react";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import styles from "./MembersView.module.css";
@@ -70,7 +70,7 @@ export function PendingRequestRow({ request, wsId }: PendingRequestRowProps) {
 
   return (
     <div className={styles.row}>
-      <Mail size={16} className={styles.icon} />
+      <Avatar name={request.name} />
       <div className={styles.identity}>
         <span className={styles.name}>{request.name}</span>
         <span className={styles.email}>{request.email}</span>
@@ -80,7 +80,7 @@ export function PendingRequestRow({ request, wsId }: PendingRequestRowProps) {
         <Button variant="primary" onClick={() => setConfirming("APPROVED")}>
           승인
         </Button>
-        <Button variant="secondary" onClick={() => setConfirming("REJECTED")}>
+        <Button variant="danger" onClick={() => setConfirming("REJECTED")}>
           거절
         </Button>
       </div>

@@ -1,69 +1,40 @@
-/* UI-SPEC Layout Mode Toggle Contract: 3x 24x24 buttons, gap 4px(xs).
-   Tooltip reuses Toolbar.module.css's hide-immediate/show-after-300ms split
-   transition (same CSS pattern, duplicated per-file since CSS Modules don't
-   share rules across files without a shared class — 3 short rules, not worth
-   a shared stylesheet). */
+/* 리디자인(1a 목업) — 아이콘 3버튼 대신 텍스트 세그먼트, ToneToggle.module.css와 동일
+   시각 패턴(비활성=투명, 활성=흰 배경+옅은 그림자). */
 .segment {
   display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+  gap: 2px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 2px;
   flex-shrink: 0;
 }
 
-.buttonWrap {
-  position: relative;
-  display: inline-flex;
-}
-
-.button {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
+.item,
+.active {
+  font-family: inherit;
+  font-size: var(--text-sm);
   border: none;
-  border-radius: var(--radius-sm);
-  color: var(--muted);
+  border-radius: 5px;
+  padding: 3px 10px;
   cursor: pointer;
   transition:
     background var(--duration-fast) var(--ease-fluid),
     color var(--duration-fast) var(--ease-fluid);
 }
 
-.button:hover {
-  background: var(--surface-2);
+.item {
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+}
+
+.item:hover {
   color: var(--text);
 }
 
-/* Accent reserved-for exception (UI-SPEC Color): a mutually-exclusive 3-way
-   mode switch showing "which mode is active now" is a different category
-   from the toolbar's banned persistent format-active tracking. */
-.active,
-.active:hover {
-  background: var(--accent-weak);
-  color: var(--accent);
-}
-
-.tooltip {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  white-space: nowrap;
-  background: #0f172a;
-  color: #fff;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0s linear 0s;
-}
-
-.buttonWrap:hover .tooltip {
-  opacity: 1;
-  transition: opacity 0s linear var(--duration-slow);
+.active {
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }

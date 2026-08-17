@@ -41,7 +41,7 @@ export function WorkspaceShell({
   folders,
   documents,
   workspaceId,
-  initialWidth = 260,
+  initialWidth = 236,
   initialCollapsed = false,
   children,
 }: WorkspaceShellProps) {

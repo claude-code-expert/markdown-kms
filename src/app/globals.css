@@ -1,25 +1,99 @@
-:root {
-  /* Ported verbatim from docs/ui-kit.html :root (UI-SPEC Color / Design System) */
+/* 리디자인(docs/claude_design/tokens.css) — 쿨/웜 2톤 × 라이트/다크. 이번 스코프는
+   쿨만 적용(PAGE-ANALYSIS.md §0-2) — 웜 블록은 값만 심어두고 tone 쿠키가 "warm"이
+   될 일이 아직 없어 도달 불가(다음 라운드에서 ToneToggle이 활성화한다). */
+:root,
+[data-tone="cool"] {
   --bg: #ffffff;
-  --surface: #f8fafc;
-  --surface-2: #eef2f6;
-  --border: #e5e7eb;
-  --border-strong: #cbd5e1;
-  --text: #0f172a;
-  --muted: #64748b;
-  --dim: #94a3b8;
-  --accent: #2563eb;
-  --accent-strong: #1d4ed8;
-  --accent-weak: #eff6ff;
-  --destructive: #dc2626;
-  --destructive-strong: #b91c1c; /* danger 버튼 hover/active — accent-strong과 같은 역할 */
-  --code-bg: #0f172a; /* Preview Pane Prose Contract (UI-SPEC) — fenced code block background */
-
-  /* docs/color.json — 원본(Dracula 스크랩)은 다크에서만 제목이 본문보다 한 단계 밝다.
-     라이트는 전용 값이 없어 --text와 동일(시각 변화 없음), 다크는 아래 [data-theme="dark"]에서 override. */
+  --surface: #f6f8fa;
+  --surface-2: #eceff3;
+  --border: #e3e7ec;
+  --border-strong: #c9d0d9;
+  --text: #14171c;
   --heading-text: var(--text);
+  --muted: #5c6672;
+  --dim: #94a0ae;
+  --accent: #2e5fe8;
+  --accent-strong: #2450c7;
+  --accent-weak: #ecf1fe;
+  --destructive: #d92d20;
+  --destructive-strong: #b42318;
+  --code-bg: #14171c;
+}
 
-  /* UI-SPEC Spacing Scale — 4-multiple, xs..3xl */
+[data-tone="warm"] {
+  --bg: #fdfcfa;
+  --surface: #f7f5f1;
+  --surface-2: #efece6;
+  --border: #e7e2d9;
+  --border-strong: #d3ccbf;
+  --text: #211d16;
+  --heading-text: var(--text);
+  --muted: #6e6759;
+  --dim: #a49c8d;
+  --accent: #3a55c9;
+  --accent-strong: #2f45a8;
+  --accent-weak: #ebeefa;
+  --destructive: #c93c2b;
+  --destructive-strong: #a83221;
+  --code-bg: #211d16;
+}
+
+/* 리디자인 결정(PAGE-ANALYSIS.md §0-1): 라이트/다크 수동 토글 폐지 — 다크는 오직
+   OS 설정(prefers-color-scheme)만 따른다. data-theme 쿠키/속성 자체가 더는 없으므로
+   과거의 ":not([data-theme])" 수동override 가드도 함께 사라졌다. tone(쿨/웜)은
+   dark 안에서도 계속 분기된다. */
+@media (prefers-color-scheme: dark) {
+  :root,
+  [data-tone="cool"] {
+    --bg: #0f1115;
+    --surface: #171a20;
+    --surface-2: #23262e;
+    --border: #23262e;
+    --border-strong: #3a3f4a;
+    --text: #c6cbd4;
+    --heading-text: #d7dbe2;
+    --muted: #9aa4b2;
+    --dim: #6a7382;
+    --accent: #8b7cf6; /* 다크 accent = 보라 유지(기존 아이덴티티) */
+    --accent-strong: #a294f8;
+    --accent-weak: #241f3d;
+    --destructive: #e5484d;
+    --destructive-strong: #ef7570;
+    --code-bg: #171a20;
+  }
+
+  [data-tone="warm"] {
+    --bg: #16130f;
+    --surface: #1e1a15;
+    --surface-2: #2b261f;
+    --border: #2b261f;
+    --border-strong: #4a4335;
+    --text: #cfc8bc;
+    --heading-text: #ddd7cb;
+    --muted: #a49c8d;
+    --dim: #7a7365;
+    --accent: #a08df2;
+    --accent-strong: #b3a3f5;
+    --accent-weak: #2a2340;
+    --destructive: #e5484d;
+    --destructive-strong: #ef7570;
+    --code-bg: #1e1a15;
+  }
+}
+
+:root {
+  /* 리디자인 타이포 스케일(NEW) — 기존 11~28px 산발 값을 8단계로 정리.
+     기존 컴포넌트 CSS는 리터럴 px를 이 변수로 점진 교체한다(PAGE-ANALYSIS.md §1). */
+  --text-xs: 11px; /* 힌트, 타임스탬프, 배지 */
+  --text-sm: 12px; /* 버튼, 보조 라벨 */
+  --text-base: 13px; /* UI 기본(트리, 리스트, 폼 입력) */
+  --text-md: 14px; /* 미리보기 본문 */
+  --text-lg: 15px; /* 섹션 소제목 */
+  --text-xl: 17px; /* 페이지 제목 */
+  --text-2xl: 21px; /* 미리보기 h1 */
+  --text-3xl: 28px; /* 랜딩 히어로급 */
+
+  /* UI-SPEC Spacing Scale — 4-multiple, xs..3xl (값 유지) */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -28,64 +102,19 @@
   --space-2xl: 48px;
   --space-3xl: 64px;
 
-  /* Phase 9 D-05 — 전역(라이트/다크 공통) Radius/Motion 토큰. UI-SPEC "Radius
-     Scale"/"Motion Tokens" 원천, Dracula DESIGN.md Layout posture. */
+  /* 리디자인 Radius(값 교체: 6/12/18 → 6/10/14) — Motion은 그대로 유지. */
   --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --duration-fast: 180ms;
   --duration-standard: 240ms;
   --duration-slow: 300ms;
   --ease-fluid: cubic-bezier(0.36, 0.66, 0.6, 1);
   --ease-elastic: cubic-bezier(0.42, 0, 0.58, 1.8);
 
-  /* 공용 SiteHeader 높이 — 헤더가 있는 화면(랜딩·로그인·사인업·대시보드)의
-     100vh 기반 레이아웃이 헤더 높이만큼 뺄 때 이 값을 재사용한다. */
-  --header-h: 64px;
-}
-
-/* Dark palette (UI-SPEC "다크 모드 CSS 변수 전체 매핑", Phase 9 D-04 전면 교체)
-   — Dracula 파생 팔레트(Void/Crypt/Hairline/Moth/Vampire Purple). 기존
-   slate/blue 스케일은 완전히 제거됨. Components stay var(--token) references,
-   so this block alone flips the whole app dark. */
-[data-theme="dark"] {
-  --bg: #0e0d11;
-  --surface: #1c1b22;
-  --surface-2: #383645;
-  --border: #383645;
-  --border-strong: #514f60;
-  --text: #c2c0ce;
-  --heading-text: #d3d1db;
-  --muted: #b2afc0;
-  --dim: #757383;
-  --accent: #7359f8;
-  --accent-strong: #9580fa;
-  --accent-weak: #241f3d;
-  --destructive: #e5484d;
-  --destructive-strong: #ef7570; /* 다크는 accent-strong처럼 hover가 더 밝아진다 */
-  --code-bg: #1c1b22;
-}
-
-/* First visit (no theme cookie yet, so RSC hasn't set data-theme) falls back
-   to the OS setting — CONTEXT lock "첫 방문은 prefers-color-scheme 따름".
-   Same values as above, duplicated (server can't read OS preference). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0e0d11;
-    --surface: #1c1b22;
-    --surface-2: #383645;
-    --border: #383645;
-    --border-strong: #514f60;
-    --text: #c2c0ce;
-    --heading-text: #d3d1db;
-    --muted: #b2afc0;
-    --dim: #757383;
-    --accent: #7359f8;
-    --accent-strong: #9580fa;
-    --accent-weak: #241f3d;
-    --destructive: #e5484d;
-    --code-bg: #1c1b22;
-  }
+  /* 공용 SiteHeader 높이(리디자인: 64px → 52px) — 헤더가 있는 화면의 100vh 기반
+     레이아웃이 헤더 높이만큼 뺄 때 이 값을 재사용한다. */
+  --header-h: 52px;
 }
 
 html {
@@ -102,10 +131,10 @@ body {
   min-height: 100%;
   color: var(--text);
   background: var(--bg);
-  /* DM Sans (본문) — Phase 9 UI-SPEC Design System / Typography, D-05 전면 대체.
-     변수명 --font-ibm-plex-sans 유지(layout.tsx 참조), 폰트 소스만 DM Sans. */
-  font-family: var(--font-ibm-plex-sans), "DM Sans", sans-serif;
-  font-size: 14px;
+  /* IBM Plex Sans KR(본문) — 리디자인. 변수명 --font-ibm-plex-sans는 이제 실제
+     폰트와 이름이 일치한다(layout.tsx의 next/font/google 참조). */
+  font-family: var(--font-ibm-plex-sans), "IBM Plex Sans KR", sans-serif;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

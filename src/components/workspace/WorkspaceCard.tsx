@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FileText, Folder, Trash2 } from "lucide-react";
-import { Card } from "@/components/ui/Card";
 import { DeleteWorkspaceDialog } from "./DeleteWorkspaceDialog";
 import styles from "./WorkspaceCard.module.css";
 
@@ -45,7 +44,7 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <Card className={styles.card}>
+    <div className={styles.card}>
       <div className={styles.body}>
         <div className={styles.titleRow}>
           <Link href={`/w/${id}`} className={styles.name}>
@@ -59,14 +58,14 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
         >
           소유자 {ownerName ?? "-"} · 생성일 {formatCreatedAt(createdAt)}
         </p>
-        <div className={styles.stats}>
+        <div className={styles.stats} title={`문서 ${docCount}개 · 폴더 ${folderCount}개`}>
           <span className={styles.stat}>
-            <FileText size={13} className={styles.statIcon} />
-            문서 {docCount}개
+            <FileText size={12} className={styles.statIcon} />
+            {docCount}
           </span>
           <span className={styles.stat}>
-            <Folder size={13} className={styles.statIcon} />
-            폴더 {folderCount}개
+            <Folder size={12} className={styles.statIcon} />
+            {folderCount}
           </span>
         </div>
       </div>
@@ -89,6 +88,6 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
           />
         </>
       )}
-    </Card>
+    </div>
   );
 }

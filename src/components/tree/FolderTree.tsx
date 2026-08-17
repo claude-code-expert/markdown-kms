@@ -25,7 +25,7 @@ import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
 import { SearchBox, SearchResultsList, useSearchResults } from "./SearchBox";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { ToneToggle } from "@/components/layout/ToneToggle";
 import nodeStyles from "./FolderTreeNode.module.css";
 import styles from "./FolderTree.module.css";
 
@@ -373,7 +373,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
         loading={search.status === "loading"}
       />
       <div className={styles.header}>
-        <span className={styles.headerLabel}>폴더</span>
+        <span className={styles.headerLabel}>FOLDERS</span>
         <div className={styles.headerActions}>
           <button
             type="button"
@@ -381,7 +381,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 폴더"
             onClick={() => setCreatingRoot(true)}
           >
-            <FolderPlus size={16} />
+            <FolderPlus size={17} />
           </button>
           <button
             type="button"
@@ -389,7 +389,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 문서"
             onClick={() => setCreatingDocumentRoot(true)}
           >
-            <FilePlus2 size={16} />
+            <FilePlus2 size={17} />
           </button>
         </div>
       </div>
@@ -483,28 +483,29 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
           ))}
         </div>
       )}
-      {/* UI-SPEC Trash Contract "진입" — flex-shrink:0 bottom row below the flex:1 tree, same
-          "current location" accent treatment as a selected tree node. */}
-      <Link
-        href={`/w/${workspaceId}/trash`}
-        className={[styles.trashLink, pathname === `/w/${workspaceId}/trash` ? styles.trashLinkActive : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <Trash2 size={16} />
-        <span>휴지통</span>
-      </Link>
-      {/* UI-SPEC Layout Contract "멤버 페이지 진입점" — trashLink 블록 복제, 동일 관례. */}
-      <Link
-        href={`/w/${workspaceId}/members`}
-        className={[styles.membersLink, pathname === `/w/${workspaceId}/members` ? styles.membersLinkActive : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <Users size={16} />
-        <span>멤버</span>
-      </Link>
-      <ThemeToggle />
+      {/* 리디자인(1a 목업) — 휴지통/멤버/톤세그먼트를 하나의 border-top 그룹으로 묶는다
+          (개별 border-top 대신 그룹 전체를 감싸는 6px 패딩 박스). */}
+      <div className={styles.bottomGroup}>
+        <Link
+          href={`/w/${workspaceId}/trash`}
+          className={[styles.trashLink, pathname === `/w/${workspaceId}/trash` ? styles.trashLinkActive : ""]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Trash2 size={14} />
+          <span>휴지통</span>
+        </Link>
+        <Link
+          href={`/w/${workspaceId}/members`}
+          className={[styles.membersLink, pathname === `/w/${workspaceId}/members` ? styles.membersLinkActive : ""]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Users size={14} />
+          <span>멤버</span>
+        </Link>
+        <ToneToggle />
+      </div>
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
       {docMenu && (
         <FolderContextMenu x={docMenu.x} y={docMenu.y} items={docMenuItems} onClose={() => setDocMenu(null)} />

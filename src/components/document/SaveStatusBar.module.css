@@ -1,11 +1,12 @@
-/* UI-SPEC Document Workspace Contract — 저장 상태 바: 우측 컬럼 최하단, 40px, 상단 구분선. */
+/* UI-SPEC Document Workspace Contract — 저장 상태 바: 우측 컬럼 최하단, 상단 구분선.
+   리디자인: 40px → 36px(목업). */
 .bar {
-  height: 40px;
+  height: 36px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 0 var(--space-md);
+  padding: 0 20px;
   border-top: 1px solid var(--border);
   background: var(--bg);
 }
@@ -39,7 +40,7 @@
 }
 
 .textMuted {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted);
@@ -48,7 +49,8 @@
 /* UI-SPEC Visual Hierarchy "상단 저장 상태 배지('저장됨', accent 배경)" — CSS-only(:has()
    + 인접 형제 결합자)로 "저장됨" 상태만 특정한다. .iconMuted는 저장중 스피너(.spinner)에는
    안 붙고 Check 아이콘(saved)에만 붙으므로, ":has(+ .textMuted)"는 저장중과 정확히 구분된다.
-   SaveStatusBar.tsx 무수정(CSS-only, D-09 계열 원칙 준수). */
+   SaveStatusBar.tsx 무수정(CSS-only, D-09 계열 원칙 준수). 리디자인: 배지 텍스트는 Mono
+   액센트(PAGE-ANALYSIS.md §1 "저장됨 배지"). */
 .iconMuted:has(+ .textMuted) {
   color: var(--accent);
 }
@@ -61,12 +63,14 @@
   border-radius: var(--radius-sm);
   background: var(--accent-weak);
   color: var(--accent);
-  font-weight: 600;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
   transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .textDestructive {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
   color: var(--destructive);
@@ -79,7 +83,7 @@
   border: none;
   background: none;
   padding: 0;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   line-height: 1.5;
   color: var(--destructive);
@@ -88,4 +92,14 @@
 
 .retryButton:hover {
   text-decoration: underline;
+}
+
+/* 리디자인(PAGE-ANALYSIS.md §0-2) — 글자수 카운터. 타임스탬프·카운트류는 Mono 액센트, 우측
+   고정(막대 안 유일한 margin-left:auto 요소 — 상태 텍스트 그룹과 시각적으로 분리). */
+.charCount {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: var(--text-xs);
+  color: var(--dim);
 }

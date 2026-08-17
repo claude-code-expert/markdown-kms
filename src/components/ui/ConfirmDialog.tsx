@@ -52,14 +52,14 @@ export function ConfirmDialog({
         <h3 className={styles.title} id="confirm-title">
           {title}
         </h3>
-        {children}
+        <div className={styles.body}>{children}</div>
         <div className={styles.actions}>
           <Button type="button" variant="secondary" onClick={onCancel}>
             {cancelLabel}
           </Button>
           <Button
             type="button"
-            variant={destructive ? "danger" : "primary"}
+            variant={destructive ? "dangerSolid" : "primary"}
             onClick={onConfirm}
             disabled={confirmDisabled}
           >

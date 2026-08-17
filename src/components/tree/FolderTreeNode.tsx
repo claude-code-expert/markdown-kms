@@ -139,12 +139,12 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
               ctx.onToggle(node.id);
             }}
           >
-            <ChevronRight size={16} className={isOpen ? styles.chevronOpen : undefined} />
+            <ChevronRight size={12} className={isOpen ? styles.chevronOpen : undefined} />
           </button>
         ) : (
           <span className={styles.chevronSpace} />
         )}
-        <Folder size={16} className={styles.folderIcon} />
+        <Folder size={15} className={styles.folderIcon} />
         {isRenaming ? (
           <RenameInput
             initialName={node.name}
@@ -280,7 +280,7 @@ function CreateInlineRow({
   return (
     <div className={styles.node} style={{ paddingLeft }}>
       <span className={styles.chevronSpace} />
-      <Folder size={16} className={styles.folderIcon} />
+      <Folder size={15} className={styles.folderIcon} />
       <input
         className={styles.inlineInput}
         placeholder="새 폴더"

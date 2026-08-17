@@ -1,9 +1,10 @@
+/* 재검증(1a 목업) — gap 6px, 우측 패딩 6px(기존 4px/8px에서 조정). */
 .node {
-  height: 32px;
+  height: 28px;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding-right: var(--space-sm);
+  gap: 6px;
+  padding-right: 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-fluid);
@@ -25,6 +26,13 @@
 .selected .name {
   color: var(--accent);
   font-weight: 600;
+}
+
+/* 재검증(1a 목업) — 선택된 행의 케밥은 hover 없이도 항상 보이고 accent색(다른 행은
+   hover에서만 muted로 드러남, .node:hover .kebab 그대로 유지). */
+.selected .kebab {
+  opacity: 1;
+  color: var(--accent);
 }
 
 /* UI-SPEC Tree Node Contract — drag-over valid target */
@@ -53,8 +61,8 @@
 }
 
 .chevron {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -62,7 +70,7 @@
   border: none;
   background: none;
   padding: 0;
-  color: var(--muted);
+  color: var(--dim);
   cursor: pointer;
 }
 
@@ -72,7 +80,7 @@
 }
 
 .chevronSpace {
-  width: 16px;
+  width: 12px;
   flex-shrink: 0;
 }
 
@@ -88,7 +96,7 @@
 .docLink {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   flex: 1;
   min-width: 0;
   text-decoration: none;
@@ -96,7 +104,7 @@
 }
 
 .name {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -136,7 +144,7 @@
   border: none;
   border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: 14px;
+  font-size: var(--text-base);
   padding: 2px 4px;
   font-family: inherit;
 }
@@ -159,7 +167,7 @@
 }
 
 .error {
-  font-size: 12px;
+  font-size: var(--text-sm);
   line-height: 1.4;
   color: var(--destructive);
   padding: 2px var(--space-sm);
