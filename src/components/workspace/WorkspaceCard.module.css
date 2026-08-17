@@ -14,6 +14,13 @@
   gap: var(--space-xs);
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
 /* UI-SPEC Typography — Heading role (16px/600/1.3), 카드 제목. 1줄 말줄임 유지. */
 .name {
   display: block;
@@ -32,6 +39,22 @@
   text-decoration: underline;
 }
 
+/* 역할 뱃지 — TagBar.module.css .chip과 같은 중립 필 스타일 재사용(무채색, 색으로만
+   정보 전달 금지 원칙). 넓은 면 액센트 금지 원칙과도 일치. */
+.roleBadge {
+  flex-shrink: 0;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 /* UI-SPEC Typography — Label role (12px/600/1.4), muted. Phase 9 D-08 워크스페이스 카드 메타 라인. */
 .meta {
   font-size: 12px;
@@ -41,6 +64,26 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 문서/폴더 수 — 긴 가운뎃점 문장에 묻혀 있던 걸 아이콘+숫자 쌍으로 분리(anti-slop "정보를
+   전달하는 요소만" — 숫자는 실제 정보라 남기고, 표현만 읽기 쉽게). */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.statIcon {
+  color: var(--accent);
 }
 
 .deleteButton {

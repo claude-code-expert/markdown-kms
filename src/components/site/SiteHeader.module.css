@@ -1,10 +1,11 @@
+/* docs/design.md — 헤더를 액센트 단색으로 채운다(넓은 면이지만 64px 얇은 띠라 히어로
+   밴드의 "넓은 면 저채도" 원칙과 별개로 다룬다 — 브랜드 존재감이 필요한 자리). */
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
   height: var(--header-h);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  background: var(--accent);
 }
 
 .inner {
@@ -17,12 +18,40 @@
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 16px;
   font-weight: 700;
-  color: var(--text);
+  color: #fff;
+}
+
+/* form.html 샘플의 "반투명 흰 배지 + 아이콘" 구조만 차용(장식 그림자·블롭은 미채택,
+   docs/design.md §5). */
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  flex-shrink: 0;
 }
 
 .actions {
   display: flex;
   gap: var(--space-sm);
+}
+
+/* 헤더 배경이 이미 accent라 buttonStyles.primary(같은 accent)를 쓰면 버튼이 안 보인다 —
+   흰 배경 + accent 텍스트로 반전. */
+.ctaOnAccent {
+  background: #fff;
+  color: var(--accent);
+}
+
+.ctaOnAccent:hover:not(:disabled) {
+  background: var(--accent-weak);
 }

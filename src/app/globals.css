@@ -12,7 +12,12 @@
   --accent-strong: #1d4ed8;
   --accent-weak: #eff6ff;
   --destructive: #dc2626;
+  --destructive-strong: #b91c1c; /* danger 버튼 hover/active — accent-strong과 같은 역할 */
   --code-bg: #0f172a; /* Preview Pane Prose Contract (UI-SPEC) — fenced code block background */
+
+  /* docs/color.json — 원본(Dracula 스크랩)은 다크에서만 제목이 본문보다 한 단계 밝다.
+     라이트는 전용 값이 없어 --text와 동일(시각 변화 없음), 다크는 아래 [data-theme="dark"]에서 override. */
+  --heading-text: var(--text);
 
   /* UI-SPEC Spacing Scale — 4-multiple, xs..3xl */
   --space-xs: 4px;
@@ -57,6 +62,7 @@
   --accent-strong: #9580fa;
   --accent-weak: #241f3d;
   --destructive: #e5484d;
+  --destructive-strong: #ef7570; /* 다크는 accent-strong처럼 hover가 더 밝아진다 */
   --code-bg: #1c1b22;
 }
 
@@ -115,4 +121,11 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* docs/design.md §2 — 원본(Dracula 스크랩)의 "브랜드 텍스트 선택" 시그니처: 텍스트 드래그
+   선택 색을 액센트로 통일한다. */
+::selection {
+  background: var(--accent);
+  color: #fff;
 }

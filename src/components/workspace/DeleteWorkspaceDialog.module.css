@@ -1,12 +1,12 @@
 .body {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   line-height: 1.5;
   margin: 0 0 var(--space-md);
 }
 
 .error {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--destructive);
   margin: var(--space-xs) 0 0;
 }

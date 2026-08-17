@@ -18,6 +18,13 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
 }
 
+/* docs/design.md §2 — Card/Modal과 동일한 squircle. */
+@supports (corner-shape: squircle) {
+  .dialog {
+    corner-shape: squircle;
+  }
+}
+
 .title {
   font-size: 16px;
   font-weight: 600;
@@ -30,39 +37,4 @@
   justify-content: flex-end;
   gap: var(--space-sm);
   margin-top: var(--space-md);
-}
-
-.cancel,
-.confirm,
-.confirmDestructive {
-  padding: 7px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.cancel {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.confirm {
-  background: var(--accent);
-  color: #fff;
-  border: 1px solid var(--accent);
-}
-
-.confirmDestructive {
-  background: var(--destructive);
-  color: #fff;
-  border: 1px solid var(--destructive);
-}
-
-.confirm:disabled,
-.confirmDestructive:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
