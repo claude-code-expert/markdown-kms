@@ -56,19 +56,16 @@
   border-radius: var(--radius-lg);
 }
 
-/* 저장/수정/삭제 — visible TEXT buttons (Button.tsx, ui-kit #4), not icon-only: an icon-only
-   affordance here didn't read as "a button" at a glance. Always in titleRow, no hover-reveal
-   (unlike FolderTreeNode's row-scoped .kebab — these are the document's own primary actions). */
-.actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-}
-
 .error {
   font-size: 12px;
   line-height: 1.4;
   color: var(--destructive);
   margin: var(--space-xs) 0 0;
+}
+
+/* 저장 완료 Modal 푸터 — ConfirmDialog/MoveFolderModal과 동일 계약(우측 정렬 단일 버튼). */
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-md);
 }

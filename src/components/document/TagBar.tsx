@@ -5,7 +5,7 @@
 // as handleTitleChange (title input) rather than the tree's "server-confirmed only" convention
 // — a tag operation is a replace-all PUT on an already-confirmed document, so an optimistic
 // local update with revert-on-failure is safe and simpler (06-UI-SPEC rationale).
-import { useState, type ChangeEvent, type KeyboardEvent } from "react";
+import { useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
 import { Tag, X } from "lucide-react";
 import styles from "./TagBar.module.css";
 
@@ -18,6 +18,9 @@ const TAG_LIMIT = 3;
 interface TagBarProps {
   documentId: string;
   initialTags: string[];
+  // 우측 50% — 저장/수정/삭제 버튼(DocumentWorkspace가 소유한 핸들러 그대로 넘겨받아 렌더만
+  // 담당, TagBar는 문서 액션을 모른다).
+  actions?: ReactNode;
 }
 
 // Pure fetch-result extraction (discardDraft/downloadExport convention) — never throws, a
@@ -35,7 +38,7 @@ async function saveTags(documentId: string, tags: string[]): Promise<boolean> {
   }
 }
 
-export function TagBar({ documentId, initialTags }: TagBarProps) {
+export function TagBar({ documentId, initialTags, actions }: TagBarProps) {
   const [tags, setTags] = useState(initialTags);
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -92,33 +95,36 @@ export function TagBar({ documentId, initialTags }: TagBarProps) {
   return (
     <div>
       <div className={styles.bar}>
-        <Tag size={14} className={styles.icon} aria-hidden="true" />
-        <div className={styles.chips}>
-          {tags.map((tag) => (
-            <span key={tag} className={styles.chip}>
-              <span className={styles.chipText} title={tag}>
-                {tag}
+        <div className={styles.left}>
+          <Tag size={14} className={styles.icon} aria-hidden="true" />
+          <div className={styles.chips}>
+            {tags.map((tag) => (
+              <span key={tag} className={styles.chip}>
+                <span className={styles.chipText} title={tag}>
+                  {tag}
+                </span>
+                <button
+                  type="button"
+                  className={styles.chipRemove}
+                  onClick={() => void removeTag(tag)}
+                  aria-label={`${tag} 태그 삭제`}
+                >
+                  <X size={12} />
+                </button>
               </span>
-              <button
-                type="button"
-                className={styles.chipRemove}
-                onClick={() => void removeTag(tag)}
-                aria-label={`${tag} 태그 삭제`}
-              >
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-          <input
-            className={styles.input}
-            value={input}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            disabled={atLimit}
-            placeholder={atLimit ? LIMIT_PLACEHOLDER : DEFAULT_PLACEHOLDER}
-            aria-label="태그 입력"
-          />
+            ))}
+            <input
+              className={styles.input}
+              value={input}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              disabled={atLimit}
+              placeholder={atLimit ? LIMIT_PLACEHOLDER : DEFAULT_PLACEHOLDER}
+              aria-label="태그 입력"
+            />
+          </div>
         </div>
+        {actions && <div className={styles.right}>{actions}</div>}
       </div>
       {error && <p className={styles.error}>{error}</p>}
     </div>

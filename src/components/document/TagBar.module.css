@@ -6,7 +6,6 @@
   align-items: center;
   min-height: 40px;
   flex-shrink: 0;
-  gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
   border-bottom: 1px solid var(--border);
   transition: border-color var(--duration-fast) var(--ease-fluid);
@@ -14,6 +13,24 @@
 
 .bar:focus-within {
   border-bottom-color: var(--accent);
+}
+
+/* 좌/우 50% 분할 — 좌측 태그, 우측 문서 액션(저장/수정/삭제). */
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  flex: 1 1 50%;
+  min-width: 0;
 }
 
 .icon {
