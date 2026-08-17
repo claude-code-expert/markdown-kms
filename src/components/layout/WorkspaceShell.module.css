@@ -1,0 +1,100 @@
+.shell {
+  height: 100%;
+  display: flex;
+  min-width: 0;
+}
+
+/* 접힘 애니메이션 — 폭만 트랜지션. resizeHandle/collapseToggle은 이 요소의 직계 자식으로
+   두고 overflow:hidden을 안 걸어야 경계 밖(right:-3px 등)까지 걸친 히트 영역이 안 잘린다.
+   드래그 중엔 WorkspaceShell.tsx가 인라인 transition:none을 얹어 리사이즈가 고무줄처럼
+   밀리지 않게 한다(EditorPreviewLayout과 동일 이유). */
+.sidebarWrap {
+  position: relative;
+  flex-shrink: 0;
+  transition: width var(--duration-standard) var(--ease-fluid);
+}
+
+/* 실제로 잘리는 건 이 레이어 하나뿐 — sidebarInner(고정 폭 유지)가 여기 안에서만
+   overflow:hidden에 잘려 "슬라이드" 시각효과를 낸다. */
+.sidebarClip {
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebarInner {
+  height: 100%;
+}
+
+/* Split-Pane Resize Contract과 동일한 6px 히트 영역(EditorPreviewLayout.module.css 참고) —
+   sidebarWrap 우측 경계에 겹쳐 놓는다. */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 2;
+}
+
+.resizeHandle:hover::after,
+.resizeHandle:active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2px;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+}
+
+.collapseToggle,
+.expandToggle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  z-index: 3;
+  transition:
+    background var(--duration-fast) var(--ease-fluid),
+    color var(--duration-fast) var(--ease-fluid);
+}
+
+.collapseToggle:hover,
+.expandToggle:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* resizeHandle은 세로 전체(top:0/height:100%)가 히트 영역이라 수직 중앙에 겹치는 자리에
+   두면 클릭이 이 버튼으로 가로채인다 — 위쪽 구석으로 옮겨 겹침 자체를 없앤다. */
+.collapseToggle {
+  top: var(--space-sm);
+  right: -10px;
+}
+
+/* collapsed일 때 sidebarWrap이 0폭이라 shell의 flex 흐름상 첫 아이템이 되는 위치 —
+   화면 맨 왼쪽에 붙는 "펼치기" 탭. */
+.expandToggle {
+  position: relative;
+  top: auto;
+  transform: none;
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: 4px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

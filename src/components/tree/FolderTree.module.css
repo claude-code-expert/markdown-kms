@@ -5,6 +5,29 @@
   overflow-y: auto;
   border-right: 1px solid var(--border);
   background: var(--bg);
+  /* WorkspaceShell이 폭을 인라인 스타일로 제어하는 실제 박스 — 아래 아이콘 전용 압축
+     규칙(@container)이 이 폭을 기준으로 켜진다. */
+  container-type: inline-size;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 .header {
@@ -57,6 +80,32 @@
 .tree {
   flex: 1;
   padding: var(--space-xs) 0;
+}
+
+/* "루트로 이동" 드롭존 — 항상 DOM에 자리를 차지한 채 visibility로만 켜고 끈다.
+   {dragged && ...} 조건부 마운트를 썼다면 드래그 시작 순간 이 높이만큼 트리 전체가
+   아래로 밀려, 좌표 기반 드래그(e2e dragTo 포함)가 어긋난다 — visibility:hidden은
+   레이아웃 공간을 그대로 유지하면서 히트테스트에서만 빠지므로 이 문제가 없다. */
+.rootDropZone {
+  flex-shrink: 0;
+  margin: var(--space-xs) var(--space-xs) 0;
+  padding: var(--space-sm);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  visibility: hidden;
+}
+
+.rootDropZoneVisible {
+  visibility: visible;
+}
+
+.rootDropZoneActive {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+  color: var(--accent);
 }
 
 .node {
@@ -227,4 +276,34 @@
 
 .exportErrorClose:hover {
   color: var(--text);
+}
+
+/* 아이콘 전용 압축 모드 — 사이드바가 100px 이하로 리사이즈되면(WorkspaceShell MIN_WIDTH=48
+   포함) 라벨 텍스트를 걷어내고 아이콘만 남긴다. 새 폴더/새 문서 버튼은 가로로 나란히 두면
+   48px 폭에서 넘치므로 세로로 쌓는다. */
+@container (max-width: 100px) {
+  .headerLabel {
+    display: none;
+  }
+
+  .header {
+    height: auto;
+    padding: var(--space-xs) 0;
+    justify-content: center;
+  }
+
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .trashLink,
+  .membersLink {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .trashLink span,
+  .membersLink span {
+    display: none;
+  }
 }

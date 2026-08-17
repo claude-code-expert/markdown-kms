@@ -46,6 +46,12 @@
   pointer-events: none;
 }
 
+/* 드래그 중인 소스 행 자체 — 브라우저 기본 드래그 고스트만으론 "지금 이게 들려 있다"가
+   약해서 원래 자리도 반투명하게 낮춘다. */
+.dragging {
+  opacity: 0.4;
+}
+
 .chevron {
   width: 16px;
   height: 16px;
@@ -70,9 +76,11 @@
   flex-shrink: 0;
 }
 
+/* docs/design.md — 폴더/문서 아이콘은 콘텐츠 정체성 글리프라 항상 accent(선택 여부와
+   무관). 셰브런·케밥은 UI 크롬이라 계속 muted로 남긴다. */
 .folderIcon {
   flex-shrink: 0;
-  color: var(--muted);
+  color: var(--accent);
 }
 
 /* DocumentTreeLeaf's inner <Link> (04-03) — wraps only the icon+name so the row's outer .node
@@ -156,4 +164,19 @@
   color: var(--destructive);
   padding: 2px var(--space-sm);
   margin: 0;
+}
+
+/* 아이콘 전용 압축 모드(FolderTree.module.css .sidebar 컨테이너 기준) — 이름/케밥을 걷어내고
+   depth별 들여쓰기(인라인 style paddingLeft, FolderTreeNode.tsx/DocumentTreeLeaf.tsx)를
+   flatten한다. 인라인 스타일은 !important 없이는 못 이긴다 — 안 그러면 깊은 폴더의 아이콘이
+   폭 밖으로 밀려난다. */
+@container (max-width: 100px) {
+  .name,
+  .kebab {
+    display: none;
+  }
+
+  .node {
+    padding-left: 4px !important;
+  }
 }

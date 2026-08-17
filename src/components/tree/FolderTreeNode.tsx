@@ -4,7 +4,13 @@ import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent, type M
 import { ChevronRight, Folder, MoreHorizontal } from "lucide-react";
 import { folderSchema } from "@/lib/validation";
 import { DocumentTreeLeaf } from "./DocumentTreeLeaf";
-import { isDescendantOrSelf, type DocumentRow, type FolderRow, type FolderTreeNode as TreeNode } from "./tree-utils";
+import {
+  isDescendantOrSelf,
+  type DocumentRow,
+  type DraggedItem,
+  type FolderRow,
+  type FolderTreeNode as TreeNode,
+} from "./tree-utils";
 import styles from "./FolderTreeNode.module.css";
 
 // Shared callbacks/state threaded through the recursive node tree — bundled into one object
@@ -23,8 +29,8 @@ export interface FolderTreeNodeCtx {
   onRenameSubmit: (id: string, name: string) => void;
   onRenameCancel: () => void;
   pendingId: string | null;
-  draggedId: string | null;
-  onDragStart: (id: string) => void;
+  dragged: DraggedItem | null;
+  onDragStart: (item: DraggedItem) => void;
   onDragEnd: () => void;
   onDropOn: (targetId: string) => void;
   creatingChildOf: string | null;
@@ -63,12 +69,13 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
   function handleDragStart(event: DragEvent<HTMLDivElement>) {
     event.dataTransfer.setData("text/plain", node.id); // Firefox requires setData in dragstart
     event.dataTransfer.effectAllowed = "move";
-    ctx.onDragStart(node.id);
+    ctx.onDragStart({ id: node.id, type: "folder" });
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
-    if (!ctx.draggedId) return;
-    if (isDescendantOrSelf(ctx.folders, ctx.draggedId, node.id)) {
+    if (!ctx.dragged) return;
+    // 문서는 리프라 사이클이 있을 수 없다 — 사이클 체크는 폴더를 폴더 위로 끌 때만 의미 있다.
+    if (ctx.dragged.type === "folder" && isDescendantOrSelf(ctx.folders, ctx.dragged.id, node.id)) {
       setDropState("rejected"); // no preventDefault -> browser's native "forbidden" cursor
       return;
     }
@@ -83,7 +90,9 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setDropState("none");
-    if (ctx.draggedId && ctx.draggedId !== node.id) ctx.onDropOn(node.id);
+    if (!ctx.dragged) return;
+    if (ctx.dragged.type === "folder" && ctx.dragged.id === node.id) return; // 자기 자신 드롭 무시
+    ctx.onDropOn(node.id);
   }
 
   function handleDragEnd() {
@@ -91,12 +100,14 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
     ctx.onDragEnd();
   }
 
+  const isDragging = ctx.dragged?.type === "folder" && ctx.dragged.id === node.id;
   const rowClasses = [
     styles.node,
     ctx.selectedId === node.id ? styles.selected : "",
     dropState === "valid" ? styles.dropValid : "",
     dropState === "rejected" ? styles.dropRejected : "",
     isPending ? styles.pending : "",
+    isDragging ? styles.dragging : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -178,6 +189,10 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
               depth={depth + 1}
               workspaceId={ctx.workspaceId}
               onOpenMenu={ctx.onOpenDocMenu}
+              dragged={ctx.dragged}
+              onDragStart={ctx.onDragStart}
+              onDragEnd={ctx.onDragEnd}
+              error={ctx.errorFor(doc.id)}
             />
           ))}
         </div>
