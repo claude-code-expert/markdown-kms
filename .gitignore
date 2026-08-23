@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+vercel-db.txt
 
 # .planning/ 은 GSD 산출물로 전부 추적 대상 — 리서치 API 응답 캐시만 로컬 전용.
 .planning/research/.cache/
@@ -50,3 +51,5 @@ public/uploads/*
 
 # 프롬프트 추출 워터마크 (Prompt.md 는 추적, 상태 사이드카는 로컬)
 Prompt.md.state
+.vercel
+.env*
