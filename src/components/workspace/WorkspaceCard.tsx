@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { FileText, Folder, Trash2 } from "lucide-react";
 import { DeleteWorkspaceDialog } from "./DeleteWorkspaceDialog";
 import styles from "./WorkspaceCard.module.css";
 
@@ -18,14 +17,22 @@ interface WorkspaceCardProps {
   folderCount: number;
 }
 
+// PRD §3 권한 매트릭스 라벨 — role이 매트릭스에 없는 값이면(있을 수 없지만) 원문 그대로 보여준다.
+const ROLE_LABEL: Record<string, string> = {
+  OWNER: "소유자",
+  ADMIN: "관리자",
+  EDITOR: "편집자",
+  VIEWER: "뷰어",
+};
+
 function formatCreatedAt(createdAt: Date | string): string {
   const date = createdAt instanceof Date ? createdAt : new Date(createdAt);
   return date.toISOString().slice(0, 10);
 }
 
 // E3/E5 — one card per membership. Title truncates to one line with an ellipsis
-// (ui-kit .kit-item-name pattern); active/emphasis is weight/lightness, never color
-// (UI-SPEC Color — accent is not spent here).
+// (ui-kit .kit-item-name pattern). docs/design.md — 문서/폴더 수 아이콘만 accent(콘텐츠
+// 정체성 글리프, FolderTreeNode.folderIcon과 같은 규칙); 역할 뱃지는 계속 무채색 필.
 // The delete affordance is UX convenience only, gated on role === "OWNER" — the real
 // authorization boundary is the server's requireRole gate on DELETE (CLAUDE.md, T-05-01).
 // The seeded default workspace has no OWNER (D-09, all members are EDITOR), so it never
@@ -37,17 +44,30 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <Card className={styles.card}>
+    <div className={styles.card}>
       <div className={styles.body}>
-        <Link href={`/w/${id}`} className={styles.name}>
-          {name}
-        </Link>
+        <div className={styles.titleRow}>
+          <Link href={`/w/${id}`} className={styles.name}>
+            {name}
+          </Link>
+          <span className={styles.roleBadge}>{ROLE_LABEL[role] ?? role}</span>
+        </div>
         <p
           className={styles.meta}
-          title={`소유자 ${ownerName ?? "-"} · 생성일 ${formatCreatedAt(createdAt)} · 문서 ${docCount}개 · 폴더 ${folderCount}개`}
+          title={`소유자 ${ownerName ?? "-"} · 생성일 ${formatCreatedAt(createdAt)}`}
         >
-          소유자 {ownerName ?? "-"} · 생성일 {formatCreatedAt(createdAt)} · 문서 {docCount}개 · 폴더 {folderCount}개
+          소유자 {ownerName ?? "-"} · 생성일 {formatCreatedAt(createdAt)}
         </p>
+        <div className={styles.stats} title={`문서 ${docCount}개 · 폴더 ${folderCount}개`}>
+          <span className={styles.stat}>
+            <FileText size={12} className={styles.statIcon} />
+            {docCount}
+          </span>
+          <span className={styles.stat}>
+            <Folder size={12} className={styles.statIcon} />
+            {folderCount}
+          </span>
+        </div>
       </div>
       {role === "OWNER" && (
         <>
@@ -68,6 +88,6 @@ export function WorkspaceCard({ id, name, role, ownerName, createdAt, docCount, 
           />
         </>
       )}
-    </Card>
+    </div>
   );
 }

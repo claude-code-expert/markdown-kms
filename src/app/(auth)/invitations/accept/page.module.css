@@ -1,44 +1,58 @@
 /* Reuses login/page.module.css's centered-card shell (UI-SPEC Invitation-Accept Result Contract:
    "로그인 페이지와 동일 .page + Card") — only new rules are the icon/title/body vertical rhythm,
    all values from the existing space/color tokens (no new hex/px values). */
+/* 재검증(2d 목업) — 페이지 배경은 surface, 카드가 흰 배경으로 뜬다. */
 .page {
   min-height: calc(100vh - var(--header-h));
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-2xl) var(--space-md);
-  background: var(--bg);
+  background: var(--surface);
 }
 
 .card {
   width: 100%;
-  max-width: 360px;
+  max-width: 340px;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
+}
+
+.iconBadge {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
 }
 
 .iconAccent {
+  background: var(--accent-weak);
   color: var(--accent);
-  margin-bottom: var(--space-md);
 }
 
 .iconDestructive {
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
   color: var(--destructive);
-  margin-bottom: var(--space-md);
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 700;
   line-height: 1.2;
   margin: 0 0 var(--space-sm);
 }
 
 .body {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--muted);
   margin: 0 0 var(--space-md);
 }

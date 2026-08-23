@@ -1,9 +1,10 @@
+/* 재검증(1a 목업) — gap 6px, 우측 패딩 6px(기존 4px/8px에서 조정). */
 .node {
-  height: 32px;
+  height: 28px;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding-right: var(--space-sm);
+  gap: 6px;
+  padding-right: 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-fluid);
@@ -27,6 +28,13 @@
   font-weight: 600;
 }
 
+/* 재검증(1a 목업) — 선택된 행의 케밥은 hover 없이도 항상 보이고 accent색(다른 행은
+   hover에서만 muted로 드러남, .node:hover .kebab 그대로 유지). */
+.selected .kebab {
+  opacity: 1;
+  color: var(--accent);
+}
+
 /* UI-SPEC Tree Node Contract — drag-over valid target */
 .dropValid {
   background: var(--accent-weak);
@@ -46,9 +54,15 @@
   pointer-events: none;
 }
 
+/* 드래그 중인 소스 행 자체 — 브라우저 기본 드래그 고스트만으론 "지금 이게 들려 있다"가
+   약해서 원래 자리도 반투명하게 낮춘다. */
+.dragging {
+  opacity: 0.4;
+}
+
 .chevron {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -56,7 +70,7 @@
   border: none;
   background: none;
   padding: 0;
-  color: var(--muted);
+  color: var(--dim);
   cursor: pointer;
 }
 
@@ -66,13 +80,15 @@
 }
 
 .chevronSpace {
-  width: 16px;
+  width: 15px;
   flex-shrink: 0;
 }
 
+/* docs/design.md — 폴더/문서 아이콘은 콘텐츠 정체성 글리프라 항상 accent(선택 여부와
+   무관). 셰브런·케밥은 UI 크롬이라 계속 muted로 남긴다. */
 .folderIcon {
   flex-shrink: 0;
-  color: var(--muted);
+  color: var(--accent);
 }
 
 /* DocumentTreeLeaf's inner <Link> (04-03) — wraps only the icon+name so the row's outer .node
@@ -80,15 +96,17 @@
 .docLink {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
   flex: 1;
   min-width: 0;
   text-decoration: none;
   color: inherit;
 }
 
+/* 사용자 요청 — 트리 행 폰트를 전역 --text-base(13px)보다 3px 키운다. 전역 토큰은 폼·리스트
+   등 다른 화면과 공유라(globals.css 주석) 여기서 var()가 아닌 리터럴 값으로 국소 override. */
 .name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -100,8 +118,8 @@
 }
 
 .kebab {
-  width: 24px;
-  height: 24px;
+  width: 27px;
+  height: 27px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -128,7 +146,7 @@
   border: none;
   border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: 14px;
+  font-size: 16px;
   padding: 2px 4px;
   font-family: inherit;
 }
@@ -151,9 +169,24 @@
 }
 
 .error {
-  font-size: 12px;
+  font-size: var(--text-sm);
   line-height: 1.4;
   color: var(--destructive);
   padding: 2px var(--space-sm);
   margin: 0;
+}
+
+/* 아이콘 전용 압축 모드(FolderTree.module.css .sidebar 컨테이너 기준) — 이름/케밥을 걷어내고
+   depth별 들여쓰기(인라인 style paddingLeft, FolderTreeNode.tsx/DocumentTreeLeaf.tsx)를
+   flatten한다. 인라인 스타일은 !important 없이는 못 이긴다 — 안 그러면 깊은 폴더의 아이콘이
+   폭 밖으로 밀려난다. */
+@container (max-width: 100px) {
+  .name,
+  .kebab {
+    display: none;
+  }
+
+  .node {
+    padding-left: 4px !important;
+  }
 }

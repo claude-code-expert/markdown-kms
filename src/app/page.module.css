@@ -1,109 +1,187 @@
-/* 히어로 밴드 — 풀와이드, accent-weak 배경(라이트: 옅은 블루 / 다크: 옅은 퍼플, globals.css
-   토큰이 알아서 전환). 넓은 면은 저채도 틴트만 쓰고, 채도 높은 accent는 버튼·프리뷰 강조줄
-   같은 작은 영역에만 쓴다(anti-slop visual-craft 색 규칙). */
-.heroBand {
-  width: 100%;
-  background: var(--accent-weak);
-}
-
-.heroInner {
-  max-width: 960px;
+/* 재작업(docs/claude_design 2a 목업 1:1 대조) — 색 있는 밴드 배경 없음(이전 accent-weak
+   히어로/클로징 밴드는 목업 어디에도 없다), 전부 흰 배경 위 880px 중앙 컬럼. */
+/* 히어로만 960px — 우측 미니 프리뷰를 키워달라는 요청으로 다른 섹션(880px)보다 넓힘. */
+.hero {
+  max-width: 1020px;
   margin: 0 auto;
-  padding: var(--space-3xl) var(--space-md);
+  padding: 56px 24px 40px;
   display: flex;
+  gap: 48px;
   align-items: center;
-  gap: var(--space-2xl);
 }
 
 .heroText {
-  flex: 1 1 420px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
   min-width: 0;
 }
 
+.badge {
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
 .headline {
-  font-size: 39px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin: 0 0 var(--space-md);
-  max-width: 16ch;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--heading-text);
+  margin: 0;
 }
 
 .subcopy {
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 14.5px;
+  line-height: 1.7;
   color: var(--muted);
-  max-width: 46ch;
-  margin: 0 0 var(--space-lg);
+  margin: 0;
 }
 
 .heroActions {
   display: flex;
-  gap: var(--space-sm);
+  gap: 10px;
 }
 
-/* 미니 프리뷰 — 실제 3-pane 에디터의 폴더/문서/서식 줄을 축약한 그래픽.
-   장식이 아니라 "이 제품이 실제로 하는 일"을 그대로 보여주는 요소. */
+.heroButton {
+  padding: 9px 18px;
+}
+
+/* 미니 프리뷰(440px, 새 이미지 자산 없이 순수 CSS 박스) — 제품의 핵심인 에디터·미리보기
+   듀얼 뷰를 그대로 축약: 창 크롬바 아래 좌(원문 타이핑)/우(렌더 결과) 2분할. */
 .heroPreview {
-  flex: 0 0 300px;
-  background: var(--bg);
+  flex: 0 0 440px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(20, 23, 28, 0.07);
 }
 
-.previewBar {
+.previewChrome {
+  height: 30px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
+  gap: 5px;
+  padding: 0 12px;
 }
 
-.previewIcon {
-  color: var(--accent);
-  flex-shrink: 0;
+.previewDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
 }
 
 .previewBody {
   display: flex;
-  gap: var(--space-sm);
-  padding: var(--space-lg) var(--space-md);
+  height: 220px;
 }
 
-.previewFileIcon {
-  color: var(--dim);
-  flex-shrink: 0;
+/* 좌측 — 마크다운 원문 타이핑(<pre>라 줄바꿈/공백이 SOURCE 그대로 유지된다). */
+.previewSource {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border-right: 1px solid var(--border);
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.previewCaret {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  margin-left: 1px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: previewCaretBlink 0.9s step-end infinite;
+}
+
+@keyframes previewCaretBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .previewCaret {
+    animation: none;
+  }
+}
+
+/* 우측 — 렌더 결과. 원문 한 줄이 완성되는 순간 대응하는 항목이 나타난다(HeroPreview.tsx). */
+.previewRendered {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.rH1 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--heading-text);
+}
+
+.rH2 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--heading-text);
   margin-top: 2px;
 }
 
-.previewLines {
-  flex: 1;
+.rBody {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.rCheck,
+.rCheckDone {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text);
 }
 
-.previewLine {
-  display: block;
-  height: 8px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
+.rCheckDone {
+  color: var(--dim);
+  text-decoration: line-through;
 }
 
-/* 서식이 적용된 한 줄만 accent로 — 큰 면적은 저채도, 작은 강조만 고채도. */
-.previewLineAccent {
+.rCheckbox,
+.rCheckboxEmpty {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+
+.rCheckboxEmpty {
+  border: 1.5px solid var(--border-strong);
+}
+
+.rCheckbox {
   background: var(--accent);
-  opacity: 0.55;
 }
 
 @media (max-width: 720px) {
-  .heroInner {
+  .hero {
     flex-direction: column;
     align-items: stretch;
   }
@@ -113,150 +191,190 @@
   }
 }
 
-.page {
-  max-width: 720px;
+/* 기능 카드 4개 — repeat(4,1fr), hero와 같은 1020px 컬럼. */
+.features {
+  max-width: 1020px;
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-2xl);
-}
-
-.section {
-  padding: var(--space-2xl) 0;
-  border-top: 1px solid var(--border);
-}
-
-/* 풀 사이즈 섹션 — 히어로·클로징 밴드와 같은 폭(960px)까지 쓰되, 색은 얹지 않아
-   중간 구간은 무채색으로 남긴다(양끝만 컬러, 중간은 중립 — 색 리듬 유지). */
-.fullBand {
-  width: 100%;
-  border-top: 1px solid var(--border);
-  padding: var(--space-2xl) 0;
-}
-
-.fullInner {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.3;
-  margin: 0 0 var(--space-md);
-}
-
-.paragraph {
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--muted);
-  margin: 0 0 var(--space-sm);
-}
-
-.paragraph:last-child {
-  margin-bottom: 0;
-}
-
-.featureGrid {
+  padding: 0 24px 40px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .featureCard {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
+  gap: var(--space-sm);
 }
 
-.featureTerm {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
+.featureIcon {
   color: var(--accent);
-  margin-bottom: var(--space-xs);
+}
+
+.featureTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text);
 }
 
 .featureBody {
-  font-size: 14px;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--muted);
 }
 
-.workspaceGrid {
+/* 워크스페이스 개설/가입 2단 — surface 배경 박스(색 있는 밴드 아님, 옅은 회색 표면).
+   hero와 같은 1020px. */
+.workspaceRow {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
   display: flex;
-  gap: var(--space-md);
-}
-
-.workspaceCard {
-  flex: 1;
-  min-width: 0;
-}
-
-.workspaceCardTitle {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 var(--space-sm);
+  gap: 12px;
 }
 
 @media (max-width: 640px) {
-  .workspaceGrid {
+  .workspaceRow {
     flex-direction: column;
   }
 }
 
-/* accent 원형 번호 — 기본 데시멀 마커 대신, 작은 면적에만 채도 높은 accent를 쓰는
-   같은 원칙을 리스트에도 적용. */
-.steps {
-  list-style: none;
-  padding: 0;
-  counter-reset: step;
+.workspaceBox {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
-.steps li {
-  counter-increment: step;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  font-size: 15px;
-  line-height: 1.5;
+.workspaceLabel {
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--dim);
+}
+
+.workspaceTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--text);
 }
 
-.steps li::before {
-  content: counter(step);
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--accent-weak);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.workspaceBody {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
-.closingBand {
-  width: 100%;
-  background: var(--accent-weak);
-  border-top: 1px solid var(--border);
-}
-
-.closingInner {
-  max-width: 720px;
+/* 쓰는 법 + 클로징을 한 섹션으로 — hero와 같은 1020px, 좌(안내 목록)/우(CTA) 배치.
+   색 밴드 없음, border-top 구분선만. */
+.finalSection {
+  max-width: 1020px;
   margin: 0 auto;
-  padding: var(--space-2xl) var(--space-md);
+  padding: 28px 24px 48px;
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
-  flex-wrap: wrap;
+  gap: var(--space-2xl);
 }
 
-.closingText {
-  font-size: 18px;
+.howTo {
+  flex: 1;
+  min-width: 0;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.howToTitle {
+  font-size: var(--text-lg);
   font-weight: 600;
+  color: var(--text);
+}
+
+.step {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.stepNumber {
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.stepText {
+  font-size: var(--text-base);
+  color: var(--muted);
+}
+
+.closing {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-right: 20px;
+}
+
+/* 워드마크급 그래픽 취급 — 큰 스케일로 키워 이 섹션의 시각적 마무리 역할을 하게 한다. */
+.closingText {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--heading-text);
+}
+
+/* 더 진하게 — dim(옅은 회색) 대신 text, weight 600으로 존재감을 준다. */
+.closingSubtext {
+  display: inline-block;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.closingCaret {
+  display: inline-block;
+  width: 2px;
+  height: 15px;
+  margin-left: 2px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: previewCaretBlink 0.9s step-end infinite;
+}
+
+@media (max-width: 720px) {
+  .finalSection {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-xl);
+  }
+
+  .howTo {
+    max-width: none;
+  }
+
+  .closing {
+    align-items: flex-start;
+  }
 }

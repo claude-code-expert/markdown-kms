@@ -19,6 +19,13 @@ export interface FolderTreeNode extends FolderRow {
   children: FolderTreeNode[];
 }
 
+// 트리 전체 D&D(폴더+문서 공용) — 드래그 중인 항목의 타입을 함께 들고 다녀야 드롭 핸들러가
+// moveFolder/moveDocument 중 뭘 호출할지, 사이클 체크가 필요한지(문서는 leaf라 불필요)를 안다.
+export interface DraggedItem {
+  id: string;
+  type: "folder" | "document";
+}
+
 export function buildTree(folders: FolderRow[]): FolderTreeNode[] {
   const byId = new Map<string, FolderTreeNode>();
   for (const f of folders) byId.set(f.id, { ...f, children: [] });

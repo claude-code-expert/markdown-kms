@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useMemo, useState, type DragEvent as ReactDragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -20,18 +20,20 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { documentSchema, folderSchema } from "@/lib/validation";
 import { DocumentTreeLeaf } from "./DocumentTreeLeaf";
 import { downloadExport } from "./download-export";
-import { buildTree, type DocumentRow, type FolderRow } from "./tree-utils";
+import { buildTree, type DocumentRow, type DraggedItem, type FolderRow } from "./tree-utils";
 import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
 import { SearchBox, SearchResultsList, useSearchResults } from "./SearchBox";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { WorkspaceSwitcher, type WorkspaceOption } from "./WorkspaceSwitcher";
+import { ToneToggle } from "@/components/layout/ToneToggle";
 import nodeStyles from "./FolderTreeNode.module.css";
 import styles from "./FolderTree.module.css";
 
 const CREATE_ERROR = "폴더를 만들지 못했어요. 다시 시도해 주세요.";
 const RENAME_ERROR = "이름을 변경하지 못했어요. 다시 시도해 주세요.";
 const MOVE_ERROR = "폴더를 이동하지 못했어요. 다시 시도해 주세요.";
+const MOVE_DOCUMENT_ERROR = "문서를 이동하지 못했어요. 다시 시도해 주세요.";
 const DELETE_ERROR = "폴더를 삭제하지 못했어요. 다시 시도해 주세요.";
 const CREATE_DOCUMENT_ERROR = "문서를 만들지 못했어요. 다시 시도해 주세요.";
 const DELETE_DOCUMENT_ERROR = "문서를 삭제하지 못했어요. 다시 시도해 주세요.";
@@ -42,6 +44,8 @@ interface FolderTreeProps {
   folders: FolderRow[];
   documents: DocumentRow[];
   workspaceId: string;
+  workspaceName: string;
+  workspaces: WorkspaceOption[];
 }
 
 interface MenuState {
@@ -62,7 +66,7 @@ interface DocMenuState {
 // FolderTreeNode stays presentational, wired via the FolderTreeNodeCtx bundle. All mutations
 // are server-confirmed only (router.refresh() after the fetch resolves — no optimistic UI,
 // CONTEXT.md).
-export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps) {
+export function FolderTree({ folders, documents, workspaceId, workspaceName, workspaces }: FolderTreeProps) {
   const router = useRouter();
   const pathname = usePathname();
   const tree = buildTree(folders);
@@ -87,7 +91,8 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
   const [creatingChildOf, setCreatingChildOf] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
-  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragged, setDragged] = useState<DraggedItem | null>(null);
+  const [rootDropActive, setRootDropActive] = useState(false);
   const [menu, setMenu] = useState<MenuState | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [deleteSubmitting, setDeleteSubmitting] = useState(false);
@@ -170,6 +175,38 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
     router.refresh();
   }
 
+  // FolderPathPicker(문서 제목 앞 브레드크럼 드롭다운, 06-08)가 이미 쓰던 것과 같은
+  // POST /api/documents/:id/move — 여기서는 트리 D&D의 드롭 결과로 호출한다.
+  async function moveDocumentTo(id: string, newFolderId: string | null) {
+    setActionError(null);
+    setPendingId(id);
+    const res = await fetch(`/api/documents/${id}/move`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ newFolderId }),
+    });
+    setPendingId(null);
+    if (!res.ok) {
+      setActionError({ id, message: MOVE_DOCUMENT_ERROR });
+      return;
+    }
+    router.refresh();
+  }
+
+  function handleRootDragOver(event: ReactDragEvent<HTMLDivElement>) {
+    if (!dragged) return;
+    event.preventDefault();
+    setRootDropActive(true);
+  }
+
+  function handleRootDrop(event: ReactDragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setRootDropActive(false);
+    if (!dragged) return;
+    if (dragged.type === "folder") void moveFolderTo(dragged.id, null);
+    else void moveDocumentTo(dragged.id, null);
+  }
+
   async function confirmDelete() {
     if (!deleteTarget) return;
     setDeleteSubmitting(true);
@@ -233,8 +270,12 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
     }
     const created = await res.json();
     setCreatingDocumentRoot(false);
-    router.refresh();
+    // confirmDeleteDocument와 같은 이유로 순서를 push 먼저: refresh()를 push()보다 먼저 부르면
+    // 곧이어 시작되는 네비게이션이 그 RSC 재조회를 가로채 유실시켜(레이아웃의 문서 목록이
+    // 새로고침되지 않은 채로 남는다), 방금 만든 루트 문서가 사이드바에 안 보이는 채로 새
+    // 문서 화면에 진입하게 된다.
     router.push(`/w/${workspaceId}/d/${created.id}`);
+    router.refresh();
   }
 
   // EXP-01/EXP-02 — UI-SPEC Export Menu Contract: no downloading-state UI (browser download
@@ -263,11 +304,13 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
     onRenameSubmit: submitRename,
     onRenameCancel: cancelRename,
     pendingId,
-    draggedId,
-    onDragStart: setDraggedId,
-    onDragEnd: () => setDraggedId(null),
+    dragged,
+    onDragStart: setDragged,
+    onDragEnd: () => setDragged(null),
     onDropOn: (targetId) => {
-      if (draggedId) void moveFolderTo(draggedId, targetId);
+      if (!dragged) return;
+      if (dragged.type === "folder") void moveFolderTo(dragged.id, targetId);
+      else void moveDocumentTo(dragged.id, targetId);
     },
     creatingChildOf,
     onSubmitCreateChild: submitCreate,
@@ -326,6 +369,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
 
   return (
     <nav className={styles.sidebar} aria-label="폴더 트리">
+      <WorkspaceSwitcher workspaceId={workspaceId} workspaceName={workspaceName} workspaces={workspaces} />
       <SearchBox
         query={search.query}
         onQueryChange={search.setQuery}
@@ -333,7 +377,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
         loading={search.status === "loading"}
       />
       <div className={styles.header}>
-        <span className={styles.headerLabel}>폴더</span>
+        <span className={styles.headerLabel}>FOLDERS</span>
         <div className={styles.headerActions}>
           <button
             type="button"
@@ -341,7 +385,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 폴더"
             onClick={() => setCreatingRoot(true)}
           >
-            <FolderPlus size={16} />
+            <FolderPlus size={20} />
           </button>
           <button
             type="button"
@@ -349,9 +393,28 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 문서"
             onClick={() => setCreatingDocumentRoot(true)}
           >
-            <FilePlus2 size={16} />
+            <FilePlus2 size={20} />
           </button>
         </div>
+      </div>
+      {/* 드래그 중에만 눈에 보이는 "루트로 이동" 드롭존 — 항상 렌더하고 visibility로만 토글한다.
+          {dragged && ...}로 조건부 마운트하면 드래그 시작 순간 트리 전체가 그만큼 아래로
+          밀려서, 드래그 중인 좌표 기반 동작(e2e dragTo 포함)이 어긋난다(레이아웃 시프트).
+          항상 자리를 차지해두면 그 문제가 없다. 트리가 꽉 차 빈 공간이 없어도 루트로 뺄 수
+          있어야 해서 트리 바깥(header 바로 아래) 고정 위치에 둔다. */}
+      <div
+        className={[
+          styles.rootDropZone,
+          dragged ? styles.rootDropZoneVisible : "",
+          rootDropActive ? styles.rootDropZoneActive : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        onDragOver={handleRootDragOver}
+        onDragLeave={() => setRootDropActive(false)}
+        onDrop={handleRootDrop}
+      >
+        워크스페이스 루트로 이동
       </div>
       {/* UI-SPEC Export Menu Contract "error" — sits above whichever of .tree/.searchResults is
           showing; no auto-dismiss timer (same principle as RestoreRootBanner/UploadErrorBanner). */}
@@ -410,32 +473,43 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             <FolderTreeNode key={node.id} node={node} depth={0} ctx={ctx} />
           ))}
           {rootDocuments.map((doc) => (
-            <DocumentTreeLeaf key={doc.id} doc={doc} depth={0} workspaceId={workspaceId} onOpenMenu={openDocMenu} />
+            <DocumentTreeLeaf
+              key={doc.id}
+              doc={doc}
+              depth={0}
+              workspaceId={workspaceId}
+              onOpenMenu={openDocMenu}
+              dragged={dragged}
+              onDragStart={setDragged}
+              onDragEnd={() => setDragged(null)}
+              error={actionError?.id === doc.id ? actionError.message : null}
+            />
           ))}
         </div>
       )}
-      {/* UI-SPEC Trash Contract "진입" — flex-shrink:0 bottom row below the flex:1 tree, same
-          "current location" accent treatment as a selected tree node. */}
-      <Link
-        href={`/w/${workspaceId}/trash`}
-        className={[styles.trashLink, pathname === `/w/${workspaceId}/trash` ? styles.trashLinkActive : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <Trash2 size={16} />
-        <span>휴지통</span>
-      </Link>
-      {/* UI-SPEC Layout Contract "멤버 페이지 진입점" — trashLink 블록 복제, 동일 관례. */}
-      <Link
-        href={`/w/${workspaceId}/members`}
-        className={[styles.membersLink, pathname === `/w/${workspaceId}/members` ? styles.membersLinkActive : ""]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <Users size={16} />
-        <span>멤버</span>
-      </Link>
-      <ThemeToggle />
+      {/* 리디자인(1a 목업) — 휴지통/멤버/톤세그먼트를 하나의 border-top 그룹으로 묶는다
+          (개별 border-top 대신 그룹 전체를 감싸는 6px 패딩 박스). */}
+      <div className={styles.bottomGroup}>
+        <Link
+          href={`/w/${workspaceId}/trash`}
+          className={[styles.trashLink, pathname === `/w/${workspaceId}/trash` ? styles.trashLinkActive : ""]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Trash2 size={14} />
+          <span>휴지통</span>
+        </Link>
+        <Link
+          href={`/w/${workspaceId}/members`}
+          className={[styles.membersLink, pathname === `/w/${workspaceId}/members` ? styles.membersLinkActive : ""]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Users size={14} />
+          <span>멤버</span>
+        </Link>
+        <ToneToggle />
+      </div>
       {menu && <FolderContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />}
       {docMenu && (
         <FolderContextMenu x={docMenu.x} y={docMenu.y} items={docMenuItems} onClose={() => setDocMenu(null)} />
@@ -562,7 +636,7 @@ function CreateDocumentRootInput({
   return (
     <div>
       <div className={styles.node} style={{ paddingLeft: 8 }}>
-        <FileText size={16} className={nodeStyles.folderIcon} />
+        <FileText size={19} className={nodeStyles.folderIcon} />
         <input
           className={styles.inlineInput}
           placeholder="새 문서"

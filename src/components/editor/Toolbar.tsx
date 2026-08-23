@@ -31,6 +31,23 @@ interface ToolbarProps {
 
 const GROUP_SIZES = [4, 3, 3, 3];
 
+// 리디자인(README Assets — lucide 목록에서 서식 아이콘 대부분이 빠졌다) — 인라인/목록/블록
+// 그룹(10개)은 Mono 타이포그래픽 글리프로, 삽입 그룹(링크/이미지/표)만 lucide 아이콘으로
+// 남는다. 플러그인 파일(1기능 1파일)은 안 건드리고 이 파일에만 로컬 매핑을 둔다 — run()
+// 순수함수·아이콘 메타는 플러그인 소유, 어떤 글리프로 "보이는지"는 Toolbar의 프레젠테이션.
+const GLYPH: Partial<Record<string, { text: string; className?: string }>> = {
+  bold: { text: "B" },
+  italic: { text: "I", className: styles.glyphItalic },
+  strikethrough: { text: "S", className: styles.glyphStrike },
+  "inline-code": { text: "</>", className: styles.glyphSmall },
+  "bullet-list": { text: "•" },
+  "ordered-list": { text: "1.", className: styles.glyphSmall },
+  "task-list": { text: "☑" },
+  blockquote: { text: "❝", className: styles.glyphQuote },
+  "code-block": { text: "{ }", className: styles.glyphSmall },
+  hr: { text: "—" },
+};
+
 function buildGroups() {
   let offset = 0;
   return GROUP_SIZES.map((size) => {
@@ -51,6 +68,7 @@ export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeC
         <div key={group[0]?.id ?? groupIndex} className={styles.group}>
           {group.map((plugin) => {
             const Icon = plugin.icon;
+            const glyph = GLYPH[plugin.id];
             return (
               <div key={plugin.id} className={styles.buttonWrap}>
                 <button
@@ -73,7 +91,11 @@ export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeC
                     view.focus();
                   }}
                 >
-                  <Icon size={16} />
+                  {glyph ? (
+                    <span className={`${styles.glyph} ${glyph.className ?? ""}`}>{glyph.text}</span>
+                  ) : (
+                    <Icon size={15} />
+                  )}
                 </button>
                 <span className={styles.tooltip}>{plugin.tooltip}</span>
               </div>

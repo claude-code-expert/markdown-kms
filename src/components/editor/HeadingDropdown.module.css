@@ -6,10 +6,10 @@
 }
 
 .trigger {
-  height: 32px;
+  height: 26px;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 3px;
   padding: 0 var(--space-sm);
   background: transparent;
   border: none;
@@ -26,6 +26,15 @@
 .trigger:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+
+/* 리디자인 — 다른 서식 버튼(Toolbar.module.css .glyph)과 동일한 Mono 타이포그래픽 글리프.
+   README Assets: heading은 lucide 목록에서 빠졌다(H 글리프로 대체). */
+.glyph {
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .caret {
@@ -50,7 +59,7 @@
   display: block;
   width: 100%;
   padding: var(--space-sm) 12px;
-  font-size: 14px;
+  font-size: var(--text-base);
   text-align: left;
   background: transparent;
   border: none;

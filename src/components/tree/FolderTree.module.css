@@ -4,27 +4,55 @@
   flex-direction: column;
   overflow-y: auto;
   border-right: 1px solid var(--border);
-  background: var(--bg);
+  /* 리디자인 재검증 — 목업(1a) 사이드바는 본문(var(--bg))보다 한 단계 옅게 대비되는
+     surface 배경. 이전 패스에서 var(--bg) 그대로 남아 사이드바/본문이 안 구분되던 버그. */
+  background: var(--surface);
+  /* WorkspaceShell이 폭을 인라인 스타일로 제어하는 실제 박스 — 아래 아이콘 전용 압축
+     규칙(@container)이 이 폭을 기준으로 켜진다. */
+  container-type: inline-size;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* 재검증(1a 목업) — 구분선 없음, 검색 박스와 트리 사이에 자연스럽게 흐르는 라벨 행.
+   기존엔 40px 고정 높이 + border-bottom이 있었지만 목업엔 그런 선이 없다. */
 .header {
-  height: 40px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-sm);
-  border-bottom: 1px solid var(--border);
+  padding: 6px 12px 4px;
 }
 
+/* Mono 액센트 "섹션 라벨" 패턴(PAGE-ANALYSIS.md §1) — 목업 "FOLDERS" 리터럴 그대로. */
 .headerLabel {
-  font-size: 12px;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 10px;
   font-weight: 600;
+  letter-spacing: 0.08em;
   line-height: 1.4;
-  color: var(--muted);
+  color: var(--dim);
 }
 
-/* UI-SPEC Interaction Contract — 새 폴더 → 새 문서 순서, gap xs between the two 24x24 buttons */
+/* UI-SPEC Interaction Contract — 새 폴더 → 새 문서 순서, gap xs between the two 26x26 buttons */
 .headerActions {
   display: flex;
   align-items: center;
@@ -32,8 +60,8 @@
 }
 
 .headerButton {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,11 +84,37 @@
 
 .tree {
   flex: 1;
-  padding: var(--space-xs) 0;
+  padding: 0 6px;
+}
+
+/* "루트로 이동" 드롭존 — 항상 DOM에 자리를 차지한 채 visibility로만 켜고 끈다.
+   {dragged && ...} 조건부 마운트를 썼다면 드래그 시작 순간 이 높이만큼 트리 전체가
+   아래로 밀려, 좌표 기반 드래그(e2e dragTo 포함)가 어긋난다 — visibility:hidden은
+   레이아웃 공간을 그대로 유지하면서 히트테스트에서만 빠지므로 이 문제가 없다. */
+.rootDropZone {
+  flex-shrink: 0;
+  margin: var(--space-xs) var(--space-xs) 0;
+  padding: var(--space-sm);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-align: center;
+  visibility: hidden;
+}
+
+.rootDropZoneVisible {
+  visibility: visible;
+}
+
+.rootDropZoneActive {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+  color: var(--accent);
 }
 
 .node {
-  height: 32px;
+  height: 28px;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -74,8 +128,8 @@
 }
 
 .chevron {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -83,7 +137,7 @@
   border: none;
   background: none;
   padding: 0;
-  color: var(--muted);
+  color: var(--dim);
   cursor: pointer;
 }
 
@@ -93,55 +147,53 @@
 }
 
 .chevronSpace {
-  width: 16px;
+  width: 12px;
   flex-shrink: 0;
 }
 
-.folderIcon {
-  flex-shrink: 0;
-  color: var(--muted);
-}
-
-.name {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+/* FolderTreeNode.module.css의 .inlineInput과 같은 이유(16px 국소 override) — 루트 레벨
+   생성 입력(CreateRootInput/CreateDocumentRootInput)도 트리 행과 같은 폰트 크기여야 한다. */
 .inlineInput {
   flex: 1;
   border: none;
   border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: 14px;
+  font-size: 16px;
   padding: 2px 4px;
   font-family: inherit;
 }
 
 .empty {
   padding: 0 var(--space-sm);
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.5;
   color: var(--muted);
 }
 
+/* 휴지통/멤버/톤세그먼트를 한 그룹으로 묶는 하단 패널(1a 목업) — 그룹 전체에 위쪽
+   구분선+6px 패딩, 안의 행들은 개별 border 없이 hover/active만 radius로 표시. */
+.bottomGroup {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 /* UI-SPEC Trash Contract "진입" — sidebar's flex-direction:column lets this sit below .tree
-   (flex:1) as a fixed 40px bottom row, same accent-on-current-location language as a selected
-   tree node (.node.selected in FolderTreeNode.module.css). */
+   (flex:1) as a bottom row, same accent-on-current-location language as a selected
+   tree node (.node.selected in FolderTreeNode.module.css). 리디자인: 40px → 30px(목업). */
 .trashLink {
-  height: 40px;
+  height: 30px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
   padding: 0 var(--space-sm);
-  border-top: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
@@ -155,19 +207,20 @@
 .trashLinkActive {
   background: var(--accent-weak);
   color: var(--accent);
+  font-weight: 600;
 }
 
 /* UI-SPEC Layout Contract "멤버 페이지 진입점" — .trashLink/.trashLinkActive 선언 복제, 신규 값 없음. */
 .membersLink {
-  height: 40px;
+  height: 30px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
   padding: 0 var(--space-sm);
-  border-top: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
@@ -227,4 +280,42 @@
 
 .exportErrorClose:hover {
   color: var(--text);
+}
+
+/* 아이콘 전용 압축 모드 — 사이드바가 100px 이하로 리사이즈되면(WorkspaceShell MIN_WIDTH=48
+   포함) 라벨 텍스트를 걷어내고 아이콘만 남긴다. 새 폴더/새 문서 버튼은 가로로 나란히 두면
+   48px 폭에서 넘치므로 세로로 쌓는다. */
+@container (max-width: 100px) {
+  .headerLabel {
+    display: none;
+  }
+
+  .header {
+    height: auto;
+    padding: var(--space-xs) 0;
+    justify-content: center;
+  }
+
+  /* .tree의 좌우 6px(리디자인, PAGE-ANALYSIS.md §1)를 압축 모드에서 되돌린다 — 48px
+     최소폭에서 아이콘 한 줄이 정확히 들어맞는 예산(WorkspaceShell.tsx 주석)에 이 6px가
+     이미 포함돼 있어, 여기까지 남기면 넘친다. */
+  .tree {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .headerActions {
+    flex-direction: column;
+  }
+
+  .trashLink,
+  .membersLink {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .trashLink span,
+  .membersLink span {
+    display: none;
+  }
 }

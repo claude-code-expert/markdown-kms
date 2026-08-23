@@ -1,5 +1,5 @@
-/* Toolbar Contract (UI-SPEC): 44px bar, 32px buttons/16px icons, exactly
-   default/hover states (no pressed state, no tooltip delay — both Phase 5).
+/* Toolbar Contract (UI-SPEC): 리디자인 40px bar, 26px buttons(PAGE-ANALYSIS.md §1) — 서식
+   버튼 대부분은 lucide 아이콘 대신 Mono 타이포그래픽 글리프(README Assets 목록 참고).
    Phase 9 Visual Hierarchy: 무채색(surface-2)으로 눌러 본문에서 시선을 뺏지 않음. */
 .bar {
   position: sticky;
@@ -9,9 +9,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  height: 44px;
-  padding: 6px var(--space-sm);
-  background: var(--surface-2);
+  height: 40px;
+  padding: 5px 14px;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
@@ -40,21 +40,22 @@
 }
 
 .button {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
-  color: var(--text);
+  color: var(--muted);
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-fluid);
 }
 
 .button:hover {
-  background: var(--bg);
+  background: none;
+  color: var(--text);
 }
 
 /* UI-SPEC Toolbar Interaction Contract "pressed" — momentary while the mouse
@@ -64,6 +65,33 @@
   color: var(--accent);
 }
 
+/* 리디자인 — 서식 버튼의 Mono 타이포그래픽 글리프(B/I/S/</>/•/1./☑/❝/{}/—). */
+.glyph {
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.glyphItalic {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.glyphStrike {
+  font-weight: 500;
+  text-decoration: line-through;
+}
+
+.glyphSmall {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.glyphQuote {
+  font-size: 14px;
+}
+
 .tooltip {
   position: absolute;
   top: 100%;
@@ -71,7 +99,7 @@
   transform: translateX(-50%);
   margin-top: 4px;
   padding: 4px 8px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   white-space: nowrap;
   /* Fixed, theme-independent — var(--text) would go near-white in dark mode,
      making the tooltip invisible (white text on white bubble). UI-SPEC

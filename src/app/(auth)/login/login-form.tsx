@@ -20,6 +20,14 @@ export function LoginForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    // required 네이티브 팝업 대신 빈 값도 같은 일반 오류로 안내 — T-03-01 "원인별로 분기하지
+    // 않는다"와 같은 이유로, 빈 칸 제출과 오답을 구분할 필요 없이 네트워크 호출도 아낀다.
+    if (!email.trim() || !password) {
+      setError(LOGIN_ERROR);
+      return;
+    }
+
     setSubmitting(true);
 
     const result = await signIn("credentials", { email, password, redirect: false });
@@ -42,7 +50,7 @@ export function LoginForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          placeholder="kim@weve.co.kr"
         />
       </FormField>
 
@@ -53,11 +61,10 @@ export function LoginForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          placeholder="비밀번호"
         />
+        <FormError>{error}</FormError>
       </FormField>
-
-      {error && <FormError>{error}</FormError>}
 
       <FormSubmit disabled={submitting}>{submitting ? "로그인하는 중…" : "로그인"}</FormSubmit>
 

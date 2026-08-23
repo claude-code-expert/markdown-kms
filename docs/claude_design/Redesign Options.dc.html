@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#eceef1;font-family:'IBM Plex Sans KR',sans-serif}a{color:#2e5fe8;text-decoration:none}a:hover{color:#2450c7}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px 'IBM Plex Mono',monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 'IBM Plex Sans KR',sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px 'IBM Plex Mono',monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'IBM Plex Sans KR',sans-serif;color:rgba(0,0,0,.55)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:22px 0 0;font:12px/1.5 'IBM Plex Sans KR',sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">쿨 테마(<a class="dv-oid" href="#1a">1a</a>) 기준 전 화면 전개 — 웜 테마는 토큰 값만 교체</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>랜딩 / (비로그인 전용)</div>
+<div class="dv-card" style="width:1100px;background:#ffffff;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #e3e7ec">
+  <div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div>
+  <div style="display:flex;gap:8px">
+    <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">로그인</button>
+    <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">회원가입</button>
+  </div>
+</div>
+<div style="max-width:880px;margin:0 auto;padding:56px 24px 40px;display:flex;gap:48px;align-items:center">
+  <div style="flex:1;display:flex;flex-direction:column;gap:16px">
+    <span style="font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8;letter-spacing:0.06em">MARKDOWN KNOWLEDGE BASE</span>
+    <h1 style="font:700 34px/1.3 'IBM Plex Sans KR',sans-serif;margin:0;color:#14171c;text-wrap:pretty">팀의 지식을,<br>마크다운 그대로.</h1>
+    <p style="font:400 14.5px/1.7 'IBM Plex Sans KR',sans-serif;color:#5c6672;margin:0;text-wrap:pretty">폴더 트리로 조직하고, 에디터·미리보기 듀얼 뷰로 쓰고, 역할 기반 권한으로 협업하는 문서 워크스페이스.</p>
+    <div style="display:flex;gap:10px">
+      <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:9px 18px;cursor:pointer">무료로 시작하기</button>
+      <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:9px 18px;cursor:pointer">로그인</button>
+    </div>
+  </div>
+  <div style="width:300px;border:1px solid #e3e7ec;border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(20,23,28,.07)">
+    <div style="height:26px;background:#f6f8fa;border-bottom:1px solid #e3e7ec;display:flex;align-items:center;gap:4px;padding:0 10px"><div style="width:7px;height:7px;border-radius:50%;background:#e3e7ec"></div><div style="width:7px;height:7px;border-radius:50%;background:#e3e7ec"></div><div style="width:7px;height:7px;border-radius:50%;background:#e3e7ec"></div></div>
+    <div style="display:flex;height:150px">
+      <div style="width:84px;background:#f6f8fa;border-right:1px solid #e3e7ec;padding:8px 6px;display:flex;flex-direction:column;gap:5px">
+        <div style="height:7px;border-radius:3px;background:#ecf1fe;width:90%"></div>
+        <div style="height:7px;border-radius:3px;background:#eceff3;width:70%"></div>
+        <div style="height:7px;border-radius:3px;background:#eceff3;width:80%;margin-left:8px"></div>
+        <div style="height:7px;border-radius:3px;background:#eceff3;width:60%;margin-left:8px"></div>
+        <div style="height:7px;border-radius:3px;background:#eceff3;width:75%"></div>
+      </div>
+      <div style="flex:1;padding:10px;display:flex;flex-direction:column;gap:6px;font:400 9px/1.4 'IBM Plex Mono',monospace;color:#94a0ae">
+        <span style="color:#14171c;font-weight:500"># 온보딩 가이드</span>
+        <div style="height:6px;border-radius:3px;background:#eceff3;width:95%"></div>
+        <div style="height:6px;border-radius:3px;background:#eceff3;width:80%"></div>
+        <div style="height:6px;border-radius:3px;background:#ecf1fe;width:60%"></div>
+        <div style="height:6px;border-radius:3px;background:#eceff3;width:88%"></div>
+        <div style="height:6px;border-radius:3px;background:#eceff3;width:50%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="max-width:880px;margin:0 auto;padding:0 24px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+  <div style="border:1px solid #e3e7ec;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg><span style="font:600 13px 'IBM Plex Sans KR',sans-serif">폴더 트리</span><span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">드래그앤드롭으로 문서를 자유롭게 조직</span></div>
+  <div style="border:1px solid #e3e7ec;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M12 4v16"></path></svg><span style="font:600 13px 'IBM Plex Sans KR',sans-serif">듀얼 뷰 에디터</span><span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">쓰면서 바로 보는 에디터·미리보기 분할</span></div>
+  <div style="border:1px solid #e3e7ec;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg><span style="font:600 13px 'IBM Plex Sans KR',sans-serif">역할 기반 권한</span><span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">Owner부터 Viewer까지 4단계 협업</span></div>
+  <div style="border:1px solid #e3e7ec;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"></path><path d="M3 4v8h8"></path></svg><span style="font:600 13px 'IBM Plex Sans KR',sans-serif">휴지통 복원</span><span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">지운 문서도 언제든 되돌리기</span></div>
+</div>
+<div style="max-width:880px;margin:0 auto;padding:0 24px 40px;display:flex;gap:12px">
+  <div style="flex:1;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:8px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">OWNER</span><span style="font:600 15px 'IBM Plex Sans KR',sans-serif">워크스페이스 개설하기</span><span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">팀 공간을 만들고 멤버를 초대하세요.</span></div>
+  <div style="flex:1;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:8px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">MEMBER</span><span style="font:600 15px 'IBM Plex Sans KR',sans-serif">기존 팀에 가입하기</span><span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">검색해서 참여 신청하거나 초대 링크로 합류.</span></div>
+</div>
+<div style="max-width:640px;margin:0 auto;padding:0 24px 40px;display:flex;flex-direction:column;gap:14px">
+  <span style="font:600 15px 'IBM Plex Sans KR',sans-serif">쓰는 법</span>
+  <div style="display:flex;gap:10px;align-items:baseline"><span style="font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8">01</span><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#5c6672">회원가입하면 기본 워크스페이스가 바로 생겨요.</span></div>
+  <div style="display:flex;gap:10px;align-items:baseline"><span style="font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8">02</span><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#5c6672">사이드바에서 폴더를 만들고 새 문서를 시작하세요.</span></div>
+  <div style="display:flex;gap:10px;align-items:baseline"><span style="font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8">03</span><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#5c6672">마크다운으로 쓰면 오른쪽에서 바로 미리보기.</span></div>
+  <div style="display:flex;gap:10px;align-items:baseline"><span style="font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8">04</span><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#5c6672">팀원을 초대하고 역할을 정해 함께 쓰세요.</span></div>
+</div>
+<div style="max-width:640px;margin:0 auto;padding:0 24px 48px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #e3e7ec;padding-top:28px">
+  <span style="font:600 16px 'IBM Plex Sans KR',sans-serif">오늘 첫 문서를 시작하세요.</span>
+  <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:9px 18px;cursor:pointer">무료로 시작하기</button>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>로그인 /login</div>
+<div class="dv-card" style="width:480px;background:#f6f8fa;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #e3e7ec;background:#ffffff"><div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div></div>
+<div style="padding:48px 0 56px;display:flex;justify-content:center">
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;padding:28px;display:flex;flex-direction:column;gap:14px">
+    <span style="font:700 18px 'IBM Plex Sans KR',sans-serif">로그인</span>
+    <div style="display:flex;flex-direction:column;gap:6px"><label style="font:600 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672">이메일</label><div style="border:1px solid #c9d0d9;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Sans KR',sans-serif;color:#14171c">kim@weve.co.kr</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><label style="font:600 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672">비밀번호</label><div style="border:1px solid #e3e7ec;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Mono',monospace;color:#94a0ae">••••••••</div><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#d92d20;min-height:14px">&nbsp;</span></div>
+    <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:10px 0;cursor:pointer">로그인</button>
+    <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;text-align:center">계정이 없나요? <a href="#2c" style="color:#2e5fe8;font-weight:500">회원가입</a></span>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>회원가입 /signup — 에러 상태 포함</div>
+<div class="dv-card" style="width:480px;background:#f6f8fa;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #e3e7ec;background:#ffffff"><div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div></div>
+<div style="padding:48px 0 56px;display:flex;justify-content:center">
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;padding:28px;display:flex;flex-direction:column;gap:14px">
+    <span style="font:700 18px 'IBM Plex Sans KR',sans-serif">회원가입</span>
+    <div style="display:flex;flex-direction:column;gap:6px"><label style="font:600 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672">이름</label><div style="border:1px solid #e3e7ec;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Sans KR',sans-serif;color:#14171c">김민지</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><label style="font:600 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672">이메일</label><div style="border:1px solid #d92d20;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Sans KR',sans-serif;color:#14171c">kim@weve</div><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#d92d20;min-height:14px">올바른 이메일 형식이 아니에요.</span></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><label style="font:600 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672">비밀번호</label><div style="border:1px solid #e3e7ec;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Mono',monospace;color:#94a0ae">8자 이상</div></div>
+    <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:10px 0;cursor:pointer">가입하기</button>
+    <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;text-align:center">이미 계정이 있나요? <a href="#2b" style="color:#2e5fe8;font-weight:500">로그인</a></span>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2d">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>초대 수락 /invitations/accept — 5분기 상태</div>
+<div class="dv-card" style="width:480px;background:#f6f8fa;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #e3e7ec;background:#ffffff"><div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div></div>
+<div style="padding:36px 0;display:flex;justify-content:center">
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;padding:32px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+    <div style="width:40px;height:40px;border-radius:50%;background:#ecf1fe;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"></path></svg></div>
+    <span style="font:700 17px 'IBM Plex Sans KR',sans-serif">초대를 수락했어요</span>
+    <span style="font:400 13px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672"><b style="font-weight:600;color:#14171c">제품팀</b> 워크스페이스에 편집자로 참여합니다.</span>
+    <button style="font:500 13px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;margin-top:6px">워크스페이스로 이동</button>
+  </div>
+</div>
+<div style="padding:0 20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  <div style="background:#ffffff;border:1px solid #e3e7ec;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">EXPIRED</span><span style="font:600 12px 'IBM Plex Sans KR',sans-serif">초대가 만료됐어요</span><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">→ 대시보드로 이동</span></div>
+  <div style="background:#ffffff;border:1px solid #e3e7ec;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">USED</span><span style="font:600 12px 'IBM Plex Sans KR',sans-serif">이미 사용된 링크예요</span><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">→ 대시보드로 이동</span></div>
+  <div style="background:#ffffff;border:1px solid #e3e7ec;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">WRONG ACCOUNT</span><span style="font:600 12px 'IBM Plex Sans KR',sans-serif">다른 계정으로 로그인돼 있어요</span><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">→ 다시 로그인</span></div>
+  <div style="background:#ffffff;border:1px solid #e3e7ec;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font:500 10px 'IBM Plex Mono',monospace;color:#d92d20">INVALID</span><span style="font:600 12px 'IBM Plex Sans KR',sans-serif">유효하지 않은 초대예요</span><span style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">→ 대시보드로 이동</span></div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2e">
+<div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>대시보드 /dashboard — 신청 버튼 3상태 포함</div>
+<div class="dv-card" style="width:820px;background:#ffffff;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #e3e7ec">
+  <div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 12px;cursor:pointer">로그아웃</button><div style="width:26px;height:26px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div></div>
+</div>
+<div style="max-width:680px;margin:0 auto;padding:32px 24px 48px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span style="font:700 19px 'IBM Plex Sans KR',sans-serif">내 워크스페이스</span>
+    <button style="font:500 12.5px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:8px 14px;cursor:pointer">워크스페이스 만들기</button>
+  </div>
+  <div style="border:1px solid #e3e7ec;border-radius:10px;overflow:hidden">
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-bottom:1px solid #e3e7ec">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px"><a href="#2a" style="font:600 14px 'IBM Plex Sans KR',sans-serif;color:#14171c">제품팀</a><span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border:1px solid #e3e7ec;border-radius:999px;padding:2px 8px">OWNER</span></div>
+        <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">소유자 김민지 · 2026-03-14 생성</span>
+        <div style="display:flex;gap:14px;font:400 11.5px 'IBM Plex Mono',monospace;color:#5c6672">
+          <span style="display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path></svg>24</span>
+          <span style="display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>6</span>
+        </div>
+      </div>
+      <button style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#94a0ae;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg></button>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 18px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px"><a href="#2a" style="font:600 14px 'IBM Plex Sans KR',sans-serif;color:#14171c">디자인 길드</a><span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border:1px solid #e3e7ec;border-radius:999px;padding:2px 8px">EDITOR</span></div>
+        <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">소유자 박서연 · 2026-01-02 생성</span>
+        <div style="display:flex;gap:14px;font:400 11.5px 'IBM Plex Mono',monospace;color:#5c6672">
+          <span style="display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path></svg>112</span>
+          <span style="display:inline-flex;align-items:center;gap:5px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid #e3e7ec;padding-top:24px;display:flex;flex-direction:column;gap:12px">
+    <span style="font:600 15px 'IBM Plex Sans KR',sans-serif">워크스페이스 참여 신청</span>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#14171c">엔지니어링</span></div>
+    <div style="display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #e3e7ec"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif;flex:1">엔지니어링 위키</span><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#2e5fe8;background:none;border:1px solid #c9d0d9;border-radius:6px;padding:5px 12px;cursor:pointer">신청</button></div>
+      <div style="display:flex;flex-direction:column;border-bottom:1px solid #e3e7ec">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 4px"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif;flex:1">엔지니어링 온콜</span><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#94a0ae;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;cursor:default">신청됨</button></div>
+        <span style="font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#2e5fe8;padding:0 4px 10px">참여 신청을 보냈어요. 관리자가 승인하면 알려드릴게요.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 4px"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif;flex:1">엔지니어링 플랫폼</span><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#94a0ae;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;cursor:default">이미 멤버예요</button></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2f">
+<div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>워크스페이스 빈 상태 /w/[wsId]</div>
+<div class="dv-card" style="width:1100px;background:#ffffff;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e3e7ec">
+  <div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 12px;cursor:pointer">로그아웃</button><div style="width:26px;height:26px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div></div>
+</div>
+<div style="display:flex;height:480px">
+  <div style="width:236px;border-right:1px solid #e3e7ec;background:#f6f8fa;display:flex;flex-direction:column">
+    <div style="padding:10px 10px 6px"><div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#ffffff;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span style="font:400 12px 'IBM Plex Sans KR',sans-serif;flex:1">검색</span><span style="font:500 10px 'IBM Plex Mono',monospace;background:#eceff3;border-radius:4px;padding:2px 5px;color:#5c6672">⌘K</span></div></div>
+    <div style="display:flex;align-items:center;padding:6px 12px 4px;gap:6px"><span style="font:600 10px 'IBM Plex Mono',monospace;color:#94a0ae;letter-spacing:0.08em;flex:1">FOLDERS</span><button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button><button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 20px;text-align:center">
+      <span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#94a0ae">아직 폴더나 문서가 없어요.<br>위 버튼으로 시작하세요.</span>
+    </div>
+    <div style="border-top:1px solid #e3e7ec;padding:6px;display:flex;flex-direction:column;gap:1px">
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg><span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">휴지통</span></div>
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg><span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">멤버</span></div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+    <div style="width:52px;height:52px;border-radius:12px;background:#f6f8fa;border:1px solid #e3e7ec;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="1.6" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg></div>
+    <span style="font:600 15px 'IBM Plex Sans KR',sans-serif">문서를 선택해 주세요</span>
+    <span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#94a0ae;text-align:center">왼쪽 트리에서 문서를 고르거나,<br>지금 바로 새로 만들 수 있어요.</span>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button style="font:500 12.5px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:8px 16px;cursor:pointer">새 문서</button>
+      <button style="font:500 12.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:8px 16px;cursor:pointer">새 폴더</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2g">
+<div class="dv-olabel"><a class="dv-oid" href="#2g">2g</a>휴지통 /w/[wsId]/trash — 편집자 시점(완전삭제 disabled+힌트)</div>
+<div class="dv-card" style="width:1100px;background:#ffffff;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e3e7ec">
+  <div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 12px;cursor:pointer">로그아웃</button><div style="width:26px;height:26px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div></div>
+</div>
+<div style="display:flex;height:460px">
+  <div style="width:236px;border-right:1px solid #e3e7ec;background:#f6f8fa;display:flex;flex-direction:column">
+    <div style="padding:10px 10px 6px"><div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#ffffff;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span style="font:400 12px 'IBM Plex Sans KR',sans-serif;flex:1">검색</span><span style="font:500 10px 'IBM Plex Mono',monospace;background:#eceff3;border-radius:4px;padding:2px 5px;color:#5c6672">⌘K</span></div></div>
+    <div style="flex:1;padding:4px 6px;display:flex;flex-direction:column;gap:1px">
+      <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">제품 문서</span></div>
+      <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">회의록</span></div>
+    </div>
+    <div style="border-top:1px solid #e3e7ec;padding:6px;display:flex;flex-direction:column;gap:1px">
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;background:#ecf1fe;color:#2e5fe8"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg><span style="font:600 12.5px 'IBM Plex Sans KR',sans-serif">휴지통</span></div>
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg><span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">멤버</span></div>
+    </div>
+  </div>
+  <div style="flex:1;padding:24px 28px;display:flex;flex-direction:column;gap:14px;min-width:0">
+    <span style="font:700 17px 'IBM Plex Sans KR',sans-serif">휴지통</span>
+    <div style="display:flex;align-items:flex-start;gap:10px;background:#f6f8fa;border:1px solid #e3e7ec;border-left:3px solid #c9d0d9;border-radius:6px;padding:10px 12px">
+      <span style="font:400 12px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672;flex:1">"스프린트 회고" 문서의 원래 폴더가 삭제되어, 복원하면 워크스페이스 루트로 이동해요.</span>
+      <button style="background:none;border:none;color:#94a0ae;font:400 13px 'IBM Plex Sans KR',sans-serif;cursor:pointer;padding:0">×</button>
+    </div>
+    <div style="border:1px solid #e3e7ec;border-radius:10px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e3e7ec">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+        <span style="font:500 13px 'IBM Plex Sans KR',sans-serif;flex:1">옛 회의록</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#94a0ae">3일 전 삭제</span>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;cursor:pointer">복원</button>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#d92d20;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;opacity:0.45;cursor:default">완전 삭제</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+        <span style="font:500 13px 'IBM Plex Sans KR',sans-serif;flex:1">스프린트 회고</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#94a0ae">1시간 전 삭제</span>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;cursor:pointer">복원</button>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#d92d20;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;opacity:0.45;cursor:default">완전 삭제</button>
+      </div>
+    </div>
+    <span style="font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">완전 삭제는 관리자 이상만 할 수 있어요.</span>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2h">
+<div class="dv-olabel"><a class="dv-oid" href="#2h">2h</a>멤버 /w/[wsId]/members — 관리자 시점</div>
+<div class="dv-card" style="width:1100px;background:#ffffff;color:#14171c">
+<div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e3e7ec">
+  <div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div><span style="font:500 13px 'IBM Plex Mono',monospace">markdown-kms</span></div>
+  <div style="display:flex;align-items:center;gap:12px"><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 12px;cursor:pointer">로그아웃</button><div style="width:26px;height:26px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div></div>
+</div>
+<div style="display:flex;height:560px">
+  <div style="width:236px;border-right:1px solid #e3e7ec;background:#f6f8fa;display:flex;flex-direction:column">
+    <div style="padding:10px 10px 6px"><div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#ffffff;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span style="font:400 12px 'IBM Plex Sans KR',sans-serif;flex:1">검색</span><span style="font:500 10px 'IBM Plex Mono',monospace;background:#eceff3;border-radius:4px;padding:2px 5px;color:#5c6672">⌘K</span></div></div>
+    <div style="flex:1;padding:4px 6px;display:flex;flex-direction:column;gap:1px">
+      <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">제품 문서</span></div>
+      <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">회의록</span></div>
+    </div>
+    <div style="border-top:1px solid #e3e7ec;padding:6px;display:flex;flex-direction:column;gap:1px">
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg><span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">휴지통</span></div>
+      <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;background:#ecf1fe;color:#2e5fe8"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg><span style="font:600 12.5px 'IBM Plex Sans KR',sans-serif">멤버</span></div>
+    </div>
+  </div>
+  <div style="flex:1;padding:24px 28px;display:flex;flex-direction:column;gap:20px;min-width:0;overflow:hidden">
+    <span style="font:700 17px 'IBM Plex Sans KR',sans-serif">멤버</span>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 11px 'IBM Plex Mono',monospace;color:#94a0ae;letter-spacing:0.08em">승인 대기 중 · 1</span>
+      <div style="border:1px solid #e3e7ec;border-radius:10px;display:flex;align-items:center;gap:12px;padding:12px 16px">
+        <div style="width:30px;height:30px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Sans KR',sans-serif">이</div>
+        <div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">이준호</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">lee@weve.co.kr</span></div>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#94a0ae">12분 전</span>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">승인</button>
+        <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#d92d20;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">거절</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 11px 'IBM Plex Mono',monospace;color:#94a0ae;letter-spacing:0.08em">멤버 목록 · 3</span>
+      <div style="border:1px solid #e3e7ec;border-radius:10px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #e3e7ec"><div style="width:30px;height:30px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Sans KR',sans-serif">김</div><div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">김민지</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">kim@weve.co.kr</span></div><span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border:1px solid #e3e7ec;border-radius:999px;padding:2px 8px">OWNER</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #e3e7ec"><div style="width:30px;height:30px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Sans KR',sans-serif">박</div><div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">박서연</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">park@weve.co.kr</span></div><span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border:1px solid #e3e7ec;border-radius:999px;padding:2px 8px">ADMIN</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 16px"><div style="width:30px;height:30px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Sans KR',sans-serif">최</div><div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">최다인</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">choi@weve.co.kr</span></div><span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border:1px solid #e3e7ec;border-radius:999px;padding:2px 8px">VIEWER</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 11px 'IBM Plex Mono',monospace;color:#94a0ae;letter-spacing:0.08em">회원 초대</span>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><span style="font:400 13px 'IBM Plex Sans KR',sans-serif;color:#14171c">jung</span></div>
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #e3e7ec"><div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">정우성</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">jung@weve.co.kr</span></div><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#2e5fe8;background:none;border:1px solid #c9d0d9;border-radius:6px;padding:5px 12px;cursor:pointer">초대</button></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 4px"><div style="flex:1;display:flex;flex-direction:column"><span style="font:500 13px 'IBM Plex Sans KR',sans-serif">정하늘</span><span style="font:400 11.5px 'IBM Plex Mono',monospace;color:#94a0ae">jung.h@weve.co.kr</span></div><button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#94a0ae;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:6px;padding:5px 12px;cursor:default">✓ 초대 보냄</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2i">
+<div class="dv-olabel"><a class="dv-oid" href="#2i">2i</a>모달·다이얼로그 — 두 셸(Modal / ConfirmDialog) 적용례</div>
+<div class="dv-card" style="width:1100px;background:#eceff3;padding:28px;display:grid;grid-template-columns:repeat(2,1fr);gap:24px;justify-items:center">
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;box-shadow:0 12px 32px rgba(20,23,28,.14);padding:20px;display:flex;flex-direction:column;gap:12px">
+    <span style="font:600 14.5px 'IBM Plex Sans KR',sans-serif;color:#14171c">임시 저장된 내용이 있어요</span>
+    <span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">마지막 저장 이후 작성된 임시 저장본이 있어요. 지금 복원할까요?</span>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+      <button style="font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#d92d20;background:none;border:none;padding:0;cursor:pointer;text-decoration:underline">폐기</button>
+      <div style="flex:1"></div>
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">나중에</button>
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">복원</button>
+    </div>
+  </div>
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;box-shadow:0 12px 32px rgba(20,23,28,.14);padding:20px;display:flex;flex-direction:column;gap:12px">
+    <span style="font:600 14.5px 'IBM Plex Sans KR',sans-serif;color:#14171c">문서를 삭제할까요?</span>
+    <span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">"스프린트 회고"가 휴지통으로 이동해요. 언제든 복원할 수 있어요.</span>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">취소</button>
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#d92d20;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">삭제</button>
+    </div>
+  </div>
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;box-shadow:0 12px 32px rgba(20,23,28,.14);padding:20px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:600 14.5px 'IBM Plex Sans KR',sans-serif;color:#14171c">저장 완료</span><span style="font:400 15px 'IBM Plex Sans KR',sans-serif;color:#94a0ae;cursor:pointer">×</span></div>
+    <span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">문서가 저장되었어요.</span>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px">
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">확인</button>
+    </div>
+  </div>
+  <div style="width:340px;background:#ffffff;border:1px solid #e3e7ec;border-radius:10px;box-shadow:0 12px 32px rgba(20,23,28,.14);padding:20px;display:flex;flex-direction:column;gap:12px">
+    <span style="font:600 14.5px 'IBM Plex Sans KR',sans-serif;color:#14171c">워크스페이스를 삭제할까요?</span>
+    <span style="font:400 12.5px/1.6 'IBM Plex Sans KR',sans-serif;color:#5c6672">모든 폴더와 문서가 함께 삭제되며 되돌릴 수 없어요. 계속하려면 이름을 입력하세요.</span>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <span style="font:500 11px 'IBM Plex Mono',monospace;color:#94a0ae">제품팀</span>
+      <div style="border:1px solid #e3e7ec;border-radius:6px;padding:8px 12px;font:400 13px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">워크스페이스 이름 입력</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">취소</button>
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#d92d20;border:none;border-radius:6px;padding:6px 14px;opacity:0.45;cursor:default">삭제</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">다음 지시 예: "<a class="dv-oid" href="#2a">2a</a> 히어로를 더 크게" · "<a class="dv-oid" href="#2g">2g</a>를 관리자 시점으로도" · "웜 테마 버전 전개" · "개발 핸드오프 토큰 문서 만들어줘"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">방향 시안 — 온도 축 · 문서 편집 화면 (05-WIREFRAMES §7 기준)</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>차가운 툴 — 쿨 그레이 · 파랑 accent · 모노 액센트</div>
+<div class="dv-card" style="width:1200px">
+<div style="padding:10px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #e3e7ec;background:#f6f8fa;flex-wrap:wrap">
+  <span style="font:500 10px 'IBM Plex Mono',monospace;color:#5c6672">TOKENS</span>
+  <div style="display:flex;gap:4px">
+    <div style="width:18px;height:18px;border-radius:4px;background:#ffffff;border:1px solid #e3e7ec"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#f6f8fa;border:1px solid #e3e7ec"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#eceff3"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#c9d0d9"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#5c6672"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#14171c"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#2e5fe8"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#d92d20"></div>
+  </div>
+  <span style="font:500 10px 'IBM Plex Mono',monospace;color:#94a0ae">DARK</span>
+  <div style="display:flex;gap:4px">
+    <div style="width:18px;height:18px;border-radius:4px;background:#0f1115"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#171a20"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#23262e"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#c6cbd4"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#8b7cf6"></div>
+  </div>
+  <span style="font:400 11px 'IBM Plex Mono',monospace;color:#5c6672">IBM Plex Sans KR + IBM Plex Mono · radius 4/8/10 · 다크 accent 보라 유지</span>
+</div>
+<div style="background:#ffffff;color:#14171c">
+  <div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e3e7ec">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:22px;height:22px;border-radius:5px;background:#2e5fe8;color:#fff;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div>
+      <span style="font:500 13px 'IBM Plex Mono',monospace;letter-spacing:-0.02em">markdown-kms</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 12px;cursor:pointer">로그아웃</button>
+      <div style="width:26px;height:26px;border-radius:50%;background:#eceff3;color:#5c6672;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div>
+    </div>
+  </div>
+  <div style="display:flex;height:640px">
+    <div style="width:236px;border-right:1px solid #e3e7ec;background:#f6f8fa;display:flex;flex-direction:column">
+      <div style="padding:10px 10px 6px">
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#ffffff;border:1px solid #e3e7ec;border-radius:6px;color:#94a0ae">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+          <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;flex:1">검색</span>
+          <span style="font:500 10px 'IBM Plex Mono',monospace;background:#eceff3;border-radius:4px;padding:2px 5px;color:#5c6672">⌘K</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:6px 12px 4px;gap:6px">
+        <span style="font:600 10px 'IBM Plex Mono',monospace;color:#94a0ae;letter-spacing:0.08em;flex:1">FOLDERS</span>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:0 6px;display:flex;flex-direction:column;gap:1px">
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">제품 문서</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:6px;background:#ecf1fe;color:#2e5fe8">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:600 13px 'IBM Plex Sans KR',sans-serif;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">온보딩 가이드</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#2e5fe8"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:6px;color:#14171c">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">API 레퍼런스</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:6px;color:#14171c">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">회의록</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:6px;color:#14171c">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2e5fe8" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">README</span>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e3e7ec;padding:6px;display:flex;flex-direction:column;gap:1px">
+        <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg>
+          <span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">휴지통</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:6px;color:#5c6672">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg>
+          <span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">멤버</span>
+        </div>
+        <div style="display:flex;align-items:center;height:34px;padding:0 8px">
+          <div style="flex:1;display:flex;gap:2px;background:#eceff3;border-radius:6px;padding:2px">
+            <button style="flex:1;font:500 11.5px 'IBM Plex Sans KR',sans-serif;color:#14171c;background:#ffffff;border:none;border-radius:5px;padding:4px 0;box-shadow:0 1px 2px rgba(0,0,0,.08);cursor:pointer">쿨 테마</button>
+            <button style="flex:1;font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:none;border-radius:5px;padding:4px 0;cursor:pointer">웜 테마</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 20px 0">
+        <button style="display:flex;align-items:center;gap:5px;font:500 11px 'IBM Plex Mono',monospace;color:#5c6672;background:#f6f8fa;border:1px solid #e3e7ec;border-radius:5px;padding:4px 8px;cursor:pointer">제품 문서<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <span style="font:600 17px 'IBM Plex Sans KR',sans-serif;color:#14171c;flex:1">온보딩 가이드</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:8px 20px 10px;border-bottom:1px solid #e3e7ec">
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a0ae" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 8-10 10-8-8V4a2 2 0 012-2z"></path><circle cx="7.5" cy="7.5" r="1"></circle></svg>
+          <span style="display:inline-flex;align-items:center;gap:4px;font:500 11px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border-radius:999px;padding:3px 8px">가이드<span style="color:#94a0ae">×</span></span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font:500 11px 'IBM Plex Mono',monospace;color:#5c6672;background:#eceff3;border-radius:999px;padding:3px 8px">신규입사자<span style="color:#94a0ae">×</span></span>
+          <span style="font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#94a0ae">태그 추가…</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#fff;background:#2e5fe8;border:none;border-radius:6px;padding:6px 14px;cursor:pointer">수정</button>
+          <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#d92d20;background:none;border:1px solid #e3e7ec;border-radius:6px;padding:6px 14px;cursor:pointer">삭제</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:2px;padding:5px 14px;background:#f6f8fa;border-bottom:1px solid #e3e7ec">
+        <button style="display:flex;align-items:center;gap:3px;height:26px;padding:0 8px;background:none;border:none;border-radius:5px;color:#5c6672;font:600 12px 'IBM Plex Mono',monospace;cursor:pointer">H<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <div style="width:1px;height:16px;background:#e3e7ec;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:700 12px 'IBM Plex Mono',monospace;cursor:pointer">B</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:italic 500 12px 'IBM Plex Mono',monospace;cursor:pointer">I</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 12px 'IBM Plex Mono',monospace;text-decoration:line-through;cursor:pointer">S</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 10px 'IBM Plex Mono',monospace;cursor:pointer">&lt;/&gt;</button>
+        <div style="width:1px;height:16px;background:#e3e7ec;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 13px 'IBM Plex Mono',monospace;cursor:pointer">•</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 11px 'IBM Plex Mono',monospace;cursor:pointer">1.</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 11px 'IBM Plex Mono',monospace;cursor:pointer">☑</button>
+        <div style="width:1px;height:16px;background:#e3e7ec;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:700 14px 'IBM Plex Mono',monospace;cursor:pointer">❝</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 10px 'IBM Plex Mono',monospace;cursor:pointer">{&nbsp;}</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:5px;color:#5c6672;font:500 12px 'IBM Plex Mono',monospace;cursor:pointer">—</button>
+        <div style="width:1px;height:16px;background:#e3e7ec;margin:0 4px"></div>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a3.5 3.5 0 005 0l3-3a3.5 3.5 0 00-5-5l-1 1"></path><path d="M14 10a3.5 3.5 0 00-5 0l-3 3a3.5 3.5 0 005 5l1-1"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#5c6672;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 3v18"></path></svg></button>
+        <div style="margin-left:auto;display:flex;gap:2px;background:#eceff3;border-radius:6px;padding:2px">
+          <button style="font:500 11px 'IBM Plex Sans KR',sans-serif;color:#14171c;background:#ffffff;border:none;border-radius:5px;padding:3px 10px;box-shadow:0 1px 2px rgba(0,0,0,.08);cursor:pointer">분할</button>
+          <button style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:none;border-radius:5px;padding:3px 10px;cursor:pointer">에디터</button>
+          <button style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#5c6672;background:none;border:none;border-radius:5px;padding:3px 10px;cursor:pointer">미리보기</button>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;min-height:0;padding:12px 16px;gap:0">
+        <div style="flex:1;border:1px solid #e3e7ec;border-radius:8px 0 0 8px;background:#ffffff;padding:16px 18px;font:400 12.5px/1.75 'IBM Plex Mono',monospace;color:#14171c;overflow:hidden">
+          <div><span style="color:#94a0ae"># </span><span style="font-weight:500">온보딩 가이드</span></div>
+          <div>&nbsp;</div>
+          <div>첫 주에 읽어야 할 문서를 순서대로 정리했다.</div>
+          <div>&nbsp;</div>
+          <div><span style="color:#94a0ae">&gt; </span>계정 세팅은 IT팀 문서를 먼저 확인할 것.</div>
+          <div>&nbsp;</div>
+          <div><span style="color:#94a0ae">## </span><span style="font-weight:500">준비물</span></div>
+          <div><span style="color:#94a0ae">- [x] </span>사내 계정 발급</div>
+          <div><span style="color:#94a0ae">- [ ] </span>저장소 접근 권한 요청</div>
+          <div>&nbsp;</div>
+          <div>로컬 실행은 <span style="background:#eceff3;border-radius:4px;padding:1px 4px">`pnpm dev`</span> 한 줄이면 된다.</div>
+        </div>
+        <div style="width:3px;background:#e3e7ec;cursor:col-resize"></div>
+        <div style="flex:1;border:1px solid #e3e7ec;border-left:none;border-radius:0 8px 8px 0;background:#ffffff;padding:16px 22px;overflow:hidden">
+          <div style="font:700 21px/1.3 'IBM Plex Sans KR',sans-serif;color:#14171c;padding-bottom:8px;border-bottom:1px solid #e3e7ec;margin-bottom:10px">온보딩 가이드</div>
+          <p style="font:400 13.5px/1.7 'IBM Plex Sans KR',sans-serif;color:#14171c;margin:0 0 10px">첫 주에 읽어야 할 문서를 순서대로 정리했다.</p>
+          <div style="border-left:3px solid #c9d0d9;padding:2px 0 2px 12px;margin:0 0 12px;color:#5c6672;font:400 13.5px/1.6 'IBM Plex Sans KR',sans-serif">계정 세팅은 IT팀 문서를 먼저 확인할 것.</div>
+          <div style="font:600 16px/1.3 'IBM Plex Sans KR',sans-serif;color:#14171c;margin:0 0 8px">준비물</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:8px;font:400 13.5px 'IBM Plex Sans KR',sans-serif;color:#14171c"><div style="width:14px;height:14px;border-radius:4px;background:#2e5fe8;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"></path></svg></div><span style="color:#94a0ae;text-decoration:line-through">사내 계정 발급</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font:400 13.5px 'IBM Plex Sans KR',sans-serif;color:#14171c"><div style="width:14px;height:14px;border-radius:4px;border:1.5px solid #c9d0d9"></div>저장소 접근 권한 요청</div>
+          </div>
+          <p style="font:400 13.5px/1.7 'IBM Plex Sans KR',sans-serif;color:#14171c;margin:0">로컬 실행은 <span style="font:500 12px 'IBM Plex Mono',monospace;background:#eceff3;border-radius:5px;padding:2px 6px">pnpm dev</span> 한 줄이면 된다.</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 20px;border-top:1px solid #e3e7ec">
+        <span style="display:inline-flex;align-items:center;gap:5px;font:500 11px 'IBM Plex Mono',monospace;color:#2e5fe8;background:#ecf1fe;border-radius:999px;padding:3px 9px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"></path></svg>저장됨</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#94a0ae">14:41 자동 저장</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#94a0ae;margin-left:auto">412자</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>따뜻한 문서감 — 크림 바탕 · 잉크 텍스트 · 종이 위에 쓰는 느낌</div>
+<div class="dv-card" style="width:1200px">
+<div style="padding:10px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #e7e2d9;background:#f7f5f1;flex-wrap:wrap">
+  <span style="font:500 10px 'IBM Plex Mono',monospace;color:#6e6759">TOKENS</span>
+  <div style="display:flex;gap:4px">
+    <div style="width:18px;height:18px;border-radius:4px;background:#fdfcfa;border:1px solid #e7e2d9"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#f7f5f1;border:1px solid #e7e2d9"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#efece6"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#d3ccbf"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#6e6759"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#211d16"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#3a55c9"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#c93c2b"></div>
+  </div>
+  <span style="font:500 10px 'IBM Plex Mono',monospace;color:#a49c8d">DARK</span>
+  <div style="display:flex;gap:4px">
+    <div style="width:18px;height:18px;border-radius:4px;background:#16130f"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#1e1a15"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#2b261f"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#cfc8bc"></div>
+    <div style="width:18px;height:18px;border-radius:4px;background:#a08df2"></div>
+  </div>
+  <span style="font:400 11px 'IBM Plex Mono',monospace;color:#6e6759">IBM Plex Sans KR + IBM Plex Mono · radius 6/10/14 · 다크 accent 보라 유지</span>
+</div>
+<div style="background:#fdfcfa;color:#211d16">
+  <div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e7e2d9">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:22px;height:22px;border-radius:6px;background:#211d16;color:#f7f5f1;display:flex;align-items:center;justify-content:center;font:500 12px 'IBM Plex Mono',monospace">m</div>
+      <span style="font:500 13px 'IBM Plex Mono',monospace;letter-spacing:-0.02em">markdown-kms</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#6e6759;background:none;border:1px solid #e7e2d9;border-radius:7px;padding:6px 12px;cursor:pointer">로그아웃</button>
+      <div style="width:26px;height:26px;border-radius:50%;background:#efece6;color:#6e6759;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif">김</div>
+    </div>
+  </div>
+  <div style="display:flex;height:640px">
+    <div style="width:236px;border-right:1px solid #e7e2d9;background:#f7f5f1;display:flex;flex-direction:column">
+      <div style="padding:10px 10px 6px">
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fdfcfa;border:1px solid #e7e2d9;border-radius:7px;color:#a49c8d">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+          <span style="font:400 12px 'IBM Plex Sans KR',sans-serif;flex:1">검색</span>
+          <span style="font:500 10px 'IBM Plex Mono',monospace;background:#efece6;border-radius:4px;padding:2px 5px;color:#6e6759">⌘K</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:6px 12px 4px;gap:6px">
+        <span style="font:600 10px 'IBM Plex Mono',monospace;color:#a49c8d;letter-spacing:0.08em;flex:1">FOLDERS</span>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#6e6759;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:5px;color:#6e6759;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M12 11v4M10 13h4"></path></svg></button>
+      </div>
+      <div style="flex:1;overflow:hidden;padding:0 6px;display:flex;flex-direction:column;gap:1px">
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:7px;color:#211d16">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a49c8d" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a55c9" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">제품 문서</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:7px;background:#ebeefa;color:#3a55c9">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a55c9" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:600 13px 'IBM Plex Sans KR',sans-serif;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">온보딩 가이드</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#3a55c9"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:7px;color:#211d16">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a55c9" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">API 레퍼런스</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-radius:7px;color:#211d16">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a49c8d" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a55c9" stroke-width="1.7" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">회의록</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 24px;border-radius:7px;color:#211d16">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a55c9" stroke-width="1.7" stroke-linejoin="round"><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"></path><path d="M14 2v6h6"></path></svg>
+          <span style="font:400 13px 'IBM Plex Sans KR',sans-serif;flex:1">README</span>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e7e2d9;padding:6px;display:flex;flex-direction:column;gap:1px">
+        <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:7px;color:#6e6759">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13"></path></svg>
+          <span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">휴지통</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 8px;border-radius:7px;color:#6e6759">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3.5 3.5 0 010 6.6M21 20c0-2.6-1.6-4.8-4-5.6"></path></svg>
+          <span style="font:400 12.5px 'IBM Plex Sans KR',sans-serif">멤버</span>
+        </div>
+        <div style="display:flex;align-items:center;height:34px;padding:0 8px">
+          <div style="flex:1;display:flex;gap:2px;background:#efece6;border-radius:7px;padding:2px">
+            <button style="flex:1;font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#6e6759;background:none;border:none;border-radius:6px;padding:4px 0;cursor:pointer">쿨 테마</button>
+            <button style="flex:1;font:500 11.5px 'IBM Plex Sans KR',sans-serif;color:#211d16;background:#fdfcfa;border:none;border-radius:6px;padding:4px 0;box-shadow:0 1px 2px rgba(0,0,0,.08);cursor:pointer">웜 테마</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 20px 0">
+        <button style="display:flex;align-items:center;gap:5px;font:500 11px 'IBM Plex Mono',monospace;color:#6e6759;background:#f7f5f1;border:1px solid #e7e2d9;border-radius:6px;padding:4px 8px;cursor:pointer">제품 문서<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <span style="font:600 17px 'IBM Plex Sans KR',sans-serif;color:#211d16;flex:1">온보딩 가이드</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:8px 20px 10px;border-bottom:1px solid #e7e2d9">
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a49c8d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 8-10 10-8-8V4a2 2 0 012-2z"></path><circle cx="7.5" cy="7.5" r="1"></circle></svg>
+          <span style="display:inline-flex;align-items:center;gap:4px;font:500 11px 'IBM Plex Mono',monospace;color:#6e6759;background:#efece6;border-radius:999px;padding:3px 8px">가이드<span style="color:#a49c8d">×</span></span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font:500 11px 'IBM Plex Mono',monospace;color:#6e6759;background:#efece6;border-radius:999px;padding:3px 8px">신규입사자<span style="color:#a49c8d">×</span></span>
+          <span style="font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:#a49c8d">태그 추가…</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#f7f5f1;background:#211d16;border:none;border-radius:7px;padding:6px 14px;cursor:pointer">수정</button>
+          <button style="font:500 12px 'IBM Plex Sans KR',sans-serif;color:#c93c2b;background:none;border:1px solid #e7e2d9;border-radius:7px;padding:6px 14px;cursor:pointer">삭제</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:2px;padding:5px 14px;background:#f7f5f1;border-bottom:1px solid #e7e2d9">
+        <button style="display:flex;align-items:center;gap:3px;height:26px;padding:0 8px;background:none;border:none;border-radius:6px;color:#6e6759;font:600 12px 'IBM Plex Mono',monospace;cursor:pointer">H<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <div style="width:1px;height:16px;background:#e7e2d9;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:700 12px 'IBM Plex Mono',monospace;cursor:pointer">B</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:italic 500 12px 'IBM Plex Mono',monospace;cursor:pointer">I</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 12px 'IBM Plex Mono',monospace;text-decoration:line-through;cursor:pointer">S</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 10px 'IBM Plex Mono',monospace;cursor:pointer">&lt;/&gt;</button>
+        <div style="width:1px;height:16px;background:#e7e2d9;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 13px 'IBM Plex Mono',monospace;cursor:pointer">•</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 11px 'IBM Plex Mono',monospace;cursor:pointer">1.</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 11px 'IBM Plex Mono',monospace;cursor:pointer">☑</button>
+        <div style="width:1px;height:16px;background:#e7e2d9;margin:0 4px"></div>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:700 14px 'IBM Plex Mono',monospace;cursor:pointer">❝</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 10px 'IBM Plex Mono',monospace;cursor:pointer">{&nbsp;}</button>
+        <button style="width:26px;height:26px;background:none;border:none;border-radius:6px;color:#6e6759;font:500 12px 'IBM Plex Mono',monospace;cursor:pointer">—</button>
+        <div style="width:1px;height:16px;background:#e7e2d9;margin:0 4px"></div>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#6e6759;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a3.5 3.5 0 005 0l3-3a3.5 3.5 0 00-5-5l-1 1"></path><path d="M14 10a3.5 3.5 0 00-5 0l-3 3a3.5 3.5 0 005 5l1-1"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#6e6759;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></button>
+        <button style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-radius:6px;color:#6e6759;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 3v18"></path></svg></button>
+        <div style="margin-left:auto;display:flex;gap:2px;background:#efece6;border-radius:7px;padding:2px">
+          <button style="font:500 11px 'IBM Plex Sans KR',sans-serif;color:#211d16;background:#fdfcfa;border:none;border-radius:6px;padding:3px 10px;box-shadow:0 1px 2px rgba(0,0,0,.08);cursor:pointer">분할</button>
+          <button style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#6e6759;background:none;border:none;border-radius:6px;padding:3px 10px;cursor:pointer">에디터</button>
+          <button style="font:400 11px 'IBM Plex Sans KR',sans-serif;color:#6e6759;background:none;border:none;border-radius:6px;padding:3px 10px;cursor:pointer">미리보기</button>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;min-height:0;padding:12px 16px;gap:0">
+        <div style="flex:1;border:1px solid #e7e2d9;border-radius:10px 0 0 10px;background:#fdfcfa;padding:16px 18px;font:400 12.5px/1.75 'IBM Plex Mono',monospace;color:#211d16;overflow:hidden">
+          <div><span style="color:#a49c8d"># </span><span style="font-weight:500">온보딩 가이드</span></div>
+          <div>&nbsp;</div>
+          <div>첫 주에 읽어야 할 문서를 순서대로 정리했다.</div>
+          <div>&nbsp;</div>
+          <div><span style="color:#a49c8d">&gt; </span>계정 세팅은 IT팀 문서를 먼저 확인할 것.</div>
+          <div>&nbsp;</div>
+          <div><span style="color:#a49c8d">## </span><span style="font-weight:500">준비물</span></div>
+          <div><span style="color:#a49c8d">- [x] </span>사내 계정 발급</div>
+          <div><span style="color:#a49c8d">- [ ] </span>저장소 접근 권한 요청</div>
+          <div>&nbsp;</div>
+          <div>로컬 실행은 <span style="background:#efece6;border-radius:4px;padding:1px 4px">`pnpm dev`</span> 한 줄이면 된다.</div>
+        </div>
+        <div style="width:3px;background:#e7e2d9;cursor:col-resize"></div>
+        <div style="flex:1;border:1px solid #e7e2d9;border-left:none;border-radius:0 10px 10px 0;background:#fffefb;padding:16px 22px;overflow:hidden">
+          <div style="font:700 21px/1.3 'IBM Plex Sans KR',sans-serif;color:#211d16;padding-bottom:8px;border-bottom:1px solid #e7e2d9;margin-bottom:10px">온보딩 가이드</div>
+          <p style="font:400 13.5px/1.7 'IBM Plex Sans KR',sans-serif;color:#211d16;margin:0 0 10px">첫 주에 읽어야 할 문서를 순서대로 정리했다.</p>
+          <div style="border-left:3px solid #d3ccbf;padding:2px 0 2px 12px;margin:0 0 12px;color:#6e6759;font:400 13.5px/1.6 'IBM Plex Sans KR',sans-serif">계정 세팅은 IT팀 문서를 먼저 확인할 것.</div>
+          <div style="font:600 16px/1.3 'IBM Plex Sans KR',sans-serif;color:#211d16;margin:0 0 8px">준비물</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:8px;font:400 13.5px 'IBM Plex Sans KR',sans-serif;color:#211d16"><div style="width:14px;height:14px;border-radius:4px;background:#3a55c9;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"></path></svg></div><span style="color:#a49c8d;text-decoration:line-through">사내 계정 발급</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font:400 13.5px 'IBM Plex Sans KR',sans-serif;color:#211d16"><div style="width:14px;height:14px;border-radius:4px;border:1.5px solid #d3ccbf"></div>저장소 접근 권한 요청</div>
+          </div>
+          <p style="font:400 13.5px/1.7 'IBM Plex Sans KR',sans-serif;color:#211d16;margin:0">로컬 실행은 <span style="font:500 12px 'IBM Plex Mono',monospace;background:#efece6;border-radius:5px;padding:2px 6px">pnpm dev</span> 한 줄이면 된다.</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 20px;border-top:1px solid #e7e2d9">
+        <span style="display:inline-flex;align-items:center;gap:5px;font:500 11px 'IBM Plex Mono',monospace;color:#3a55c9;background:#ebeefa;border-radius:999px;padding:3px 9px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"></path></svg>저장됨</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#a49c8d">14:41 자동 저장</span>
+        <span style="font:400 11px 'IBM Plex Mono',monospace;color:#a49c8d;margin-left:auto">412자</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">다음 지시 예: "<a class="dv-oid" href="#1a">1a</a>로 전 화면 진행" · "<a class="dv-oid" href="#1b">1b</a> 바탕인데 accent는 <a class="dv-oid" href="#1a">1a</a>의 파랑으로" · "두 방향 다크 모드도 보여줘"</p>
+</section>
+</x-dc>
+</body>
+</html>

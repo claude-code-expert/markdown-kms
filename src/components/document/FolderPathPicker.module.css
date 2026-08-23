@@ -5,6 +5,7 @@
   flex-shrink: 0;
 }
 
+/* Mono 액센트 브레드크럼(PAGE-ANALYSIS.md §1 — README가 FolderPathPicker를 명시). */
 .trigger {
   height: 28px;
   max-width: 220px;
@@ -16,7 +17,9 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--muted);
-  font-size: 12px;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: var(--text-sm);
+  font-weight: 500;
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-fluid);
 }
@@ -65,7 +68,7 @@
   display: block;
   width: 100%;
   padding: var(--space-sm) 12px;
-  font-size: 13px;
+  font-size: 12px;
   text-align: left;
   background: transparent;
   border: none;

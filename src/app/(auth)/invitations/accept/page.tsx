@@ -32,7 +32,9 @@ export default async function AcceptInvitationPage({
       <Card className={styles.card}>
         {result.status === "success" ? (
           <>
-            <CheckCircle2 size={24} className={styles.iconAccent} />
+            <span className={`${styles.iconBadge} ${styles.iconAccent}`}>
+              <CheckCircle2 size={18} />
+            </span>
             <h1 className={styles.title}>초대를 수락했어요</h1>
             <p className={styles.body}>{`'${result.workspaceName}'의 편집자로 합류했습니다.`}</p>
             <Link href={`/w/${result.workspaceId}`}>
@@ -41,7 +43,9 @@ export default async function AcceptInvitationPage({
           </>
         ) : result.status === "expired" ? (
           <>
-            <AlertCircle size={24} className={styles.iconDestructive} />
+            <span className={`${styles.iconBadge} ${styles.iconDestructive}`}>
+              <AlertCircle size={18} />
+            </span>
             <h1 className={styles.title}>초대가 만료됐어요</h1>
             <p className={styles.body}>이 초대 링크는 유효 기간이 지났어요. 워크스페이스 관리자에게 새 초대를 요청해 주세요.</p>
             <Link href="/dashboard">
@@ -50,7 +54,9 @@ export default async function AcceptInvitationPage({
           </>
         ) : result.status === "already-used" ? (
           <>
-            <AlertCircle size={24} className={styles.iconDestructive} />
+            <span className={`${styles.iconBadge} ${styles.iconDestructive}`}>
+              <AlertCircle size={18} />
+            </span>
             <h1 className={styles.title}>이미 사용된 초대예요</h1>
             <p className={styles.body}>이 초대 링크는 이미 한 번 사용됐어요.</p>
             <Link href="/dashboard">
@@ -59,7 +65,9 @@ export default async function AcceptInvitationPage({
           </>
         ) : result.status === "wrong-user" ? (
           <>
-            <AlertCircle size={24} className={styles.iconDestructive} />
+            <span className={`${styles.iconBadge} ${styles.iconDestructive}`}>
+              <AlertCircle size={18} />
+            </span>
             <h1 className={styles.title}>이 계정으로는 사용할 수 없어요</h1>
             <p className={styles.body}>초대받은 계정으로 로그인한 후 다시 시도해 주세요.</p>
             <Link href="/login">
@@ -68,7 +76,9 @@ export default async function AcceptInvitationPage({
           </>
         ) : (
           <>
-            <AlertCircle size={24} className={styles.iconDestructive} />
+            <span className={`${styles.iconBadge} ${styles.iconDestructive}`}>
+              <AlertCircle size={18} />
+            </span>
             <h1 className={styles.title}>유효하지 않은 링크예요</h1>
             <p className={styles.body}>링크가 손상됐거나 올바르지 않아요. 초대 이메일의 링크를 다시 확인해 주세요.</p>
             <Link href="/dashboard">

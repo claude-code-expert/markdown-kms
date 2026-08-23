@@ -3,10 +3,12 @@
 .banner {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-xs);
-  background: var(--surface-2);
-  border-left: 4px solid var(--border-strong);
-  padding: 12px var(--space-md);
+  gap: var(--space-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
   margin-bottom: var(--space-md);
 }
 
@@ -19,10 +21,10 @@
 .text {
   flex: 1;
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 400;
-  line-height: 1.5;
-  color: var(--text);
+  line-height: 1.6;
+  color: var(--muted);
 }
 
 .close {

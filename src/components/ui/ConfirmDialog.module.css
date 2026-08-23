@@ -13,16 +13,29 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 20px;
-  width: 320px;
+  width: 340px;
   max-width: calc(100vw - 32px);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 32px rgba(20, 23, 28, 0.14);
+}
+
+/* docs/design.md §2 — Card/Modal과 동일한 squircle. */
+@supports (corner-shape: squircle) {
+  .dialog {
+    corner-shape: squircle;
+  }
 }
 
 .title {
-  font-size: 16px;
+  font-size: 14.5px;
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 6px;
+}
+
+.body {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
 .actions {
@@ -30,39 +43,4 @@
   justify-content: flex-end;
   gap: var(--space-sm);
   margin-top: var(--space-md);
-}
-
-.cancel,
-.confirm,
-.confirmDestructive {
-  padding: 7px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.cancel {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.confirm {
-  background: var(--accent);
-  color: #fff;
-  border: 1px solid var(--accent);
-}
-
-.confirmDestructive {
-  background: var(--destructive);
-  color: #fff;
-  border: 1px solid var(--destructive);
-}
-
-.confirm:disabled,
-.confirmDestructive:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

@@ -104,6 +104,9 @@ export function DocumentWorkspace({
   // Body content is owned by EditorPreviewLayout's internal state (D-P2 uncontrolled editor) —
   // this ref just tracks the latest value so a title-only edit can still send the current body.
   const contentRef = useRef(initialContent);
+  // 리디자인(PAGE-ANALYSIS.md §0-2) — SaveStatusBar 글자수 카운터용. contentRef는 리렌더를
+  // 안 일으키는 ref라 별도 state로 둔다(매 키입력마다 handleContentChange에서 갱신).
+  const [charCount, setCharCount] = useState(initialContent.length);
   // Pitfall 6: DocumentWorkspace never imports CodeMirror/EditorView directly — this ref only
   // holds EditorPreviewLayout's forwardRef handle, and dispatch() is reached structurally through
   // getView()'s declared return type, no @codemirror/* import needed in this file.
@@ -113,6 +116,7 @@ export function DocumentWorkspace({
 
   function handleContentChange(next: string) {
     contentRef.current = next;
+    setCharCount(next.length);
     scheduleSave(next, title);
     draft.onContentChange(next);
   }
@@ -177,6 +181,30 @@ export function DocumentWorkspace({
     router.refresh();
   }
 
+  // savedSeq는 문서 생성 시 0에서 시작하고 첫 저장(autosave/수동)에서만 올라간다(TRD §7) — 한
+  // 번도 저장된 적 없는 "새 문서"는 저장 버튼만, 이미 저장된 적 있는 문서(조회)는 수정/삭제만
+  // 노출한다. initialSeq는 RSC가 마운트 시 1회 읽은 값이라 이 세션 내 첫 저장 이후에도 버튼
+  // 세트는 안 바뀌고, 다음에 문서를 다시 열 때(page.tsx 재조회) "조회"로 넘어간다.
+  const isNew = initialSeq === 0;
+  const actions = canDelete && (
+    <>
+      {isNew ? (
+        <Button type="button" variant="primary" onClick={handleSaveNow}>
+          저장
+        </Button>
+      ) : (
+        <>
+          <Button type="button" variant="primary" onClick={handleSaveNow}>
+            수정
+          </Button>
+          <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
+            삭제
+          </Button>
+        </>
+      )}
+    </>
+  );
+
   return (
     <div className={styles.workspace}>
       <div className={styles.titleRow}>
@@ -188,24 +216,8 @@ export function DocumentWorkspace({
           placeholder="제목 없음"
           aria-label="문서 제목"
         />
-        {canDelete && (
-          <div className={styles.actions}>
-            {/* 저장/수정 both call the same saveNow — this editor has no separate edit-mode
-                (typing is always live), so "수정" is a second, explicitly-labeled entry point
-                to the identical commit-now action as "저장", not a different operation. */}
-            <Button type="button" variant="secondary" onClick={handleSaveNow}>
-              저장
-            </Button>
-            <Button type="button" variant="secondary" onClick={handleSaveNow}>
-              수정
-            </Button>
-            <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
-              삭제
-            </Button>
-          </div>
-        )}
       </div>
-      <TagBar documentId={docId} initialTags={initialTags} />
+      <TagBar documentId={docId} initialTags={initialTags} actions={actions} />
       <div className={styles.body}>
         <EditorPreviewLayout
           ref={layoutRef}
@@ -216,7 +228,7 @@ export function DocumentWorkspace({
           initialSplitRatio={initialSplitRatio}
         />
       </div>
-      <SaveStatusBar status={status} onRetry={retry} />
+      <SaveStatusBar status={status} onRetry={retry} charCount={charCount} />
       <DraftRecoveryDialog
         open={showRecovery}
         onRestore={handleRestore}
@@ -240,9 +252,11 @@ export function DocumentWorkspace({
       </ConfirmDialog>
       <Modal open={saveConfirmOpen} onClose={() => setSaveConfirmOpen(false)} title="저장 완료">
         <p>저장되었습니다.</p>
-        <Button type="button" variant="secondary" onClick={() => setSaveConfirmOpen(false)}>
-          확인
-        </Button>
+        <div className={styles.modalFooter}>
+          <Button type="button" variant="primary" onClick={() => setSaveConfirmOpen(false)}>
+            확인
+          </Button>
+        </div>
       </Modal>
     </div>
   );

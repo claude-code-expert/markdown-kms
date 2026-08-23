@@ -1,6 +1,7 @@
 // UI-SPEC Members Page Contract — 멤버 목록 (WS-04). Read-only row, no action buttons (role
 // change/removal is Deferred — this phase's scope). Role badge is a neutral pill (Phase 6 chip
 // exception reuse), never accent — "활성 표시는 색이 아니라 굵기/명도" (Phase 1 principle).
+import { Avatar } from "@/components/ui/Avatar";
 import styles from "./MembersView.module.css";
 
 export interface MemberRowData {
@@ -23,6 +24,7 @@ const ROLE_LABEL: Record<string, string> = {
 export function MemberRow({ name, email, role }: MemberRowData) {
   return (
     <div className={styles.row}>
+      <Avatar name={name} />
       <div className={styles.identity}>
         <span className={styles.name}>{name}</span>
         <span className={styles.email}>{email}</span>

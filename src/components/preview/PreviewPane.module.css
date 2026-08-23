@@ -4,48 +4,52 @@
   height: 100%;
   overflow-y: auto;
   padding: var(--space-lg);
-  font-family: var(--font-ibm-plex-sans), "IBM Plex Sans", sans-serif;
+  font-family: var(--font-ibm-plex-sans), "IBM Plex Sans KR", sans-serif;
   overflow-wrap: break-word;
 }
 
 .state {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--muted);
   text-align: center;
 }
 
+/* 리디자인(PAGE-ANALYSIS.md §1) — h1만 21px/700 + 하단 보더(목업 명시), 나머지는
+   4단계로 압축. */
 .pane :global(h1) {
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: var(--space-lg) 0 var(--space-sm);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.3;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 var(--space-md);
 }
 
 .pane :global(h2) {
-  font-size: 22px;
+  font-size: var(--text-lg);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
   margin: var(--space-lg) 0 var(--space-sm);
 }
 
 .pane :global(h3) {
-  font-size: 18px;
+  font-size: var(--text-md);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
   margin: var(--space-lg) 0 var(--space-sm);
 }
 
 .pane :global(h4) {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.3;
   margin: var(--space-lg) 0 var(--space-sm);
 }
 
 .pane :global(p) {
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 400;
-  line-height: 1.65;
+  line-height: 1.7;
   margin-bottom: var(--space-md);
 }
 
@@ -66,8 +70,39 @@
   gap: var(--space-sm);
 }
 
+/* 리디자인(1a 목업) — 체크됨 항목은 텍스트도 흐리게+취소선(네이티브 accent-color
+   틴트만으론 이 상태를 표현 못해 커스텀 박스로 교체). */
+.pane :global(li:has(input[type="checkbox"]:checked)) {
+  color: var(--dim);
+  text-decoration: line-through;
+}
+
 .pane :global(li input[type="checkbox"]) {
-  accent-color: var(--accent);
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: default;
+}
+
+.pane :global(li input[type="checkbox"]:checked) {
+  background: var(--accent);
+  border-color: var(--accent);
+  position: relative;
+}
+
+.pane :global(li input[type="checkbox"]:checked)::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
 }
 
 .pane :global(blockquote) {
@@ -79,10 +114,10 @@
 
 .pane :global(code) {
   background: var(--surface-2);
-  padding: 2px 4px;
+  padding: 2px 6px;
   border-radius: var(--radius-sm);
   font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .pane :global(pre) {
@@ -99,8 +134,8 @@
   /* Fixed, theme-independent — --code-bg는 라이트/다크 모두 어두운 표면(NFR
      Preview Pane Prose Contract 기존 예외), 코드 텍스트도 고정 밝은 색 유지. */
   color: #cbd5e1;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 12.5px;
+  line-height: 1.75;
 }
 
 .pane :global(hr) {

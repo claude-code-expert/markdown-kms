@@ -1,37 +1,29 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Folder, FileText } from "lucide-react";
+import { Columns2, Folder, RotateCcw, Users } from "lucide-react";
 import { auth } from "@/auth";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { Card } from "@/components/ui/Card";
 import buttonStyles from "@/components/ui/Button.module.css";
+import { ClosingSubtext } from "./ClosingSubtext";
+import { HeroPreview } from "./HeroPreview";
 import styles from "./page.module.css";
 
+// 재작업(docs/claude_design 2a 목업 1:1 대조) — 구성/카피/아이콘 전부 목업 원문 그대로.
 const FEATURES = [
-  {
-    term: "실시간 미리보기",
-    body: "굵게·기울임·표·코드블록 같은 서식을 툴바나 마크다운 문법으로 적용하면, 입력과 동시에 안전하게 렌더링된 미리보기로 확인합니다.",
-  },
-  {
-    term: "폴더 트리",
-    body: "문서를 워크스페이스 안의 폴더 계층으로 정리합니다. 폴더를 옮기거나 지우면 하위 문서까지 함께 움직입니다.",
-  },
-  {
-    term: "자동 저장",
-    body: "입력을 멈추면 저장됩니다. 브라우저가 닫혀도 임시 저장본이 남아 이어서 쓸 수 있습니다.",
-  },
-  {
-    term: "태그와 검색",
-    body: "문서마다 태그를 최대 3개까지 붙이고, 제목·본문·태그로 검색합니다. 한글 검색도 정확하게 동작합니다.",
-  },
-  {
-    term: "내보내기",
-    body: "문서는 .md로, 폴더는 .zip으로 원문 그대로 내려받습니다.",
-  },
+  { icon: Folder, title: "폴더 트리", body: "드래그앤드롭으로 문서를 자유롭게 조직" },
+  { icon: Columns2, title: "듀얼 뷰 에디터", body: "쓰면서 바로 보는 에디터·미리보기 분할" },
+  { icon: Users, title: "역할 기반 권한", body: "Owner부터 Viewer까지 4단계 협업" },
+  { icon: RotateCcw, title: "휴지통 복원", body: "지운 문서도 언제든 되돌리기" },
 ];
 
-// 미인증 사용자만 마케팅 랜딩을 본다. 로그인 상태면 곧장 대시보드로 보낸다
-// (기존 "/" 리다이렉트 계약 중 이 절반만 유지 — 나머지 절반은 아래 렌더로 대체).
+const STEPS = [
+  "회원가입하면 기본 워크스페이스가 바로 생겨요.",
+  "사이드바에서 폴더를 만들고 새 문서를 시작하세요.",
+  "마크다운으로 쓰면 오른쪽에서 바로 미리보기.",
+  "팀원을 초대하고 역할을 정해 함께 쓰세요.",
+];
+
+// 미인증 사용자만 마케팅 랜딩을 본다. 로그인 상태면 곧장 대시보드로 보낸다.
 export default async function LandingPage() {
   const session = await auth();
   if (session?.user?.id) {
@@ -42,102 +34,70 @@ export default async function LandingPage() {
     <>
       <SiteHeader />
       <main>
-        {/* 풀와이드 히어로 밴드 — accent-weak 배경(라이트/다크 자동 전환)으로 색감을 주고,
-            내부 콘텐츠는 본문 컬럼과 같은 720px 폭으로 정렬한다. */}
-        <section className={styles.heroBand}>
-          <div className={styles.heroInner}>
-            <div className={styles.heroText}>
-              <h1 className={styles.headline}>마크다운 문서를, 워크스페이스 단위로 관리한다.</h1>
-              <p className={styles.subcopy}>
-                입력한 서식은 60ms 안에 미리보기로 반영되고, 입력을 멈추면 자동으로 저장됩니다.
-                폴더로 문서를 정리하고, 팀원을 초대해 함께 씁니다.
-              </p>
-              <div className={styles.heroActions}>
-                <Link href="/signup" className={`${buttonStyles.btn} ${buttonStyles.primary}`}>
-                  가입하고 시작하기
-                </Link>
-                <Link href="/login" className={`${buttonStyles.btn} ${buttonStyles.secondary}`}>
-                  로그인
-                </Link>
-              </div>
+        <section className={styles.hero}>
+          <div className={styles.heroText}>
+            <span className={styles.badge}>MARKDOWN KNOWLEDGE BASE</span>
+            <h1 className={styles.headline}>
+              팀의 지식을,
+              <br />
+              마크다운 그대로.
+            </h1>
+            <p className={styles.subcopy}>
+              폴더 트리로 조직하고, 에디터·미리보기 듀얼 뷰로 쓰고, 역할 기반 권한으로 협업하는 문서 워크스페이스.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/signup" className={`${buttonStyles.btn} ${buttonStyles.primary} ${styles.heroButton}`}>
+                무료로 시작하기
+              </Link>
+              <Link href="/login" className={`${buttonStyles.btn} ${buttonStyles.secondary} ${styles.heroButton}`}>
+                로그인
+              </Link>
             </div>
+          </div>
 
-            {/* 실제 화면을 요약한 미니 프리뷰 — 장식용 도형이 아니라 폴더/문서/서식 줄을
-                그대로 축약한 그래픽. 새 이미지 자산 없이 기존 lucide 아이콘 + 토큰만 사용. */}
-            <div className={styles.heroPreview} aria-hidden="true">
-              <div className={styles.previewBar}>
-                <Folder size={14} className={styles.previewIcon} />
-                <span>워크스페이스 / 기획 문서</span>
-              </div>
-              <div className={styles.previewBody}>
-                <FileText size={16} className={styles.previewFileIcon} />
-                <div className={styles.previewLines}>
-                  <span className={`${styles.previewLine} ${styles.previewLineAccent}`} style={{ width: "70%" }} />
-                  <span className={styles.previewLine} style={{ width: "94%" }} />
-                  <span className={styles.previewLine} style={{ width: "60%" }} />
-                  <span className={styles.previewLine} style={{ width: "82%" }} />
-                </div>
-              </div>
+          {/* 실제 3-pane 화면을 축약한 미니 프리뷰 — 마크다운 타이핑 애니메이션(HeroPreview.tsx,
+              client 컴포넌트로 분리). */}
+          <HeroPreview />
+        </section>
+
+        <section className={styles.features}>
+          {FEATURES.map(({ icon: Icon, title, body }) => (
+            <div key={title} className={styles.featureCard}>
+              <Icon size={18} className={styles.featureIcon} />
+              <span className={styles.featureTitle}>{title}</span>
+              <span className={styles.featureBody}>{body}</span>
             </div>
+          ))}
+        </section>
+
+        <section className={styles.workspaceRow}>
+          <div className={styles.workspaceBox}>
+            <span className={styles.workspaceLabel}>OWNER</span>
+            <span className={styles.workspaceTitle}>워크스페이스 개설하기</span>
+            <span className={styles.workspaceBody}>팀 공간을 만들고 멤버를 초대하세요.</span>
+          </div>
+          <div className={styles.workspaceBox}>
+            <span className={styles.workspaceLabel}>MEMBER</span>
+            <span className={styles.workspaceTitle}>기존 팀에 가입하기</span>
+            <span className={styles.workspaceBody}>검색해서 참여 신청하거나 초대 링크로 합류.</span>
           </div>
         </section>
 
-        {/* 풀 사이즈 섹션 — 아래 두 섹션만 720px 컬럼을 벗어나 넓은 화면을 그대로 쓴다.
-            "쓰는 법"은 짧은 순서 목록이라 좁은 컬럼이 그대로 낫다(아래 .page 참조). */}
-        <section className={styles.fullBand}>
-          <div className={styles.fullInner}>
-            <h2 className={styles.sectionTitle}>무엇을 할 수 있나</h2>
-            <div className={styles.featureGrid}>
-              {FEATURES.map((feature) => (
-                <Card key={feature.term} className={styles.featureCard}>
-                  <span className={styles.featureTerm}>{feature.term}</span>
-                  <p className={styles.featureBody}>{feature.body}</p>
-                </Card>
-              ))}
-            </div>
+        {/* 쓰는 법 + 클로징 CTA를 한 섹션으로 합쳐 hero와 같은 960px 폭을 쓴다 — 아래로
+            내려갈수록 컬럼이 좁아지던(640px) 깔때기 모양을 없앴다. */}
+        <section className={styles.finalSection}>
+          <div className={styles.howTo}>
+            <span className={styles.howToTitle}>사용 가이드</span>
+            {STEPS.map((step, index) => (
+              <div key={step} className={styles.step}>
+                <span className={styles.stepNumber}>{String(index + 1).padStart(2, "0")}</span>
+                <span className={styles.stepText}>{step}</span>
+              </div>
+            ))}
           </div>
-        </section>
-
-        <section className={styles.fullBand}>
-          <div className={styles.fullInner}>
-            <h2 className={styles.sectionTitle}>워크스페이스, 만들거나 참여하거나</h2>
-            <div className={styles.workspaceGrid}>
-              <Card className={styles.workspaceCard}>
-                <h3 className={styles.workspaceCardTitle}>새로 만들기</h3>
-                <p className={styles.paragraph}>
-                  로그인 후 대시보드에서 &ldquo;워크스페이스 만들기&rdquo;를 누르세요. 만든 사람이
-                  오너가 됩니다.
-                </p>
-              </Card>
-              <Card className={styles.workspaceCard}>
-                <h3 className={styles.workspaceCardTitle}>참여하기</h3>
-                <p className={styles.paragraph}>
-                  워크스페이스 ID로 참여 신청을 보내고 관리자 승인을 기다리거나, 이메일로 받은
-                  초대 링크를 열어 바로 편집자로 합류합니다.
-                </p>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <div className={styles.page}>
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>쓰는 법</h2>
-            <ol className={styles.steps}>
-              <li>문서를 열고 툴바나 마크다운 문법으로 서식을 적용합니다.</li>
-              <li>폴더에 정리하고 태그를 답니다.</li>
-              <li>나중에 제목·본문·태그로 찾습니다.</li>
-              <li>필요하면 .md나 .zip으로 내려받습니다.</li>
-            </ol>
-          </section>
-        </div>
-
-        <section className={styles.closingBand}>
-          <div className={styles.closingInner}>
-            <p className={styles.closingText}>지금 바로 첫 워크스페이스를 만들어 보세요.</p>
-            <Link href="/signup" className={`${buttonStyles.btn} ${buttonStyles.primary}`}>
-              가입하기
-            </Link>
+          <div className={styles.closing}>
+            <span className={styles.closingText}>팀의 지식을 마크다운으로 기록하세요</span>
+            <ClosingSubtext />
           </div>
         </section>
       </main>

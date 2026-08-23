@@ -6,7 +6,7 @@
 // through the live EditorView (same dispatch contract as Toolbar.tsx).
 import { useEffect, useRef, useState } from "react";
 import type { EditorView } from "@codemirror/view";
-import { ChevronDown, Heading as HeadingIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { heading } from "./plugins/heading";
 import styles from "./HeadingDropdown.module.css";
 
@@ -42,8 +42,8 @@ export function HeadingDropdown({ getView }: HeadingDropdownProps) {
           setOpen((value) => !value);
         }}
       >
-        <HeadingIcon size={16} />
-        <ChevronDown size={14} className={styles.caret} />
+        <span className={styles.glyph}>H</span>
+        <ChevronDown size={11} className={styles.caret} />
       </button>
       {open && (
         <div className={styles.menu}>

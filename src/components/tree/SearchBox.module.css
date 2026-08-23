@@ -1,18 +1,23 @@
-/* UI-SPEC "Search Contract" (DOC-04) -- sidebar-top search input, same 40px/border-bottom rhythm
-   as FolderTree.module.css's .header. Pure var(--token) refs only, dark theme auto-inherits. */
-.wrapper {
-  height: 40px;
+/* 재검증(1a 목업) — 사이드바 배경(surface) 위에 얹힌 흰(--bg) 인셋 알약, 구분선 없음.
+   기존엔 사이드바 폭 전체를 가로지르는 40px border-bottom 행이었다. */
+.outer {
   flex-shrink: 0;
+  padding: 10px 10px 6px;
+}
+
+.wrapper {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 0 var(--space-sm);
-  border-bottom: 1px solid var(--border);
+  padding: 7px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   transition: border-color var(--duration-fast) var(--ease-fluid);
 }
 
 .wrapper:focus-within {
-  border-bottom-color: var(--accent);
+  border-color: var(--accent);
 }
 
 .icon {
@@ -44,7 +49,7 @@
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text);
 }
 
@@ -92,7 +97,7 @@
 }
 
 .resultTitle {
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text);
@@ -103,7 +108,7 @@
 
 .resultSnippet {
   margin-top: 2px;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted);
@@ -138,7 +143,7 @@
 .empty {
   padding: var(--space-md);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.5;
   color: var(--muted);
 }
@@ -146,7 +151,7 @@
 .error {
   padding: var(--space-md);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.5;
   color: var(--destructive);
 }
@@ -156,7 +161,7 @@
   border: none;
   background: none;
   padding: 0;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--destructive);
   cursor: pointer;

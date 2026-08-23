@@ -138,7 +138,7 @@ export function InviteSearch({ wsId }: InviteSearchProps) {
                   <Check size={14} /> 초대 보냄
                 </Button>
               ) : (
-                <Button variant="primary" disabled={sending} onClick={() => handleInvite(result)}>
+                <Button variant="accentOutline" disabled={sending} onClick={() => handleInvite(result)}>
                   {sending ? "보내는 중…" : "초대"}
                 </Button>
               )}

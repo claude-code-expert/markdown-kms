@@ -97,24 +97,26 @@ interface SearchBoxProps {
 
 export function SearchBox({ query, onQueryChange, onClear, loading }: SearchBoxProps) {
   return (
-    <div className={styles.wrapper}>
-      {loading ? (
-        <span className={styles.spinner} aria-hidden="true" />
-      ) : (
-        <Search size={16} className={styles.icon} aria-hidden="true" />
-      )}
-      <input
-        className={styles.input}
-        value={query}
-        onChange={(event) => onQueryChange(event.target.value)}
-        placeholder={PLACEHOLDER}
-        aria-label={PLACEHOLDER}
-      />
-      {query && (
-        <button type="button" className={styles.clearButton} aria-label="검색어 지우기" onClick={onClear}>
-          <X size={14} />
-        </button>
-      )}
+    <div className={styles.outer}>
+      <div className={styles.wrapper}>
+        {loading ? (
+          <span className={styles.spinner} aria-hidden="true" />
+        ) : (
+          <Search size={14} className={styles.icon} aria-hidden="true" />
+        )}
+        <input
+          className={styles.input}
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+          placeholder={PLACEHOLDER}
+          aria-label={PLACEHOLDER}
+        />
+        {query && (
+          <button type="button" className={styles.clearButton} aria-label="검색어 지우기" onClick={onClear}>
+            <X size={14} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

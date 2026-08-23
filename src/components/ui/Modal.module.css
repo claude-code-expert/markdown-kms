@@ -1,7 +1,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 17, 21, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,11 +10,12 @@
 
 .box {
   background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md); /* 폴백: 항상 적용 (UI-SPEC Radius Scale) */
-  padding: var(--space-lg);
-  width: 320px;
+  padding: 20px;
+  width: 340px;
   max-width: calc(100vw - 32px);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 32px rgba(20, 23, 28, 0.14);
 }
 
 /* Phase 9 UI-SPEC squircle progressive enhancement — 미지원 브라우저는 위
@@ -33,7 +34,7 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 14.5px;
   font-weight: 600;
   line-height: 1.2;
   margin: 0;

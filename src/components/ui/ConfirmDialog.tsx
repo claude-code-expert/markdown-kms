@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
+import { Button } from "./Button";
 import styles from "./ConfirmDialog.module.css";
 
 interface ConfirmDialogProps {
@@ -51,19 +52,19 @@ export function ConfirmDialog({
         <h3 className={styles.title} id="confirm-title">
           {title}
         </h3>
-        {children}
+        <div className={styles.body}>{children}</div>
         <div className={styles.actions}>
-          <button type="button" className={styles.cancel} onClick={onCancel}>
+          <Button type="button" variant="secondary" onClick={onCancel}>
             {cancelLabel}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className={destructive ? styles.confirmDestructive : styles.confirm}
+            variant={destructive ? "dangerSolid" : "primary"}
             onClick={onConfirm}
             disabled={confirmDisabled}
           >
             {confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

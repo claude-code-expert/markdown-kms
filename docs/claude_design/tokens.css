@@ -1,0 +1,108 @@
+/* markdown-kms 리디자인 토큰 — globals.css 교체용
+   기존 변수명 체계 유지(값만 교체). 새로 추가된 변수는 (NEW) 표기.
+   테마 축 2개: data-theme(light|dark) × data-tone(cool|warm) (NEW: tone) */
+
+:root, [data-tone="cool"] {
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface-2: #eceff3;
+  --border: #e3e7ec;
+  --border-strong: #c9d0d9;
+  --text: #14171c;
+  --heading-text: var(--text);
+  --muted: #5c6672;
+  --dim: #94a0ae;
+  --accent: #2e5fe8;
+  --accent-strong: #2450c7;
+  --accent-weak: #ecf1fe;
+  --destructive: #d92d20;
+  --destructive-strong: #b42318;
+  --code-bg: #14171c;
+}
+
+[data-tone="warm"] {
+  --bg: #fdfcfa;
+  --surface: #f7f5f1;
+  --surface-2: #efece6;
+  --border: #e7e2d9;
+  --border-strong: #d3ccbf;
+  --text: #211d16;
+  --heading-text: var(--text);
+  --muted: #6e6759;
+  --dim: #a49c8d;
+  --accent: #3a55c9;
+  --accent-strong: #2f45a8;
+  --accent-weak: #ebeefa;
+  --destructive: #c93c2b;
+  --destructive-strong: #a83221;
+  --code-bg: #211d16;
+}
+
+[data-theme="dark"], [data-theme="dark"][data-tone="cool"] {
+  --bg: #0f1115;
+  --surface: #171a20;
+  --surface-2: #23262e;
+  --border: #23262e;
+  --border-strong: #3a3f4a;
+  --text: #c6cbd4;
+  --heading-text: #d7dbe2;
+  --muted: #9aa4b2;
+  --dim: #6a7382;
+  --accent: #8b7cf6;      /* 다크 accent = 보라 유지 (기존 아이덴티티) */
+  --accent-strong: #a294f8;
+  --accent-weak: #241f3d;
+  --destructive: #e5484d;
+  --destructive-strong: #ef7570;
+  --code-bg: #171a20;
+}
+
+[data-theme="dark"][data-tone="warm"] {
+  --bg: #16130f;
+  --surface: #1e1a15;
+  --surface-2: #2b261f;
+  --border: #2b261f;
+  --border-strong: #4a4335;
+  --text: #cfc8bc;
+  --heading-text: #ddd7cb;
+  --muted: #a49c8d;
+  --dim: #7a7365;
+  --accent: #a08df2;
+  --accent-strong: #b3a3f5;
+  --accent-weak: #2a2340;
+  --destructive: #e5484d;
+  --destructive-strong: #ef7570;
+  --code-bg: #1e1a15;
+}
+
+/* 타이포 — next/font로 IBM Plex Sans KR + IBM Plex Mono 로드 권장.
+   기존 레거시 변수명(--font-ibm-plex-sans/-mono)을 실제 폰트와 일치시키는 정리 겸함. */
+:root {
+  --font-sans: var(--font-ibm-plex-sans, 'IBM Plex Sans KR'), sans-serif;
+  --font-mono: var(--font-ibm-plex-mono, 'IBM Plex Mono'), monospace;
+
+  /* 크기 스케일 (NEW): 기존 11~28px 산발 → 8단계로 정리 */
+  --text-xs: 11px;    /* 힌트, 타임스탬프, 배지 */
+  --text-sm: 12px;    /* 버튼, 보조 라벨 */
+  --text-base: 13px;  /* UI 기본(트리, 리스트, 폼 입력) */
+  --text-md: 14px;    /* 미리보기 본문(=15px/1.65 유지해도 무방) */
+  --text-lg: 15px;    /* 섹션 소제목 */
+  --text-xl: 17px;    /* 페이지 제목(문서 제목 행, 휴지통/멤버 타이틀) */
+  --text-2xl: 21px;   /* 미리보기 h1 */
+  --text-3xl: 28px;   /* 랜딩 히어로급 */
+
+  /* spacing — 기존 값 유지 */
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 64px;
+
+  /* radius — 값 교체 */
+  --radius-sm: 6px;   /* 버튼, 인풋, 칩 */
+  --radius-md: 10px;  /* 카드, 모달, 드롭다운 */
+  --radius-lg: 14px;  /* 페이지급 패널 */
+
+  /* motion — 기존 유지 */
+  --duration-fast: 180ms; --duration-standard: 240ms; --duration-slow: 300ms;
+  --ease-fluid: cubic-bezier(0.36, 0.66, 0.6, 1);
+  --ease-elastic: cubic-bezier(0.42, 0, 0.58, 1.8);
+
+  --header-h: 52px;   /* 64px -> 52px */
+}

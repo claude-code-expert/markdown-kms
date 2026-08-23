@@ -1,0 +1,55 @@
+/* 목업(1a) 사이드바 하단 톤 세그먼트 — FolderTree.module.css .sidebar와 같은 40px
+   리듬 자리에 34px 높이로 얹힌다(ThemeToggle의 40px 단일 버튼 자리를 대체). */
+.row {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 var(--space-sm);
+  display: flex;
+  align-items: center;
+}
+
+.segment {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.item,
+.active {
+  flex: 1;
+  font-family: inherit;
+  font-size: var(--text-sm);
+  border: none;
+  border-radius: 5px;
+  padding: 4px 0;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-fluid),
+    color var(--duration-fast) var(--ease-fluid);
+}
+
+.item {
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+}
+
+.active {
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* 아이콘 전용 압축 모드(FolderTree.module.css .sidebar 기준) — "쿨 테마"/"웜 테마"
+   텍스트 세그먼트는 대응하는 아이콘이 없어 48px 폭에서 표현할 방법이 없다. 트리
+   행/휴지통/멤버처럼 라벨만 걷어내는 대신, 이 컨트롤은 통째로 숨긴다(톤 전환은
+   기본 사이드바 폭으로 넓혔을 때 하면 된다). */
+@container (max-width: 100px) {
+  .row {
+    display: none;
+  }
+}

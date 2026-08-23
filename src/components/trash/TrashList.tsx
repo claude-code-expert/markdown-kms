@@ -103,37 +103,43 @@ export function TrashList({ items, canRestore, canPermanentDelete }: TrashListPr
           삭제된 폴더와 문서가 여기 표시돼요.
         </p>
       )}
-      {items.map((item) => {
-        const Icon = item.type === "folder" ? Folder : FileText;
-        const name = item.name || "제목 없음";
-        const isRestoring = restoringId === item.id;
-        return (
-          <div key={`${item.type}-${item.id}`} className={styles.row}>
-            <Icon size={16} className={styles.icon} />
-            <span className={styles.name}>{name}</span>
-            <span className={styles.deletedAt}>{item.deletedAt ? formatDeletedAt(item.deletedAt) : ""}</span>
-            <div className={styles.actions}>
-              <Button
-                variant="secondary"
-                disabled={!canRestore || isRestoring}
-                onClick={() => handleRestore(item)}
-              >
-                {isRestoring ? "복원하는 중…" : "복원"}
-              </Button>
-              {!canRestore && <span className={styles.gateHint}>{RESTORE_GATE_HINT}</span>}
-              <Button
-                variant="danger"
-                disabled={!canPermanentDelete}
-                onClick={() => setDeleteTarget({ type: item.type, id: item.id, name })}
-              >
-                완전 삭제
-              </Button>
-              {!canPermanentDelete && <span className={styles.gateHint}>{PERMANENT_DELETE_GATE_HINT}</span>}
-            </div>
-            {restoreError?.id === item.id && <p className={styles.errorText}>{restoreError.message}</p>}
-          </div>
-        );
-      })}
+      {items.length > 0 && (
+        <div className={styles.list}>
+          {items.map((item) => {
+            const Icon = item.type === "folder" ? Folder : FileText;
+            const name = item.name || "제목 없음";
+            const isRestoring = restoringId === item.id;
+            return (
+              <div key={`${item.type}-${item.id}`} className={styles.row}>
+                <Icon size={15} className={styles.icon} />
+                <span className={styles.name}>{name}</span>
+                <span className={styles.deletedAt}>
+                  {item.deletedAt ? formatDeletedAt(item.deletedAt) : ""}
+                </span>
+                <div className={styles.actions}>
+                  <Button
+                    variant="secondary"
+                    disabled={!canRestore || isRestoring}
+                    onClick={() => handleRestore(item)}
+                  >
+                    {isRestoring ? "복원하는 중…" : "복원"}
+                  </Button>
+                  {!canRestore && <span className={styles.gateHint}>{RESTORE_GATE_HINT}</span>}
+                  <Button
+                    variant="danger"
+                    disabled={!canPermanentDelete}
+                    onClick={() => setDeleteTarget({ type: item.type, id: item.id, name })}
+                  >
+                    완전 삭제
+                  </Button>
+                  {!canPermanentDelete && <span className={styles.gateHint}>{PERMANENT_DELETE_GATE_HINT}</span>}
+                </div>
+                {restoreError?.id === item.id && <p className={styles.errorText}>{restoreError.message}</p>}
+              </div>
+            );
+          })}
+        </div>
+      )}
       {deleteTarget && (
         <ConfirmDialog
           open

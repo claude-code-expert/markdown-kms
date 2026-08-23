@@ -1,13 +1,14 @@
 .btn {
-  padding: 8px 16px;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
   font-family: inherit;
   transition:
     background-color var(--duration-fast) var(--ease-fluid),
+    color var(--duration-fast) var(--ease-fluid),
     transform var(--duration-fast) var(--ease-elastic);
 }
 
@@ -26,25 +27,60 @@
 }
 
 .secondary {
-  background: var(--bg);
-  color: var(--text);
+  background: none;
+  color: var(--muted);
   border-color: var(--border);
 }
 
 .secondary:hover:not(:disabled) {
-  background: var(--surface);
+  background: var(--surface-2);
 }
 
+/* 리디자인(PAGE-ANALYSIS.md §0-3): 위험 액션 "트리거" 버튼(목록/행의 삭제·거절·완전삭제
+   등)은 솔리드가 아니라 아웃라인 — 테두리는 destructive가 아니라 중립 border색, 글자만
+   destructive(목업에서 일관되게 확인). */
 .danger {
+  background: none;
+  color: var(--destructive);
+  border-color: var(--border);
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+/* ConfirmDialog의 최종 확인 버튼 전용 — 파괴적 액션이 실제로 실행되는 그 순간만
+   솔리드로 무게감을 준다(§0-3). Button.tsx 소비자 중 ConfirmDialog만 이 variant를 쓴다. */
+.dangerSolid {
   background: var(--destructive);
   color: #fff;
 }
 
-.danger:hover:not(:disabled) {
-  background: #b91c1c;
+.dangerSolid:hover:not(:disabled) {
+  background: var(--destructive-strong);
+}
+
+/* 대시보드 "신청"·멤버 "초대" 등 accent 액션이지만 목록/행 안이라 무게를 낮춘 아웃라인
+   (PAGE-ANALYSIS.md §1). border는 secondary와 같은 중립색, 글자만 accent. */
+.accentOutline {
+  background: none;
+  color: var(--accent);
+  border-color: var(--border-strong);
+}
+
+.accentOutline:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 
 .btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* docs/design.md §2 — Card.module.css와 동일한 squircle 점진 향상. 미지원 브라우저는
+   위 border-radius 폴백 그대로, 시각 회귀 없음. */
+@supports (corner-shape: squircle) {
+  .btn {
+    corner-shape: squircle;
+  }
 }
