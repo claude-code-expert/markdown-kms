@@ -139,12 +139,12 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
               ctx.onToggle(node.id);
             }}
           >
-            <ChevronRight size={12} className={isOpen ? styles.chevronOpen : undefined} />
+            <ChevronRight size={15} className={isOpen ? styles.chevronOpen : undefined} />
           </button>
         ) : (
           <span className={styles.chevronSpace} />
         )}
-        <Folder size={15} className={styles.folderIcon} />
+        <Folder size={18} className={styles.folderIcon} />
         {isRenaming ? (
           <RenameInput
             initialName={node.name}
@@ -164,7 +164,7 @@ export function FolderTreeNode({ node, depth, ctx }: FolderTreeNodeProps) {
               ctx.onOpenMenu(event, node.id, node.name);
             }}
           >
-            <MoreHorizontal size={16} />
+            <MoreHorizontal size={19} />
           </button>
         )}
         {isPending && <span className={styles.spinner} aria-hidden="true" />}
@@ -280,7 +280,7 @@ function CreateInlineRow({
   return (
     <div className={styles.node} style={{ paddingLeft }}>
       <span className={styles.chevronSpace} />
-      <Folder size={15} className={styles.folderIcon} />
+      <Folder size={18} className={styles.folderIcon} />
       <input
         className={styles.inlineInput}
         placeholder="새 폴더"

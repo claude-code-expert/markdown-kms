@@ -7,6 +7,7 @@ import { workspace } from "@/db/schema";
 import { ForbiddenError, requireRole } from "@/lib/rbac";
 import { getWorkspaceFolders } from "@/lib/closure";
 import { getWorkspaceDocuments } from "@/lib/documents";
+import { listMembershipsForUser } from "@/lib/db-membership";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { WorkspaceShell } from "@/components/layout/WorkspaceShell";
 import styles from "./layout.module.css";
@@ -23,8 +24,9 @@ interface WorkspaceLayoutProps {
 export default async function WorkspaceLayout({ children, params }: WorkspaceLayoutProps) {
   const { wsId } = await params;
 
+  let userId: string;
   try {
-    await requireRole(wsId, "VIEWER");
+    ({ userId } = await requireRole(wsId, "VIEWER"));
   } catch (err) {
     if (err instanceof ForbiddenError) notFound();
     throw err;
@@ -33,7 +35,11 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
   const [ws] = await db.select({ name: workspace.name }).from(workspace).where(eq(workspace.id, wsId));
   if (!ws) notFound();
 
-  const [folders, documents] = await Promise.all([getWorkspaceFolders(wsId), getWorkspaceDocuments(wsId)]);
+  const [folders, documents, memberships] = await Promise.all([
+    getWorkspaceFolders(wsId),
+    getWorkspaceDocuments(wsId),
+    listMembershipsForUser(userId),
+  ]);
 
   // no-FOUC: RSC가 쿠키로 초기 폭/접힘 상태를 읽어 첫 렌더부터 반영한다(splitRatio/layoutMode와
   // 동일한 관례, EditorPreviewLayout 참고). 값이 없거나 손상됐으면 기본값(236px, 펼침 —
@@ -53,6 +59,8 @@ export default async function WorkspaceLayout({ children, params }: WorkspaceLay
           folders={folders}
           documents={documents}
           workspaceId={wsId}
+          workspaceName={ws.name}
+          workspaces={memberships}
           initialWidth={initialWidth}
           initialCollapsed={initialCollapsed}
         >

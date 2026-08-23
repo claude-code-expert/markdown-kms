@@ -61,8 +61,8 @@
 }
 
 .chevron {
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -80,7 +80,7 @@
 }
 
 .chevronSpace {
-  width: 12px;
+  width: 15px;
   flex-shrink: 0;
 }
 
@@ -103,8 +103,10 @@
   color: inherit;
 }
 
+/* 사용자 요청 — 트리 행 폰트를 전역 --text-base(13px)보다 3px 키운다. 전역 토큰은 폼·리스트
+   등 다른 화면과 공유라(globals.css 주석) 여기서 var()가 아닌 리터럴 값으로 국소 override. */
 .name {
-  font-size: var(--text-base);
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -116,8 +118,8 @@
 }
 
 .kebab {
-  width: 24px;
-  height: 24px;
+  width: 27px;
+  height: 27px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -144,7 +146,7 @@
   border: none;
   border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: var(--text-base);
+  font-size: 16px;
   padding: 2px 4px;
   font-family: inherit;
 }

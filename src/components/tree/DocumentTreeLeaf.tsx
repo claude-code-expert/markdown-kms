@@ -65,7 +65,7 @@ export function DocumentTreeLeaf({
       >
         <span className={styles.chevronSpace} />
         <Link href={href} className={styles.docLink}>
-          <FileText size={15} className={styles.folderIcon} />
+          <FileText size={18} className={styles.folderIcon} />
           <span className={styles.name}>{title}</span>
         </Link>
         <button
@@ -77,7 +77,7 @@ export function DocumentTreeLeaf({
             onOpenMenu(event, doc.id, title);
           }}
         >
-          <MoreHorizontal size={16} />
+          <MoreHorizontal size={19} />
         </button>
       </div>
       {error && <p className={styles.error}>{error}</p>}

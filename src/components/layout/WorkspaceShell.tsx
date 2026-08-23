@@ -15,6 +15,7 @@
 import { useRef, useState, type ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { FolderTree } from "@/components/tree/FolderTree";
+import type { WorkspaceOption } from "@/components/tree/WorkspaceSwitcher";
 import type { DocumentRow, FolderRow } from "@/components/tree/tree-utils";
 import styles from "./WorkspaceShell.module.css";
 
@@ -32,6 +33,8 @@ interface WorkspaceShellProps {
   folders: FolderRow[];
   documents: DocumentRow[];
   workspaceId: string;
+  workspaceName: string;
+  workspaces: WorkspaceOption[];
   initialWidth?: number;
   initialCollapsed?: boolean;
   children: ReactNode;
@@ -41,6 +44,8 @@ export function WorkspaceShell({
   folders,
   documents,
   workspaceId,
+  workspaceName,
+  workspaces,
   initialWidth = 236,
   initialCollapsed = false,
   children,
@@ -101,7 +106,13 @@ export function WorkspaceShell({
             className={styles.sidebarInner}
             style={{ width, visibility: collapsed ? "hidden" : "visible" }}
           >
-            <FolderTree folders={folders} documents={documents} workspaceId={workspaceId} />
+            <FolderTree
+              folders={folders}
+              documents={documents}
+              workspaceId={workspaceId}
+              workspaceName={workspaceName}
+              workspaces={workspaces}
+            />
           </div>
         </div>
         {!collapsed && (

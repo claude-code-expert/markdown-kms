@@ -25,6 +25,7 @@ import { FolderTreeNode, type FolderTreeNodeCtx } from "./FolderTreeNode";
 import { FolderContextMenu, type FolderMenuItem } from "./FolderContextMenu";
 import { MoveFolderModal } from "./MoveFolderModal";
 import { SearchBox, SearchResultsList, useSearchResults } from "./SearchBox";
+import { WorkspaceSwitcher, type WorkspaceOption } from "./WorkspaceSwitcher";
 import { ToneToggle } from "@/components/layout/ToneToggle";
 import nodeStyles from "./FolderTreeNode.module.css";
 import styles from "./FolderTree.module.css";
@@ -43,6 +44,8 @@ interface FolderTreeProps {
   folders: FolderRow[];
   documents: DocumentRow[];
   workspaceId: string;
+  workspaceName: string;
+  workspaces: WorkspaceOption[];
 }
 
 interface MenuState {
@@ -63,7 +66,7 @@ interface DocMenuState {
 // FolderTreeNode stays presentational, wired via the FolderTreeNodeCtx bundle. All mutations
 // are server-confirmed only (router.refresh() after the fetch resolves — no optimistic UI,
 // CONTEXT.md).
-export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps) {
+export function FolderTree({ folders, documents, workspaceId, workspaceName, workspaces }: FolderTreeProps) {
   const router = useRouter();
   const pathname = usePathname();
   const tree = buildTree(folders);
@@ -366,6 +369,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
 
   return (
     <nav className={styles.sidebar} aria-label="폴더 트리">
+      <WorkspaceSwitcher workspaceId={workspaceId} workspaceName={workspaceName} workspaces={workspaces} />
       <SearchBox
         query={search.query}
         onQueryChange={search.setQuery}
@@ -381,7 +385,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 폴더"
             onClick={() => setCreatingRoot(true)}
           >
-            <FolderPlus size={17} />
+            <FolderPlus size={20} />
           </button>
           <button
             type="button"
@@ -389,7 +393,7 @@ export function FolderTree({ folders, documents, workspaceId }: FolderTreeProps)
             aria-label="새 문서"
             onClick={() => setCreatingDocumentRoot(true)}
           >
-            <FilePlus2 size={17} />
+            <FilePlus2 size={20} />
           </button>
         </div>
       </div>
@@ -632,7 +636,7 @@ function CreateDocumentRootInput({
   return (
     <div>
       <div className={styles.node} style={{ paddingLeft: 8 }}>
-        <FileText size={16} className={nodeStyles.folderIcon} />
+        <FileText size={19} className={nodeStyles.folderIcon} />
         <input
           className={styles.inlineInput}
           placeholder="새 문서"

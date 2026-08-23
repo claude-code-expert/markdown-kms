@@ -151,12 +151,14 @@
   flex-shrink: 0;
 }
 
+/* FolderTreeNode.module.css의 .inlineInput과 같은 이유(16px 국소 override) — 루트 레벨
+   생성 입력(CreateRootInput/CreateDocumentRootInput)도 트리 행과 같은 폰트 크기여야 한다. */
 .inlineInput {
   flex: 1;
   border: none;
   border-radius: var(--radius-sm);
   outline: 1px solid var(--accent);
-  font-size: var(--text-base);
+  font-size: 16px;
   padding: 2px 4px;
   font-family: inherit;
 }

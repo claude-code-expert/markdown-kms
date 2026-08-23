@@ -1096,7 +1096,7 @@ Continue the conversation from where it left off without asking the user any fur
 
 ### 135. 2026-08-17
 
-아니 버튼만 삭제해고 기존에 있는 내용은 남겨줘야지...
+아니 버튼만 삭제해고 기존에 있는 내용은 남겨줘야지
 
 ### 136. 2026-08-17
 
@@ -1107,3 +1107,18 @@ Continue the conversation from where it left off without asking the user any fur
 
 마크다운 기반 지식 관리 시스템 Markdown KMS 이 부분도 이미지화 하고 애니메이션 타이핑 효과줘. 더 진하게 표기해
 
+### 138. 2026-08-17
+
+회원 가입, 입력 폼 값 미입력시 밸리데이션이 기본값인거 같은데 @"docs/claude_design/Redesign Options.dc.html" 에 폼들 참고해서 경고 플레이스 홀더로 변경해
+
+### 139. 2026-08-17
+
+[<nav class="FolderTree_s..." aria-label="폴더 트리" /> in FolderTree (at src/components/tree/FolderTree.tsx:424:87) in WorkspaceShell (at src/components/layout/WorkspaceShell.tsx:96:114) in WorkspaceLayout (at src/app/(main)/w/[wsId]/layout.tsx:52:9) selector: [aria-label="폴더 트리"]] 이 영역 좌측 셀렉트 박스에 현재 워크스페이스명과 드롭다운으로 워크스페이스 선택할 수 있는 기능 추가하고, 검색 기능은 남은 영역에 위치하게 해
+
+### 140. 2026-08-17
+
+원래대로 다시 되돌려. 어무 어글리해
+
+### 141. 2026-08-17
+
+[<div class="SearchBox_wr..." /> in SearchBox (at src/components/tree/SearchBox.tsx:101:94) in FolderTree (at src/components/tree/FolderTree.tsx:428:88) in WorkspaceShell (at src/components/layout/WorkspaceShell.tsx:96:114) selector: [aria-label="폴더 트리"]] 검색 영역 위에 드롭다운으로 현재 워크스페이스와 다른 워크스페이스를 선택하여 이동할 수 있도록 해줘
