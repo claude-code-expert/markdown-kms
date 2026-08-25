@@ -55,6 +55,20 @@ Neon 콘솔의 "Pooled connection" 토글을 켜고 끄면 각각의 문자열�
 
 > **함정 ①** — Neon 통합은 env를 자동 주입하는데 이름에 프로젝트명 프리픽스가 붙는다(`markdownkms_DATABASE_URL`). 코드는 plain `DATABASE_URL`만 읽으므로, 자동 주입만 믿으면 빌드가 죽는다. 아래 2단계에서 plain 이름으로 **직접 추가**해야 한다.
 
+> **함정 ②** — DB 연결 도중 아래 에러가 뜨면, 프로젝트에 같은 이름의 env가 **이미 있어서** 통합이 덮어쓰기를 거부한 것이다.
+>
+> ```
+> This project already has an existing environment variable with name DATABASE_URL in one of the chosen environments
+> ```
+>
+> 통합이 주입하는 이름은 `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `PGHOST`, `PGUSER`, `PGDATABASE`, `PGPASSWORD` 여섯 개다. 선택한 환경(Production/Preview/Development) 중 **한 곳에라도** 겹치는 이름이 있으면 막힌다.
+>
+> 해결: Settings → Environment Variables에서 겹치는 항목을 **삭제하거나 이름을 바꾼 뒤** 연결을 재시도한다. 이전에 남은 Neon 통합이 원인이면 그 통합 자체를 제거하면 변수도 함께 지워진다.
+>
+> 순서를 뒤집는 게 더 편하다 — 2단계에서 `DATABASE_URL`을 수동 등록하기 **전에** DB 연결을 먼저 끝내면 이 충돌이 아예 안 난다.
+
+연결이 끝나면 `DATABASE_URL`은 통합이 관리하는 변수가 된다. 이때부터 Settings 화면에서 그 항목의 값을 손으로 못 고친다 — 편집을 누르면 Storage(Neon) 화면으로 넘어간다. 값을 직접 쥐고 싶으면 통합을 쓰지 말고 Neon 콘솔에서 pooled 문자열을 복사해 2단계처럼 수동 등록한다(대신 비밀번호 로테이션 자동 동기화는 없어진다).
+
 앱 코드는 pooled 엔드포인트를 전제로 `postgres(url, { prepare: false })`로 접속한다(PgBouncer transaction mode는 prepared statement를 보장하지 않음). direct 연결에서도 안전한 설정이라 그대로 두면 된다.
 
 ---
@@ -89,7 +103,19 @@ openssl rand -base64 32
 https://<프로젝트명>.vercel.app
 ```
 
-**끝에 슬래시를 붙이지 않는다.** 워크스페이스 초대 링크의 origin으로 쓰이며(`src/app/api/workspaces/[id]/invitations/route.ts:65`), 없으면 초대 API가 `AUTH_URL (or NEXTAUTH_URL) is not configured`로 500을 낸다. 도메인을 아직 모르면 일단 배포하고 도메인 확정 후 추가한 뒤 **재배포**한다.
+**TLD는 `.app`이다. `.com`이 아니다.** Vercel 배포 도메인은 `*.vercel.app`이고, `*.vercel.com`은 이 프로젝트와 무관한 별개 도메인이라 그대로 404가 난다. 오타가 나면 로그아웃이 깨진다 — `SiteHeader.tsx:29`의 `signOut({ redirectTo: "/" })`는 상대 경로라 Auth.js가 `AUTH_URL` origin에 붙여 절대 URL을 만들기 때문이다. 로그인·회원가입은 리다이렉트 origin을 타지 않아 멀쩡해 보이므로, 로그아웃에서만 증상이 드러난다.
+
+의심되면 추측하지 말고 확인한다:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -I https://<프로젝트명>.vercel.app/
+```
+
+`200`이 나오는 쪽이 맞는 도메인이다. 브라우저 강력 새로고침으로는 절대 해결되지 않는다 — 캐시가 아니라 잘못된 origin으로 나가는 것이다.
+
+**끝에 슬래시를 붙이지 않는다.** 워크스페이스 초대 링크의 origin으로도 쓰이며(`src/app/api/workspaces/[id]/invitations/route.ts:65`), 없으면 초대 API가 `AUTH_URL (or NEXTAUTH_URL) is not configured`로 500을 낸다. 도메인을 아직 모르면 일단 배포하고 도메인 확정 후 추가한 뒤 **재배포**한다.
+
+값을 고친 뒤에는 반드시 재배포하고, 초대 링크도 한 번 재발급해 origin이 정상인지 확인한다(깨진 도메인으로 이미 나간 링크는 죽은 링크다).
 
 ---
 
@@ -132,6 +158,9 @@ curl -I https://<도메인>/api/auth/csrf
 2. **env 변경은 재배포해야 반영된다.** 기존 배포에는 적용되지 않는다. Deployments 탭 → 최신 배포 → `⋯` → **Redeploy**.
 3. **`AUTH_SECRET`을 Sensitive로 등록하면 값을 다시 읽을 수 없다.** 값이 의심될 때 확인할 방법이 없으므로 `vercel env rm AUTH_SECRET production` → 재등록 → 재배포가 유일한 경로다.
 4. **DB 시드 누락** — 마이그레이션만 돌리고 시드를 건너뛰면 회원가입이 전부 실패한다.
+5. **env를 먼저 넣고 DB를 연결하면 이름 충돌로 막힌다.** `DATABASE_URL` 수동 등록 → Neon 연결 순서면 `already has an existing environment variable` 에러가 난다. DB 연결을 먼저 하거나, 겹치는 변수를 지우고 재시도할 것 (1단계 함정 ② 참조).
+6. **통합이 주입한 변수는 손으로 못 고친다.** 편집을 누르면 Storage 화면으로 넘어간다. 값 교체는 통합 쪽에서 하거나, 통합을 떼고 수동 등록으로 전환해야 한다.
+7. **`AUTH_URL`의 `.app`을 `.com`으로 쓴다.** 로그아웃만 404가 나면 십중팔구 이것이다. 브라우저 캐시 문제로 오인하기 쉬우니 `curl -I`로 도메인부터 확인할 것 (2단계 ③ 참조).
 
 ---
 
