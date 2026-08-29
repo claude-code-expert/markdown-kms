@@ -25,6 +25,7 @@ import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import type { ReactElement } from "react";
 import type { Root, Nodes } from "hast";
 import { remarkGfmSubset } from "./remark-gfm-subset";
+import { emptyImageToText } from "./empty-image-to-text";
 import { schema } from "./schema";
 
 // `breaks: true` inserts remark-breaks (soft line ending -> hard <br>) BEFORE remark-rehype,
@@ -107,14 +108,19 @@ export const markdownProcessorPreSanitize = {
   },
 };
 
+// emptyImageToText는 sanitize **뒤**에 온다 — sanitize가 허용되지 않은 프로토콜(javascript: 등)의
+// src를 떼어내면 그 img도 빈 src가 되므로, 정리된 결과를 보고 판단해야 둘 다 잡힌다.
+// 두 렌더 fork에 동일하게 적용한다(CLAUDE.md: 미리보기·프레젠테이션이 같은 파이프라인을 공유).
 export const markdownProcessor = baseProcessor({ breaks: true })
   .use(rehypeRaw)
   .use(rehypeSanitize, schema)
+  .use(emptyImageToText)
   .use(rehypeStringify);
 
 const markdownProcessorReact = baseProcessor({ breaks: true })
   .use(rehypeRaw)
   .use(rehypeSanitize, schema)
+  .use(emptyImageToText)
   .use(rehypeReact, { Fragment, jsx, jsxs });
 
 export function renderMarkdown(markdown: string): ReactElement {
