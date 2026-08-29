@@ -1148,3 +1148,20 @@ Continue the conversation from where it left off without asking the user any fur
 이제 회원 가입/로그인에 구글 oauth를 적용할거야 
 먼저 feature/oauth 브랜치를 만들고 구글을 이용한 회원 가입, 구글 로그인 연동 코드를 만들고 이 기능을 local, production 배포(mingleup.net) 까지 할 수 있도록 가이드문서 단계별 설명 먼저 기술해서 md 만들어주고  관련 코드 작업 진행해줘
 
+### 181. 2026-08-29
+
+현재 개발 작업 테스트 로컬이 완료되었어 main에 커밋하고 PR 만들어줘
+
+### 182. 2026-08-29
+
+이제 resend 를 이용한 이메일 인증 절차를 추가할 거야 
+회원가입 시 email_verified=false로 저장 후 인증 코드 발송하는 프로세스이고 https://resend.com 에서 mingleup.net 도메인을 이용해서 verify 이메일을 전송한 뒤 인증 메일의 값을 입력 하여 회원 가입시 인증이후 가입이 되어야 해. 개발 계획을 수립한 뒤 필요한 설정들과  단계별 개발 진행해줘
+
+### 183. 2026-08-29
+
+.env.local에 RESEND_API_KEY 와 MAIL_FROM 키를 세팅 했으니 로컬에서 회원 가입시 메일 전송 테스트를 진행해줘
+
+### 184. 2026-08-29
+
+현재 메일 주소로 아직 인증메일이 안왔는데 테스트 메일 다시 보내줘
+
