@@ -144,6 +144,33 @@ DATABASE_URL='postgresql://user:pw@ep-xxxx.ap-southeast-1.aws.neon.tech/neondb?s
 
 pg_trgm 검색 인덱스는 마이그레이션 `0006`에 포함돼 있어 위 명령으로 함께 생성된다.
 
+### 이건 최초 1회가 아니다 — 마이그레이션이 추가될 때마다 다시 밟아야 한다
+
+`git push` → Vercel 자동 배포는 **코드만** 옮긴다. 새 마이그레이션을 적용하지 않은 채 배포하면 새 컬럼을 읽는 코드가 그 컬럼이 없는 DB보다 먼저 도착한다.
+
+2026-08-29에 실제로 그렇게 터졌다. `0009`(이메일 인증)를 안 돌린 상태로 배포되어 가입이 전부 500이 났다.
+
+```
+signup failed Error: Failed query: select "id", "email_verified" from "user" ...
+[cause]: column "email_verified" does not exist   ← PG 42703
+```
+
+**증상이 `column "..." does not exist`면 항상 이것이다.** env도 코드도 아니고 마이그레이션 누락이다. 위 1) 명령을 돌리면 끝난다.
+
+### 자동화 (권장)
+
+이 단계를 사람이 기억하지 않게 하려면 Vercel에 env를 하나 더 넣는다.
+
+| 키 | 값 | Environment |
+|---|---|---|
+| `MIGRATE_DATABASE_URL` | Neon **unpooled** 문자열 | **Production만** |
+
+`package.json`의 `vercel-build`가 `next build` 앞에서 `scripts/migrate-on-build.mjs`를 부르고, 그 스크립트가 이 변수가 있을 때만 마이그레이션을 적용한다. 마이그레이션이 실패하면 빌드가 중단되어 스키마를 앞서가는 코드가 배포되지 않는다.
+
+Production에만 넣는 이유는 preview 배포가 프로덕션 DB에 DDL을 치지 않게 하기 위함이다. 변수가 없는 환경(로컬·preview·다른 개발자)의 빌드는 이 스크립트가 있기 전과 완전히 동일하게 동작한다.
+
+`DATABASE_URL`(pooled)과 값이 다르다는 점에 주의한다 — DDL은 PgBouncer를 통과하지 못하므로 반드시 unpooled 쪽이다(1단계 표 참조).
+
 ---
 
 ## 4단계 — 확인
@@ -221,6 +248,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -I https://example.com/api/auth/csrf
 2. **env 변경은 재배포해야 반영된다.** 기존 배포에는 적용되지 않는다. Deployments 탭 → 최신 배포 → `⋯` → **Redeploy**.
 3. **`AUTH_SECRET`을 Sensitive로 등록하면 값을 다시 읽을 수 없다.** 값이 의심될 때 확인할 방법이 없으므로 `vercel env rm AUTH_SECRET production` → 재등록 → 재배포가 유일한 경로다.
 4. **DB 시드 누락** — 마이그레이션만 돌리고 시드를 건너뛰면 회원가입이 전부 실패한다.
+4-1. **새 마이그레이션을 안 돌리고 배포한다.** 최초 1회로 끝나는 일이 아니다. `column "..." does not exist`(42703)로 500이 나면 항상 이것이다. `MIGRATE_DATABASE_URL`을 등록해 자동화하는 쪽을 권장한다 (3단계 참조).
 5. **env를 먼저 넣고 DB를 연결하면 이름 충돌로 막힌다.** `DATABASE_URL` 수동 등록 → Neon 연결 순서면 `already has an existing environment variable` 에러가 난다. DB 연결을 먼저 하거나, 겹치는 변수를 지우고 재시도할 것 (1단계 함정 ② 참조).
 6. **통합이 주입한 변수는 손으로 못 고친다.** 편집을 누르면 Storage 화면으로 넘어간다. 값 교체는 통합 쪽에서 하거나, 통합을 떼고 수동 등록으로 전환해야 한다.
 7. **`AUTH_URL`의 `.app`을 `.com`으로 쓴다.** 로그아웃만 404가 나면 십중팔구 이것이다. 브라우저 캐시 문제로 오인하기 쉬우니 `curl -I`로 도메인부터 확인할 것 (2단계 ③ 참조).

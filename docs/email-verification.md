@@ -165,7 +165,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST https://mingleup.net/api/auth/v
 2. **도메인 검증 전에 실제 도메인으로 보낸다.** Resend가 `not_allowed`로 거부한다. 검증이 끝날 때까지는 `MAIL_FROM=onboarding@resend.dev` (2단계 함정 ④).
 3. **가비아 호스트에 도메인을 중복 입력한다.** `send.mingleup.net`이 아니라 `send`다 (1단계 함정 ②).
 4. **MX 값 끝점 누락.** 값 뒤에 도메인이 한 번 더 붙어 등록되고 영원히 검증이 안 된다 (1단계 함정 ③).
-5. **마이그레이션을 안 돌린다.** `column "email_verified" does not exist`로 가입이 전부 500이다 (3단계).
+5. **마이그레이션을 안 돌린다.** `column "email_verified" does not exist`(PG `42703`)로 가입이 전부 500이다 (3단계). **2026-08-29 프로덕션에서 실제로 발생했다** — 코드 머지 5분 뒤 배포는 됐는데 `0009`가 적용되지 않아 가입이 전부 죽었다. `MIGRATE_DATABASE_URL` 등록으로 자동화하는 방법은 `connect.md` 3단계 참조.
 6. **백필 줄을 지우고 마이그레이션한다.** 기존 가입자 전원이 로그인 불가로 잠긴다. 이미 그렇게 됐다면 `UPDATE "user" SET email_verified = true WHERE created_at < '<배포시각>'`으로 복구한다.
 7. **env만 바꾸고 재배포를 안 한다.** `connect.md`와 같은 항목이다.
 8. **`.env.local`만 고치고 dev 서버를 안 껐다.** env는 기동 시점에 한 번만 읽힌다.
