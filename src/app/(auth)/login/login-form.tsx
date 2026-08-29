@@ -10,11 +10,11 @@ import styles from "./page.module.css";
 // T-03-01: a single generic message — never branch by cause (no such user vs. wrong password).
 const LOGIN_ERROR = "이메일 또는 비밀번호가 올바르지 않습니다.";
 
-export function LoginForm() {
+export function LoginForm({ initialError }: { initialError?: string }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError ?? null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -68,9 +68,13 @@ export function LoginForm() {
 
       <FormSubmit disabled={submitting}>{submitting ? "로그인하는 중…" : "로그인"}</FormSubmit>
 
-      {/* UI-SPEC Copywriting Contract "Google 로그인 placeholder" — 비활성
-          전용, onClick/signIn 프로바이더 호출 없음(Phase 8 descope 유지). */}
-      <button type="button" disabled className={styles.googleButton}>
+      {/* FR-A2. redirect: false 를 쓰는 위 credentials 경로와 달리 여기선 브라우저가 Google로
+          떠나야 하므로 리다이렉트를 막지 않는다. redirectTo 가 v5 옵션이다(callbackUrl 은 deprecated). */}
+      <button
+        type="button"
+        className={styles.googleButton}
+        onClick={() => signIn("google", { redirectTo: "/dashboard" })}
+      >
         Google로 계속하기
       </button>
     </Form>
