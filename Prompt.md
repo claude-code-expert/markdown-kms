@@ -1139,3 +1139,12 @@ Continue the conversation from where it left off without asking the user any fur
 
 이제 가비아에 있는 내 도메인을 버셀에 연결할 예정이야 @docs/connect.md 에서 기술한 방식과 같이 어떻게 진행해야 하는지 단계별로 정리해줘
 
+### 179. 2026-08-29
+
+/clear
+
+### 180. 2026-08-29
+
+이제 회원 가입/로그인에 구글 oauth를 적용할거야 
+먼저 feature/oauth 브랜치를 만들고 구글을 이용한 회원 가입, 구글 로그인 연동 코드를 만들고 이 기능을 local, production 배포(mingleup.net) 까지 할 수 있도록 가이드문서 단계별 설명 먼저 기술해서 md 만들어주고  관련 코드 작업 진행해줘
+
