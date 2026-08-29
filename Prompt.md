@@ -1165,3 +1165,7 @@ Continue the conversation from where it left off without asking the user any fur
 
 현재 메일 주소로 아직 인증메일이 안왔는데 테스트 메일 다시 보내줘
 
+### 185. 2026-08-29
+
+현재 이메일 소스 변경사항 feature/email 브랜치에 커밋, 푸시하고 main에 PR 만들어줘
+
