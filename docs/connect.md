@@ -2,7 +2,7 @@
 
 markdown-kms를 Vercel에 처음 배포할 때 어디서 무엇을 입력하는지 순서대로 정리한 문서. 이미 배포된 프로젝트를 재구성하거나 새 환경(스테이징 등)을 만들 때도 동일하게 적용된다.
 
-관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지 교체 지점은 `TRD.md` §8.
+관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지 교체 지점은 `TRD.md` §8, Google 로그인 연동은 `oauth-google.md`.
 
 ---
 
@@ -15,6 +15,8 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 | `DATABASE_URL` | Neon **pooled** 연결 문자열 | Neon 콘솔 Connection Details |
 | `AUTH_SECRET` | 랜덤 32바이트 base64 | `openssl rand -base64 32` |
 | `AUTH_URL` | `https://<도메인>` | 배포 후 확정되는 프로덕션 도메인 |
+
+Google 로그인까지 켤 거면 `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` 2개가 더 필요하다. 이 문서 범위 밖이고 절차가 따로 있다 — `oauth-google.md` 참조. 없어도 이메일+비밀번호 로그인은 정상 동작한다.
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
