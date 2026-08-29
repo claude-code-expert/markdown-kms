@@ -120,9 +120,13 @@ export function SignupForm() {
 
       <FormSubmit disabled={submitting}>{submitting ? "가입하는 중…" : "가입하기"}</FormSubmit>
 
-      {/* UI-SPEC Copywriting Contract "Google 로그인 placeholder" — 비활성
-          전용, onClick/signIn 프로바이더 호출 없음(Phase 8 descope 유지). */}
-      <button type="button" disabled className={styles.googleButton}>
+      {/* FR-A2. 가입 폼이지만 로그인과 같은 호출이다 — Google 경로에는 별도 가입 단계가 없고,
+          처음 보는 이메일이면 auth.ts의 jwt 콜백이 계정을 만들어 기본 워크스페이스에 넣는다. */}
+      <button
+        type="button"
+        className={styles.googleButton}
+        onClick={() => signIn("google", { redirectTo: "/dashboard" })}
+      >
         Google로 계속하기
       </button>
     </Form>

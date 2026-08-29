@@ -2,7 +2,7 @@
 
 markdown-kms를 Vercel에 처음 배포할 때 어디서 무엇을 입력하는지 순서대로 정리한 문서. 이미 배포된 프로젝트를 재구성하거나 새 환경(스테이징 등)을 만들 때도 동일하게 적용된다.
 
-관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지 교체 지점은 `TRD.md` §8.
+관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지 교체 지점은 `TRD.md` §8, Google 로그인 연동은 `oauth-google.md`.
 
 ---
 
@@ -15,6 +15,8 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 | `DATABASE_URL` | Neon **pooled** 연결 문자열 | Neon 콘솔 Connection Details |
 | `AUTH_SECRET` | 랜덤 32바이트 base64 | `openssl rand -base64 32` |
 | `AUTH_URL` | `https://<도메인>` | 배포 후 확정되는 프로덕션 도메인 |
+
+Google 로그인까지 켤 거면 `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` 2개가 더 필요하다. 이 문서 범위 밖이고 절차가 따로 있다 — `oauth-google.md` 참조. 없어도 이메일+비밀번호 로그인은 정상 동작한다.
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
@@ -152,6 +154,62 @@ curl -I https://<도메인>/api/auth/csrf
 
 ---
 
+## 5단계 — 커스텀 도메인 연결 (가비아)
+
+`*.vercel.app` 대신 보유 도메인을 붙이는 절차. 4단계까지 정상 동작하는 상태에서 시작한다.
+
+**전제**: 도메인의 네임서버가 가비아여야 한다. 다른 곳(Cloudflare 등)을 쓰고 있으면 가비아 DNS 관리툴에 뭘 넣어도 적용되지 않는다. My가비아 → 도메인 관리에서 네임서버가 `ns.gabia.co.kr` 계열인지 먼저 확인한다.
+
+### ① Vercel에 도메인 등록
+
+프로젝트 → **Settings → Domains → Add Domain** → 도메인 입력.
+
+apex(`example.com`)를 넣으면 Vercel이 `www.example.com`도 같이 추가할지 묻는다. 둘 다 등록하고 **한쪽을 primary로, 다른 쪽은 리다이렉트**로 두는 게 정석이다. 어느 쪽을 primary로 하든 앱 동작은 같지만, 뒤의 ④에서 `AUTH_URL`에 넣을 값이 primary 하나로 고정된다.
+
+### ② 도메인 카드의 값 복사
+
+등록 직후 도메인 카드에 넣어야 할 DNS 레코드가 표시된다. **이 화면의 값을 그대로 쓴다.**
+
+블로그에서 흔히 보는 `76.76.21.21`과 `cname.vercel-dns.com`을 그대로 복사하면 안 된다. A 레코드 IP도(신규 프로젝트는 `216.198.79.1` 계열을 받는다) CNAME 타깃도(`d1d4fc829fe7bc7c.vercel-dns-017.com` 같은 프로젝트 고유값) 프로젝트마다 다르고, Vercel의 검증은 **정확히 그 값**이 있는지를 본다. 값이 다르면 영원히 `Invalid Configuration`에서 멈춘다.
+
+### ③ 가비아에 레코드 입력
+
+My가비아 → 도메인 목록 → 해당 도메인 **관리툴** → DNS 정보 → **설정 → 레코드 수정 → 레코드 추가**.
+
+| 타입 | 호스트 | 값/위치 |
+|---|---|---|
+| `A` | `@` | 도메인 카드에 표시된 IP |
+| `CNAME` | `www` | 도메인 카드에 표시된 CNAME 타깃 + **끝에 마침표** |
+
+가비아는 CNAME 값 끝에 마침표를 요구한다. `xxxx.vercel-dns-017.com.` 처럼 끝점을 찍지 않으면 도메인 뒤에 자기 도메인이 한 번 더 붙어 엉뚱한 호스트로 등록된다.
+
+apex(`@`)에는 A 레코드만 넣는다. `@`에 CNAME을 넣으면 안 되고, 가비아도 `@`와 `www` 양쪽에 CNAME을 동시에 두는 것을 막는다.
+
+저장 후 전파까지 보통 10분~1시간. Vercel 도메인 카드가 **Valid Configuration**으로 바뀌면 인증서(Let's Encrypt)가 자동 발급된다.
+
+### ④ `AUTH_URL` 교체 + 재배포 (빠뜨리면 로그아웃이 깨진다)
+
+DNS가 붙어도 앱은 아직 옛 도메인을 자기 origin으로 알고 있다. Settings → Environment Variables에서 `AUTH_URL`을 primary 도메인으로 바꾼다.
+
+```
+https://example.com
+```
+
+끝 슬래시 없이, primary로 정한 쪽 하나만. 그리고 **재배포**한다. 안 바꾸면 2단계 ③에 적은 것과 똑같은 증상이 난다 — 로그인은 되는데 로그아웃이 `*.vercel.app`으로 튀고, 초대 링크도 옛 도메인으로 발송된다.
+
+### ⑤ 확인
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -I https://example.com/
+curl -s -o /dev/null -w "%{http_code}\n" -I https://example.com/api/auth/csrf
+```
+
+둘 다 `200`이면 브라우저에서 로그인 → **로그아웃**까지 확인한다. 로그아웃이 새 도메인 `/`로 돌아오면 완료다.
+
+기존 `*.vercel.app`은 계속 살아있다. 세션 쿠키는 origin마다 별개라, 옛 도메인에 로그인해 있던 세션은 새 도메인에서 이어지지 않는다(정상 동작).
+
+---
+
 ## 반복해서 밟는 함정
 
 1. **Neon 통합의 프리픽스 env** — `markdownkms_DATABASE_URL`은 코드가 읽지 않는다. plain `DATABASE_URL`을 직접 추가할 것 (1단계 참조).
@@ -161,6 +219,10 @@ curl -I https://<도메인>/api/auth/csrf
 5. **env를 먼저 넣고 DB를 연결하면 이름 충돌로 막힌다.** `DATABASE_URL` 수동 등록 → Neon 연결 순서면 `already has an existing environment variable` 에러가 난다. DB 연결을 먼저 하거나, 겹치는 변수를 지우고 재시도할 것 (1단계 함정 ② 참조).
 6. **통합이 주입한 변수는 손으로 못 고친다.** 편집을 누르면 Storage 화면으로 넘어간다. 값 교체는 통합 쪽에서 하거나, 통합을 떼고 수동 등록으로 전환해야 한다.
 7. **`AUTH_URL`의 `.app`을 `.com`으로 쓴다.** 로그아웃만 404가 나면 십중팔구 이것이다. 브라우저 캐시 문제로 오인하기 쉬우니 `curl -I`로 도메인부터 확인할 것 (2단계 ③ 참조).
+8. **커스텀 도메인 붙이고 `AUTH_URL`을 안 바꾼다.** DNS는 정상인데 로그아웃이 `*.vercel.app`으로 튄다. 5단계 ④는 선택이 아니다.
+9. **DNS 값을 블로그에서 복사한다.** A 레코드 IP와 CNAME 타깃은 프로젝트 고유값이라 Vercel 도메인 카드에 뜨는 것만 유효하다. 다르면 `Invalid Configuration`에서 안 넘어간다.
+10. **가비아 CNAME 끝점 누락.** 값 끝에 `.`을 안 찍으면 도메인이 한 번 더 붙어 등록된다.
+11. **CAA 레코드가 Let's Encrypt를 막고 있다.** 도메인 검증은 통과했는데 인증서만 안 나오면 이걸 의심한다. 기존 CAA가 있으면 `letsencrypt.org`를 허용하도록 고치거나 제거한다.
 
 ---
 
