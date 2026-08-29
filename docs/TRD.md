@@ -21,6 +21,7 @@ REQUIREMENT는 스택을 지정하지 않았다. 아래로 확정한다. 선정 
 | 인증 | Auth.js v5 (NextAuth) | FR-A2 "OAuth 확장 가능한 구조"를 credentials provider → Google provider 추가로 정확히 충족. 비밀번호는 bcrypt |
 | 에디터 | CodeMirror 6 | 커서 위치 삽입(FR-E6)·선택 영역 감싸기(US-1)·10k자 성능이 표준 API. textarea는 이 셋이 전부 수제, Monaco는 IDE급 무게 |
 | 마크다운 | unified: remark-parse + remark-gfm + remark-breaks + remark-rehype + rehype-raw + rehype-sanitize + rehype-react | micromark 코어가 CommonMark 0.31.2 spec 테스트를 통과. remark-gfm에서 취소선·태스크·표만 활성, footnote 등은 비활성 (§1 범위). remark-breaks는 렌더 fork에만(단일 엔터→`<br>`, §5 이탈 결정) |
+| 메일 | Resend | 가입 인증 코드·초대 메일 발송(§9.2). SMTP 자격증명 대신 API 키 하나, 도메인 검증도 DNS 레코드 3개로 끝난다 (탈락: nodemailer+SMTP — 서버리스에서 커넥션 유지가 애매하고 발송 도메인 인증을 직접 떠안아야 함) |
 | 아이콘 | lucide-react | FR-E7 명시 |
 | zip | archiver | FR-X2 스트리밍 압축 |
 | 테스트 | Vitest + Playwright | spec_tests 러너는 Vitest, 60ms 측정·E2E는 Playwright |
@@ -47,11 +48,12 @@ PRD §2·§3의 확정 해석을 반영한 스키마. Drizzle 스키마(`src/db/
 
 ```sql
 CREATE TABLE "user" (
-  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  email         text UNIQUE NOT NULL,
-  password_hash text,                -- OAuth 전용 계정은 NULL 허용 (R3)
-  name          text NOT NULL,
-  created_at    timestamptz NOT NULL DEFAULT now()
+  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email          text UNIQUE NOT NULL,
+  password_hash  text,                -- OAuth 전용 계정은 NULL 허용 (R3)
+  name           text NOT NULL,
+  email_verified boolean NOT NULL DEFAULT false,  -- 이메일 소유 확인 전 false (§9.1)
+  created_at     timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE workspace (
@@ -145,6 +147,17 @@ CREATE TABLE invitation (      -- NFR-3.3: 토큰 원문은 저장하지 않는�
   used_at      timestamptz,
   created_at   timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE email_verification (   -- 코드 원문은 저장하지 않는다 (§9.1)
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     uuid NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  code_hash   text NOT NULL,
+  expires_at  timestamptz NOT NULL,
+  attempts    integer NOT NULL DEFAULT 0,
+  consumed_at timestamptz,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX email_verification_user_idx ON email_verification (user_id, created_at);
 ```
 
 ## 4. 폴더 트리 연산 (Closure Table)
@@ -230,7 +243,9 @@ export interface EditorPlugin {
 
 | 메서드·경로 | 동작 | 최소 역할 |
 |-------------|------|----------|
-| POST `/api/auth/signup` | 가입 + 기본 워크스페이스 EDITOR 편입 | - |
+| POST `/api/auth/signup` | 가입(`email_verified=false`) + 기본 워크스페이스 EDITOR 편입 + 인증 코드 발송 | - |
+| POST `/api/auth/verify-email` | 6자리 코드 검증 → `email_verified=true` (§9.1) | - |
+| POST `/api/auth/verify-email/resend` | 인증 코드 재발송 (항상 200 — 계정 존재 비노출) | - |
 | POST `/api/workspaces` | 워크스페이스 생성, 생성자 OWNER | 회원 |
 | DELETE `/api/workspaces/:id` | 워크스페이스 삭제 (소프트, `is_deleted=true`; D-15 개정) | OWNER |
 | GET `/api/workspaces/:id/tree` | 트리 전체 (2쿼리, §4) | VIEWER |
@@ -256,7 +271,23 @@ export interface EditorPlugin {
 
 - 서명 검증 실패·`expires_at` 경과·`used_at` 존재 → 410 거부. 수락 성공 시 `used_at` 기록으로 일회성 보장.
 - DB에는 토큰 원문을 저장하지 않는다. 유출 표면은 메일 한 곳뿐이다.
-- 메일 발송은 nodemailer + SMTP 환경변수. 개발 환경은 콘솔 출력으로 대체.
+
+## 9.1 이메일 인증 코드 (D-02 반전)
+
+`code_hash = HMAC-SHA256(AUTH_SECRET, code)` — `code`는 `crypto.randomInt`로 뽑은 6자리 숫자.
+
+- 가입은 `email_verified=false`로 계정을 만들고 코드를 발송한다. 코드 검증에 성공해야 `true`가 되고, 그 전까지 Credentials 로그인은 거부된다(`authorize()`가 비밀번호 확인 **후** `email_unverified` 코드로 실패).
+- TTL 10분 / 시도 5회 / 재발송 쿨다운 60초. 초과 시 행을 폐기하고 재발송을 요구한다.
+- 초대 토큰과 같은 이유로 코드 원문은 저장하지 않는다. 6자리는 10^6 공간이라 평문 SHA-256이면 DB 유출 시 즉시 역산되므로 키 있는 HMAC을 쓴다.
+- Google 로그인은 `email_verified` 클레임이 소유를 보증하므로 코드를 거치지 않는다. 미인증 상태의 비밀번호 계정에 Google이 도달하면 그 계정을 인증됨으로 승격하고 **`password_hash`를 비운다** — 증명되지 않은 비밀번호를 폐기해 계정 선점을 차단한다.
+- 열거 방지: 검증 실패는 원인을 구분하지 않고, 재발송은 계정 유무와 무관하게 항상 200을 낸다.
+
+## 9.2 메일 발송
+
+- 발송은 [Resend](https://resend.com) 1개 모듈(`src/lib/mailer.ts`)에 가둔다. 업로드 스토리지(§8)와 같은 원칙 — 제공자 교체가 함수 본문 교체로 끝나야 한다.
+- 환경변수는 `RESEND_API_KEY`, 발신 주소는 `MAIL_FROM`(기본 `markdown-kms <noreply@mingleup.net>`).
+- `RESEND_API_KEY`가 없으면 콘솔 출력으로 대체한다. 로컬 개발과 테스트가 키 없이 돌아가야 하기 때문이다.
+- 절차는 `docs/email-verification.md`.
 
 ## 10. 테스트 전략 (NFR-5.1)
 
