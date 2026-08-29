@@ -68,18 +68,10 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
 
     // EDIT-09 tracer: upload orchestration is owned here (RESEARCH Pattern 1), not by the
     // Toolbar or the image plugin — Toolbar only intercepts the click to open this hidden input.
+    // 파일 업로드는 R2 한 경로뿐이다. 툴바의 "이미지 삽입"은 마크다운 문법만 넣는 서식
+    // 버튼이라 여기에 관여하지 않는다(다른 플러그인들과 동일하게 run(state)만 돌린다).
     const { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError } =
-      useImageUpload(getView);
-
-    // R2 업로드 — 같은 훅을 엔드포인트만 바꿔 한 번 더 인스턴스화한다. 플레이스홀더 삽입·치환,
-    // 중복 업로드 가드, 에러 문구 처리가 로컬 경로와 한 벌로 유지된다.
-    const {
-      inputRef: cloudInputRef,
-      openFilePicker: openCloudFilePicker,
-      handleFileChange: handleCloudFileChange,
-      errorMessage: cloudErrorMessage,
-      dismissError: dismissCloudError,
-    } = useImageUpload(getView, "/api/uploads/r2");
+      useImageUpload(getView, "/api/uploads/r2");
 
     function handleChange(next: string) {
       setContent(next);
@@ -168,8 +160,7 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
             onClick의 기존 null 가드, Toolbar.tsx). */}
         <Toolbar
           getView={getView}
-          onImageButtonClick={openFilePicker}
-          onCloudImageButtonClick={openCloudFilePicker}
+          onCloudImageButtonClick={openFilePicker}
           layoutMode={layoutMode}
           onLayoutModeChange={onLayoutModeChange}
         />
@@ -192,23 +183,10 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
                 accept="image/png,image/jpeg,image/gif,image/webp"
                 onChange={handleFileChange}
                 style={{ display: "none" }}
-                aria-label="이미지 파일 선택"
-              />
-              <input
-                ref={cloudInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/gif,image/webp"
-                onChange={handleCloudFileChange}
-                style={{ display: "none" }}
-                aria-label="클라우드 이미지 파일 선택"
+                aria-label="이미지 업로드 파일 선택"
               />
               {isDraggingFile && <ImageDropzone />}
-              {/* 두 업로드 경로가 각자 에러 상태를 들고 있지만 배너는 하나만 띄운다 — 한 번에
-                  하나만 진행되고, 둘을 동시에 보여줄 자리도 없다. */}
               {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}
-              {!errorMessage && cloudErrorMessage && (
-                <UploadErrorBanner message={cloudErrorMessage} onClose={dismissCloudError} />
-              )}
               {layoutMode === "split" && (
                 <div
                   className={styles.resizeHandle}

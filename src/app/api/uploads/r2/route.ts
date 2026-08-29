@@ -12,19 +12,21 @@ export async function POST(req: Request) {
   const wsId = new URL(req.url).searchParams.get("wsId");
   if (!wsId) return Response.json({ error: "잘못된 요청입니다." }, { status: 400 });
 
-  // env 미설정을 500으로 흘리지 않는다 — 원인이 코드가 아니라 설정이라는 걸 응답에서 바로 안다.
+  try {
+    await requireRole(wsId, "EDITOR"); // 쓰기는 EDITOR+
+  } catch (err) {
+    if (err instanceof ForbiddenError) return forbiddenResponse();
+    throw err;
+  }
+
+  // 권한 확인 **뒤**에 본다. 앞에 두면 워크스페이스 멤버가 아닌 사람도 이 서비스가 클라우드
+  // 저장소를 쓰는지 여부를 알아낼 수 있다 — 설정 상태는 인가된 사용자에게만 알린다.
+  // 500이 아니라 503인 이유는 원인이 코드가 아니라 배포 설정이라는 걸 드러내기 위함이다.
   if (!isR2Configured()) {
     return Response.json(
       { error: "클라우드 저장소가 설정되지 않았어요. 관리자에게 문의해 주세요." },
       { status: 503 },
     );
-  }
-
-  try {
-    await requireRole(wsId, "EDITOR"); // 쓰기는 EDITOR+ (기존 업로드 라우트와 동일)
-  } catch (err) {
-    if (err instanceof ForbiddenError) return forbiddenResponse();
-    throw err;
   }
 
   // req.formData()가 본문 전체를 메모리에 올리기 전에 막는다.

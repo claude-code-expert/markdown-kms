@@ -21,12 +21,9 @@ import styles from "./Toolbar.module.css";
 
 interface ToolbarProps {
   getView: () => EditorView | null;
-  // EDIT-09 (05-01): image is the one button that no longer runs its plugin's run(state) —
-  // it opens EditorPreviewLayout's hidden file input instead. Optional so any other Toolbar
-  // caller (if one ever exists) keeps working without this prop.
-  onImageButtonClick?: () => void;
-  // R2 업로드 — 기존 이미지 버튼과 별개의 저장 경로다. 핸들러를 안 넘기면 버튼 자체가
-  // 렌더되지 않으므로, R2를 안 쓰는 화면에는 아무 흔적도 남지 않는다.
+  // 이미지 업로드. "이미지 삽입" 버튼은 마크다운 문법(`![alt](url)`)만 넣는 서식 버튼이라
+  // 다른 플러그인들과 똑같이 run(state)를 돌린다 — 파일을 올리는 건 이 버튼 하나뿐이다.
+  // 핸들러를 안 넘기면 버튼 자체가 렌더되지 않는다.
   onCloudImageButtonClick?: () => void;
   // 보기 모드(분할/에디터만/미리보기만) 세그먼트 — 에디터+프리뷰를 합친 이 통합 툴바의
   // 우측 끝에 함께 둔다(기존엔 titleRow에 별도로 있었음). 둘 다 없으면 렌더하지 않는다.
@@ -67,7 +64,6 @@ function buildGroups() {
 
 export function Toolbar({
   getView,
-  onImageButtonClick,
   onCloudImageButtonClick,
   layoutMode,
   onLayoutModeChange,
@@ -98,10 +94,6 @@ export function Toolbar({
                   onClick={() => {
                     const view = getView();
                     if (!view) return;
-                    if (plugin.id === "image") {
-                      onImageButtonClick?.();
-                      return;
-                    }
                     view.dispatch(plugin.run(view.state));
                     view.focus();
                   }}

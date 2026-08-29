@@ -1169,3 +1169,55 @@ Continue the conversation from where it left off without asking the user any fur
 
 현재 이메일 소스 변경사항 feature/email 브랜치에 커밋, 푸시하고 main에 PR 만들어줘
 
+### 186. 2026-08-29
+
+Request URL
+https://www.mingleup.net/api/auth/signup
+Request Method
+POST
+Status Code
+500 Internal Server Error
+Remote Address
+64.29.17.65:443
+Referrer Policy
+strict-origin-when-cross-origin
+  2026-08-29 10:21:59.744 [error] signup failed Error: Failed query: select "id", "email_verified" from "user" where "user"."email" = $1
+params: brewnet.dev@gmail.com
+    at aB.queryWithCache (.next/server/chunks/8648.js:69:36749)
+    at async (.next/server/chunks/8648.js:69:39237)
+    at async D (.next/server/app/api/auth/signup/route.js:11:1112)
+    at async k (.next/server/app/api/auth/signup/route.js:11:4556)
+    at async g (.next/server/app/api/auth/signup/route.js:11:5559)
+    at async J (.next/server/app/api/auth/signup/route.js:11:6681) {
+  query: 'select "id", "email_verified" from "user" where "user"."email" = $1',
+  params: [Array],
+  [cause]: k: column "email_verified" does not exist
+      at U (.next/server/chunks/8648.js:72:2009)
+      at <unknown> (.next/server/chunks/8648.js:72:2964)
+      at TLSSocket.aP (.next/server/chunks/8648.js:72:2968) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '42703',
+    position: '14',
+    file: 'parse_relation.c',
+    line: '3854',
+    routine: 'errorMissingColumn'
+  }
+}
+
+회원 가입시  이와 같은 에러가 발생하고 있어. 원인을 분석해서 해결책을 설명해주고 패치 진행해줘
+
+### 187. 2026-08-29
+
+MIGRATE_DATABASE_URL 을 환경 변수에 추가하라는거야? PR 머지 후에?
+
+### 188. 2026-08-29
+
+가입은 완료 되었는데, 메일이 spam함으로 발송되고 있어. 어떤 조치들을 해줘야 하지?
+
+### 189. 2026-08-29
+
+[<button class="Toolbar_butt..." aria-label="이미지 삽입" type="button" /> in Toolbar (at src/components/editor/Toolbar.tsx:105:112) in src/components/editor/Toolbar.tsx:105:112 in src/components/editor/Toolbar.tsx:98:31 key: "image" selector: [aria-label="이미지 삽입"]] 이 위치 옆에 별도의 이미지 업로드 기능을 구현할거야 
+
+클라우드 플레어의 R2 오브젝트 스토리지를 연결해야 하고, 초기 셋업부터 이미지 업로드 까지 단계별 설정 및 연동 작업을 진행해줘
+

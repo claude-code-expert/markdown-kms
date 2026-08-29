@@ -2,7 +2,7 @@
 
 markdown-kms를 Vercel에 처음 배포할 때 어디서 무엇을 입력하는지 순서대로 정리한 문서. 이미 배포된 프로젝트를 재구성하거나 새 환경(스테이징 등)을 만들 때도 동일하게 적용된다.
 
-관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지 교체 지점은 `TRD.md` §8, Google 로그인 연동은 `oauth-google.md`.
+관련 문서: 스택·환경 전제는 `TRD.md` §1, 업로드 스토리지는 `TRD.md` §8과 `r2-storage.md`, Google 로그인은 `oauth-google.md`, 가입 이메일 인증은 `email-verification.md`.
 
 ---
 
@@ -22,6 +22,7 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 |---|---|---|---|
 | Google 로그인 | `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` | `oauth-google.md` | 버튼만 동작 안 함 |
 | 가입 이메일 인증 | `RESEND_API_KEY` | `email-verification.md` | **아무도 가입을 못 끝냄** (코드가 서버 로그에만 남음) |
+| 이미지 업로드 | `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` | `r2-storage.md` | 업로드가 503 |
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
@@ -261,8 +262,8 @@ curl -s -o /dev/null -w "%{http_code}\n" -I https://example.com/api/auth/csrf
 
 ## 알려진 미해결 이슈
 
-`/api/uploads`(툴바의 **이미지 삽입** 버튼)는 `public/uploads`에 디스크 쓰기를 하므로 Vercel 프로덕션에서 500이 난다. 환경변수로는 해결되지 않는다.
+~~`/api/uploads`가 디스크 쓰기를 해서 Vercel 프로덕션에서 500이 난다~~ **(해소됨 — 2026-08-29)**
 
-**우회 경로가 생겼다** — 툴바의 **클라우드에 이미지 업로드**(구름 아이콘) 버튼은 Cloudflare R2로 나가며 프로덕션에서 정상 동작한다. 설정은 `r2-storage.md`, 필요한 env는 `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` 4개다.
+이미지 업로드는 Cloudflare R2로 옮겼다. 로컬 디스크에 쓰던 라우트와 `saveUpload`는 제거했다.
 
-기존 버튼까지 고치려면 `src/lib/storage.ts`의 `saveUpload` 본문을 `saveUploadToR2` 호출로 바꾸면 된다 — TRD §8이 이 스왑을 전제로 설계돼 있고 호출부는 건드릴 필요가 없다. 지금은 두 경로를 나란히 둔 상태다.
+설정 절차는 `r2-storage.md`, 필요한 env는 `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` 4개다. **이 4개가 없으면 업로드가 503으로 실패한다** — 배포 시 빠뜨리지 않는다.

@@ -1,69 +1,63 @@
-// 05-01 Task 1 (TDD RED first, CLAUDE.md/TRD §10): saveUpload's server-side magic-byte gate.
-// EDIT-09 / Pitfall 1 — the fixture that matters most here is the spoofed one: a file named
-// ".png" and labelled "image/png" whose BYTES are plain text must still be rejected, because
-// saveUpload never looks at file.name/file.type to decide the outcome.
-import { describe, expect, it, vi } from "vitest";
-import { saveUpload } from "@/lib/storage";
+// 서버 측 매직바이트 게이트(EDIT-09 / Pitfall 1). 원래 saveUpload(로컬 디스크 저장)를 통해
+// 검증했지만 그 함수는 R2 전환으로 사라졌고, 규칙 자체는 저장 위치와 무관하므로 sniffImageType을
+// 직접 검증한다. 가장 중요한 건 위조 케이스다 — 이름이 ".png"이고 Content-Type이 "image/png"라도
+// 바이트가 아니면 거부돼야 한다. 스니퍼는 file.name/file.type을 아예 보지 않는다.
+import { describe, expect, it } from "vitest";
+import { MAX_UPLOAD_BYTES, sniffImageType } from "@/lib/storage";
 
-function fixture(bytes: number[], name: string, type: string) {
-  return new File([new Uint8Array(bytes)], name, { type });
-}
-
-// Signatures padded with a couple of trailing filler bytes so each fixture clears the sniffer's
-// minimum-length check (png>=8, jpeg>=3, gif>=6, webp>=12) without asserting on real image data.
+// 각 픽스처는 스니퍼의 최소 길이 검사(png>=8, jpeg>=3, gif>=6, webp>=12)를 통과하도록
+// 시그니처 뒤에 채움 바이트를 붙였다. 실제 이미지 데이터를 단언하지는 않는다.
 const PNG_BYTES = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00];
 const JPEG_BYTES = [0xff, 0xd8, 0xff, 0x00, 0x00];
 const GIF87_BYTES = [0x47, 0x49, 0x46, 0x38, 0x37, 0x61, 0x00, 0x00];
 const GIF89_BYTES = [0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x00, 0x00];
 const WEBP_BYTES = [0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50];
 
-describe("saveUpload — magic-byte sniffing (EDIT-09)", () => {
-  it("accepts a png signature and returns a server-generated .png url", async () => {
-    const res = await saveUpload(fixture(PNG_BYTES, "photo.png", "image/png"));
-    expect("url" in res).toBe(true);
-    if ("url" in res) expect(res.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.png$/);
+const buf = (bytes: number[]) => Buffer.from(bytes);
+
+describe("sniffImageType — magic-byte sniffing (EDIT-09)", () => {
+  it("accepts a png signature", () => {
+    expect(sniffImageType(buf(PNG_BYTES))).toEqual({ ext: "png" });
   });
 
-  it("accepts a jpeg signature and returns a .jpg url", async () => {
-    const res = await saveUpload(fixture(JPEG_BYTES, "photo.jpg", "image/jpeg"));
-    expect("url" in res).toBe(true);
-    if ("url" in res) expect(res.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.jpg$/);
+  it("accepts a jpeg signature", () => {
+    expect(sniffImageType(buf(JPEG_BYTES))).toEqual({ ext: "jpg" });
   });
 
-  it("accepts a gif87a signature and returns a .gif url", async () => {
-    const res = await saveUpload(fixture(GIF87_BYTES, "photo.gif", "image/gif"));
-    expect("url" in res).toBe(true);
-    if ("url" in res) expect(res.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.gif$/);
+  it("accepts a gif87a signature", () => {
+    expect(sniffImageType(buf(GIF87_BYTES))).toEqual({ ext: "gif" });
   });
 
-  it("accepts a gif89a signature and returns a .gif url", async () => {
-    const res = await saveUpload(fixture(GIF89_BYTES, "photo.gif", "image/gif"));
-    expect("url" in res).toBe(true);
-    if ("url" in res) expect(res.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.gif$/);
+  it("accepts a gif89a signature", () => {
+    expect(sniffImageType(buf(GIF89_BYTES))).toEqual({ ext: "gif" });
   });
 
-  it("accepts a webp (RIFF....WEBP) signature and returns a .webp url", async () => {
-    const res = await saveUpload(fixture(WEBP_BYTES, "photo.webp", "image/webp"));
-    expect("url" in res).toBe(true);
-    if ("url" in res) expect(res.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.webp$/);
+  it("accepts a webp (RIFF....WEBP) signature", () => {
+    expect(sniffImageType(buf(WEBP_BYTES))).toEqual({ ext: "webp" });
   });
 
-  it("rejects a spoofed file — text bytes labelled image/png with a .png name", async () => {
-    const fake = new File([new TextEncoder().encode("not an image, just text bytes")], "fake.png", {
-      type: "image/png",
-    });
-    const res = await saveUpload(fake);
-    expect(res).toEqual({ error: "BAD_TYPE" });
+  // 이 케이스가 뚫리면 확장자만 바꾼 실행 파일·HTML을 저장소에 심을 수 있다.
+  it("rejects text bytes regardless of what the filename or Content-Type claimed", () => {
+    expect(sniffImageType(Buffer.from("not an image, just text bytes"))).toBeNull();
   });
 
-  it("rejects an oversized file (>5MB) BEFORE reading its bytes — size cap runs first (Pitfall 3)", async () => {
-    const file = fixture(PNG_BYTES, "big.png", "image/png");
-    Object.defineProperty(file, "size", { value: 6 * 1024 * 1024 });
-    const arrayBufferSpy = vi.spyOn(file, "arrayBuffer");
+  // 시그니처 앞부분만 맞고 길이가 모자란 경우 — 길이 검사가 빠지면 여기서 오탐이 난다.
+  it("rejects a truncated signature", () => {
+    expect(sniffImageType(buf(PNG_BYTES.slice(0, 4)))).toBeNull();
+    expect(sniffImageType(buf(WEBP_BYTES.slice(0, 8)))).toBeNull();
+    expect(sniffImageType(Buffer.alloc(0))).toBeNull();
+  });
 
-    const res = await saveUpload(file);
+  // RIFF 컨테이너지만 WEBP가 아닌 것(예: WAV)은 통과하면 안 된다.
+  it("rejects a RIFF container that is not WEBP", () => {
+    const wav = [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x41, 0x56, 0x45];
+    expect(sniffImageType(buf(wav))).toBeNull();
+  });
+});
 
-    expect(res).toEqual({ error: "TOO_LARGE" });
-    expect(arrayBufferSpy).not.toHaveBeenCalled();
+describe("MAX_UPLOAD_BYTES", () => {
+  // 라우트의 Content-Length 선검사와 저장 함수의 file.size 검사가 같은 값을 봐야 한다.
+  it("is the 5MB cap both the route and the storage layer read", () => {
+    expect(MAX_UPLOAD_BYTES).toBe(5 * 1024 * 1024);
   });
 });
