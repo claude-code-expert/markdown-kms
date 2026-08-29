@@ -1,15 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 test("the session survives a browser reload after signup (AUTH-02)", async ({ page }) => {
   const email = `e2e-session-${Date.now()}@example.com`;
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Session");
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   await page.reload();
 

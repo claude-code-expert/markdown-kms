@@ -18,6 +18,9 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash"), // nullable — OAuth-only accounts in R3
   name: text("name").notNull(),
+  // D-02 반전: 이메일 소유가 확인되기 전에는 false. Credentials 로그인은 이 값이 false면
+  // 거부하고(auth.ts), Google 로그인은 email_verified 클레임을 근거로 true로 만든다.
+  emailVerified: boolean("email_verified").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -191,3 +194,27 @@ export const invitation = pgTable("invitation", {
   usedAt: timestamp("used_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// TRD §3 / §9: 가입 시 이메일 소유 확인용 6자리 코드. invitation과 같은 모양이다 — 원문은
+// 저장하지 않고(codeHash = HMAC-SHA256(AUTH_SECRET, code)), consumedAt nullable 타임스탬프가
+// 곧 unused/used 상태다(상태가 둘뿐이라 status text + CHECK는 과하다).
+//
+// 6자리는 10^6 공간이라 평문 SHA-256이면 DB 유출 시 즉시 역산된다. 키 있는 HMAC이라야
+// 의미가 있어서 secret을 섞는다(src/lib/verification-code.ts).
+export const emailVerification = pgTable(
+  "email_verification",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    codeHash: text("code_hash").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    // 무제한 추측을 막는다 — 6자리는 5회 안에 맞힐 확률이 사실상 0이지만 시도가 무한하면 뚫린다.
+    attempts: integer("attempts").notNull().default(0),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  // 검증·재발송 모두 "이 사용자의 가장 최근 미소비 행"을 찾는 것으로 시작한다.
+  (table) => [index("email_verification_user_idx").on(table.userId, table.createdAt)],
+);

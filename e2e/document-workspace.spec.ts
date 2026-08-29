@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // 04-02 tracer e2e: the phase's single end-to-end proof — create → open (3-pane) → type →
 // 1s-debounced autosave → status bar transitions → refresh restores. Reuses
@@ -7,12 +8,7 @@ async function signupAndOpenWorkspace(page: Page, seed: string) {
   const email = `e2e-doc-${seed}@example.com`;
   const workspaceName = `E2E Doc WS ${seed}`;
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Doc");
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   await page.getByRole("button", { name: "워크스페이스 만들기" }).click();
   await page.getByLabel("이름").fill(workspaceName);

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // EDIT-06 / TRD §5: keystroke -> sanitized preview mutation must stay p95 <= 60ms for a
 // 10,000-code-unit document. RESEARCH Common Pitfalls #4 + Open Question #4: no
@@ -115,12 +116,7 @@ test.describe("preview p95 latency (EDIT-06)", () => {
     const email = `e2e-perf-${Date.now()}@example.com`;
     const workspaceName = `E2E Perf ${Date.now()}`;
 
-    await page.goto("/signup");
-    await page.getByLabel("이름").fill("E2E Perf");
-    await page.getByLabel("이메일").fill(email);
-    await page.getByLabel("비밀번호").fill("password123");
-    await page.getByRole("button", { name: "가입하기" }).click();
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await signUpAndLogin(page, email);
 
     // Reuse the proven workspace-create flow (e2e/workspace-create.spec.ts) to land on a
     // real /w/[wsId] host route (D-P2-01) -- the dashboard's default-workspace card has no

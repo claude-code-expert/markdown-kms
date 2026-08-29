@@ -207,8 +207,15 @@ curl -s -o /dev/null -w "%{http_code}\n" -I https://mingleup.net/api/auth/csrf
 
 ## 알려진 미해결 이슈
 
-**같은 이메일 계정의 자동 연결에는 선점 위험이 있다.** Google이 `email_verified: true`로 보증한 이메일에 한해 기존 계정에 합류시키는데(`src/lib/account.ts`), 이 앱의 비밀번호 가입에는 이메일 인증 단계가 없다(`PRD.md` D-02). 따라서 공격자가 피해자의 Gmail 주소로 먼저 비밀번호 가입을 해두면, 나중에 피해자가 Google로 로그인했을 때 **공격자가 비밀번호를 아는 그 계정**으로 들어가게 된다.
+**~~같은 이메일 계정의 자동 연결에는 선점 위험이 있다.~~ (해소됨 — 2026-08-29)**
 
-근본 해결은 비밀번호 가입 시 이메일 소유 확인을 넣는 것이다. `src/lib/mailer.ts`가 아직 콘솔 출력 스텁이라 메일 발송 인프라부터 필요하다. 현재는 수용된 리스크로 둔다.
+원래 이 자리에는 이런 위험이 적혀 있었다: 비밀번호 가입에 이메일 인증이 없으니(D-02) 공격자가 피해자의 Gmail 주소로 먼저 가입해두면, 나중에 피해자가 Google로 로그인했을 때 공격자가 비밀번호를 아는 계정으로 합류하게 된다.
+
+이메일 인증 도입(`docs/email-verification.md`)으로 두 겹이 막혔다.
+
+1. 공격자의 선점 가입은 코드를 받지 못해 **미인증 상태로 남는다.** `authorize()`가 미인증 계정의 로그인을 거부하므로 그 계정에는 애초에 들어갈 수 없다.
+2. 그 계정에 Google이 도달하면 `findOrCreateOAuthUser`가 인증됨으로 승격하면서 **`password_hash`를 비운다.** 아무도 소유를 증명하지 않은 비밀번호라 폐기하는 것이 맞고, 이걸로 공격자가 아는 비밀번호는 무효가 된다.
+
+회귀 방지 테스트는 `tests/auth/oauth-user.test.ts`의 "takes over an unverified password account and wipes its passwordHash".
 
 **리프레시 토큰을 저장하지 않는다.** Auth.js 어댑터와 `account` 테이블을 쓰지 않으므로 Google 액세스 토큰이 세션에 남지 않는다. 로그인 신원 확인에는 충분하지만, 나중에 사용자 대신 Google API(Drive 등)를 호출하려면 그때 어댑터 도입과 마이그레이션이 필요하다.

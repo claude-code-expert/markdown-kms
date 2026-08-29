@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { eq } from "drizzle-orm";
@@ -16,6 +16,15 @@ import { normalizeEmail } from "@/lib/validation";
 // CR-02: fixed dummy hash so a nonexistent user still pays the same bcrypt cost as a real
 // one — the DB lookup hitting 0 vs 1 rows must not be observable via response timing (T-02-01).
 const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8G7VpTNK6H7oXBCa/6dKQvV5cD5cGO";
+
+// TRD §9.1. @auth/core는 CredentialsSignin 서브클래스의 `code`를 클라이언트 SignInResponse.code로
+// 전달한다 — login-form이 이 값으로 "인증 필요" 안내와 재발송 버튼을 띄운다.
+//
+// T-03-01("원인별로 분기하지 않는다")의 예외지만 열거 oracle이 되지는 않는다: 아래에서 이 에러는
+// **비밀번호가 맞은 뒤에만** 나온다. 비밀번호를 모르면 여전히 일반 실패와 구분할 수 없다.
+class EmailUnverifiedError extends CredentialsSignin {
+  code = "email_unverified";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -53,6 +62,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         undoLoginFailure(rateLimitKey);
+
+        // 비밀번호 검증 뒤에 온다 — 순서가 곧 보안 속성이다. 앞에 두면 아무나 이메일만 넣어보고
+        // "미인증" 응답으로 가입 여부를 알아낼 수 있다(TRD §9.1).
+        if (!found.emailVerified) throw new EmailUnverifiedError();
+
         return { id: found.id, email: found.email, name: found.name };
       },
     }),

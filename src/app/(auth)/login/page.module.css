@@ -56,3 +56,24 @@
   background: var(--surface-2);
   color: var(--text);
 }
+
+/* 미인증 계정으로 로그인했을 때만 뜨는 보조 행동. 링크 무게로 둬서 로그인 버튼과 경쟁하지
+   않게 한다(signup/page.module.css에 같은 규칙 — 파일 스코프 관례에 따른 의도적 중복). */
+.linkButton {
+  margin-top: var(--space-sm);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.notice {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}

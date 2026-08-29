@@ -41,6 +41,8 @@ describe("POST /api/auth/signup", () => {
     expect(createdUser).toBeTruthy();
     expect(createdUser.passwordHash).not.toBe("password123");
     expect(await bcrypt.compare("password123", createdUser.passwordHash!)).toBe(true);
+    // D-02 반전: 가입만으로는 인증되지 않는다. 이 값이 true로 새면 인증 단계 전체가 무의미해진다.
+    expect(createdUser.emailVerified).toBe(false);
 
     const [defaultWs] = await db.select().from(workspace).where(eq(workspace.isDefault, true));
     expect(defaultWs).toBeTruthy();
@@ -73,6 +75,10 @@ describe("POST /api/auth/signup", () => {
 
     const first = await POST(signupRequest({ email, password: "password123", name: "Original" }));
     expect(first.status).toBe(200);
+
+    // 409는 **인증까지 끝난** 계정에만 해당한다. 미인증 계정에 대한 재가입은 중단된 가입을
+    // 이어가는 정상 경로라 200 + 코드 재발송이다(email-verification.test.ts가 그쪽을 다룬다).
+    await db.update(user).set({ emailVerified: true }).where(eq(user.email, email));
 
     const second = await POST(signupRequest({ email, password: "password456", name: "Duplicate" }));
     expect(second.status).toBe(409);

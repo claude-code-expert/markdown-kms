@@ -56,3 +56,55 @@
   background: var(--surface-2);
   color: var(--text);
 }
+
+/* 인증 코드 단계. 어디로 보냈는지 카드 안에 남겨야 사용자가 오타를 스스로 알아챈다. */
+.sentTo {
+  margin: 0 0 var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.sentTo strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* 6자리를 한 글자씩 떨어뜨려 보여준다 — 입력한 자릿수를 눈으로 세기 쉽다. */
+.codeInput {
+  text-align: center;
+  font-family: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+  font-size: 20px;
+  letter-spacing: 8px;
+}
+
+/* 재발송은 보조 행동이라 링크 무게로 둔다(제출 버튼과 경쟁시키지 않는다). */
+.resendRow {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.linkButton:disabled {
+  color: var(--dim);
+  cursor: default;
+}
+
+.notice {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}

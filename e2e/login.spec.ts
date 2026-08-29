@@ -1,15 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 test.describe("login", () => {
   test("logs in an existing user and lands on the dashboard", async ({ page }) => {
     const email = `e2e-login-${Date.now()}@example.com`;
 
-    await page.goto("/signup");
-    await page.getByLabel("이름").fill("E2E Login");
-    await page.getByLabel("이메일").fill(email);
-    await page.getByLabel("비밀번호").fill("password123");
-    await page.getByRole("button", { name: "가입하기" }).click();
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await signUpAndLogin(page, email);
 
     await page.goto("/login");
     await page.getByLabel("이메일").fill(email);
@@ -22,12 +18,7 @@ test.describe("login", () => {
   test("shows the single generic error on a wrong password", async ({ page }) => {
     const email = `e2e-login-wrong-${Date.now()}@example.com`;
 
-    await page.goto("/signup");
-    await page.getByLabel("이름").fill("E2E Wrong Password");
-    await page.getByLabel("이메일").fill(email);
-    await page.getByLabel("비밀번호").fill("password123");
-    await page.getByRole("button", { name: "가입하기" }).click();
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await signUpAndLogin(page, email);
 
     await page.goto("/login");
     await page.getByLabel("이메일").fill(email);

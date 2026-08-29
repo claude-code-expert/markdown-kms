@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { signupSchema } from "@/lib/validation";
 import { Form, FormField, FormLabel, FormError, FormSubmit } from "@/components/ui/Form";
 import { Input } from "@/components/ui/Input";
+import { VerifyStep } from "./verify-step";
 import styles from "./page.module.css";
 
 const GENERIC_ERROR = "일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요.";
@@ -17,7 +17,9 @@ interface FieldErrors {
 }
 
 export function SignupForm() {
-  const router = useRouter();
+  // 라우트를 나누지 않고 카드 안에서 단계만 바꾼다 — 인증 직후 로그인하려면 방금 입력한
+  // 비밀번호가 필요한데, 페이지를 이동하면 그 값을 URL이나 스토리지에 실어야 한다.
+  const [step, setStep] = useState<"form" | "verify">("form");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,19 +63,19 @@ export function SignupForm() {
         return;
       }
 
-      // D-02: signup immediately establishes the session — no email verification step.
-      const result = await signIn("credentials", { email, password, redirect: false });
-      if (result?.error) {
-        setError(GENERIC_ERROR);
-        setSubmitting(false);
-        return;
-      }
-
-      router.push("/dashboard");
+      // 여기서 로그인하지 않는다(D-02 반전) — 세션은 인증 코드를 맞힌 뒤에야 생긴다.
+      // 서버는 미인증으로 남은 계정에도 200 + 코드 재발송으로 응답하므로, 중단된 가입을
+      // 이어서 하는 경우도 같은 화면으로 들어온다.
+      setSubmitting(false);
+      setStep("verify");
     } catch {
       setError(GENERIC_ERROR);
       setSubmitting(false);
     }
+  }
+
+  if (step === "verify") {
+    return <VerifyStep email={email} password={password} onBack={() => setStep("form")} />;
   }
 
   return (
