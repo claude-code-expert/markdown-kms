@@ -25,7 +25,15 @@ export function sanitizeAlt(name: string): string {
   return name.replace(/[[\]()`\r\n]/g, "");
 }
 
-export function useImageUpload(getView: () => EditorView | null) {
+/**
+ * @param endpoint 업로드를 받을 라우트. 로컬 디스크(`/api/uploads`)와 R2(`/api/uploads/r2`)가
+ *   같은 요청·응답 계약(multipart `file` → `{ url }` / `{ error }`)을 쓰므로, 훅을 복제하지
+ *   않고 이 인자만 바꿔 두 번 인스턴스화한다. 플레이스홀더·에러 처리 로직이 한 벌로 유지된다.
+ */
+export function useImageUpload(
+  getView: () => EditorView | null,
+  endpoint: string = "/api/uploads",
+) {
   const params = useParams<{ wsId?: string }>();
   const wsId = params?.wsId;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -67,7 +75,7 @@ export function useImageUpload(getView: () => EditorView | null) {
       try {
         const formData = new FormData();
         formData.set("file", file);
-        const res = await fetch(`/api/uploads?wsId=${wsId}`, { method: "POST", body: formData });
+        const res = await fetch(`${endpoint}?wsId=${wsId}`, { method: "POST", body: formData });
         const body: { url?: string; error?: string } = await res.json().catch(() => ({}));
 
         if (res.ok && body.url) {
@@ -95,7 +103,7 @@ export function useImageUpload(getView: () => EditorView | null) {
         uploadingRef.current = false;
       }
     },
-    [getView, wsId],
+    [getView, wsId, endpoint],
   );
 
   return { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError };

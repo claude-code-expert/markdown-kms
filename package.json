@@ -12,6 +12,7 @@
     "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1121.0",
     "@codemirror/commands": "6.10.4",
     "@codemirror/state": "6.7.1",
     "@codemirror/view": "6.43.7",

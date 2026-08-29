@@ -68,8 +68,10 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
 
     // EDIT-09 tracer: upload orchestration is owned here (RESEARCH Pattern 1), not by the
     // Toolbar or the image plugin — Toolbar only intercepts the click to open this hidden input.
+    // 파일 업로드는 R2 한 경로뿐이다. 툴바의 "이미지 삽입"은 마크다운 문법만 넣는 서식
+    // 버튼이라 여기에 관여하지 않는다(다른 플러그인들과 동일하게 run(state)만 돌린다).
     const { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError } =
-      useImageUpload(getView);
+      useImageUpload(getView, "/api/uploads/r2");
 
     function handleChange(next: string) {
       setContent(next);
@@ -158,7 +160,7 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
             onClick의 기존 null 가드, Toolbar.tsx). */}
         <Toolbar
           getView={getView}
-          onImageButtonClick={openFilePicker}
+          onCloudImageButtonClick={openFilePicker}
           layoutMode={layoutMode}
           onLayoutModeChange={onLayoutModeChange}
         />
@@ -181,7 +183,7 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
                 accept="image/png,image/jpeg,image/gif,image/webp"
                 onChange={handleFileChange}
                 style={{ display: "none" }}
-                aria-label="이미지 파일 선택"
+                aria-label="이미지 업로드 파일 선택"
               />
               {isDraggingFile && <ImageDropzone />}
               {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}

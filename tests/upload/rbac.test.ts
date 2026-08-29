@@ -1,8 +1,11 @@
-// 05-01 Task 2 (TDD RED first): POST /api/uploads is gated by requireRole(wsId, "EDITOR") —
-// the single server-side authorization boundary (CLAUDE.md invariant). VIEWER is rejected,
-// EDITOR/ADMIN/OWNER pass through to saveUpload. Follows tests/rbac/matrix.test.ts's real-DB +
-// mocked-session pattern (tests/rbac/helpers.ts) rather than mocking requireRole itself, so the
-// UUID_RE fail-closed guard and the actual DB membership lookup are exercised too.
+// POST /api/uploads/r2 is gated by requireRole(wsId, "EDITOR") — the single server-side
+// authorization boundary (CLAUDE.md invariant). VIEWER is rejected, EDITOR/ADMIN/OWNER pass
+// through to the storage layer. Follows tests/rbac/matrix.test.ts's real-DB + mocked-session
+// pattern (tests/rbac/helpers.ts) rather than mocking requireRole itself, so the UUID_RE
+// fail-closed guard and the actual DB membership lookup are exercised too.
+//
+// 저장 계층만 모킹한다 — 여기서 증명하려는 건 라우트의 인가·크기 가드이지 R2 네트워크가
+// 아니고, 테스트에 실제 자격증명을 요구하면 이 파일이 CI에서 돌지 않는다.
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
@@ -11,24 +14,35 @@ import { addMember, createTestUser, createTestWorkspace, mockSessionFor, type Ro
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
 
-// A minimal valid 1x1 png so saveUpload's magic-byte sniff passes for the 2xx cases — the
-// route's own behavior (403 vs 200), not saveUpload's sniffing logic, is what this file asserts.
+vi.mock("@/lib/storage-r2", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/storage-r2")>();
+  return {
+    ...actual,
+    isR2Configured: () => true,
+    saveUploadToR2: async (_file: File, wsId: string) => ({
+      url: `/api/uploads/r2/w/${wsId}/00000000-0000-4000-8000-000000000000.png`,
+    }),
+  };
+});
+
+// A minimal valid 1x1 png so the storage layer's magic-byte sniff passes for the 2xx cases — the
+// route's own behavior (403 vs 200), not the sniffing logic, is what this file asserts.
 const PNG_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00]);
 
 function uploadRequest(wsId: string | null) {
   const form = new FormData();
   form.set("file", new File([PNG_BYTES], "photo.png", { type: "image/png" }));
   const qs = wsId ? `?wsId=${wsId}` : "";
-  return new Request(`http://localhost/api/uploads${qs}`, { method: "POST", body: form });
+  return new Request(`http://localhost/api/uploads/r2${qs}`, { method: "POST", body: form });
 }
 
-describe("POST /api/uploads — RBAC gate (EDITOR+)", () => {
-  let POST: typeof import("@/app/api/uploads/route").POST;
+describe("POST /api/uploads/r2 — RBAC gate (EDITOR+)", () => {
+  let POST: typeof import("@/app/api/uploads/r2/route").POST;
   const createdUsers: string[] = [];
   const createdWorkspaces: string[] = [];
 
   beforeAll(async () => {
-    ({ POST } = await import("@/app/api/uploads/route"));
+    ({ POST } = await import("@/app/api/uploads/r2/route"));
   });
 
   afterEach(async () => {
@@ -64,7 +78,7 @@ describe("POST /api/uploads — RBAC gate (EDITOR+)", () => {
 
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.url).toMatch(/^\/uploads\/[0-9a-f-]{36}\.png$/);
+    expect(body.url).toMatch(/^\/api\/uploads\/r2\/w\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.png$/);
   });
 
   it("rejects a request missing wsId with 400", async () => {
@@ -75,16 +89,16 @@ describe("POST /api/uploads — RBAC gate (EDITOR+)", () => {
 });
 
 // CR-02 (05-REVIEW): req.formData() buffers the ENTIRE multipart body into memory before
-// saveUpload's file.size check ever runs — a Content-Length pre-check must reject an
+// the storage layer's file.size check ever runs — a Content-Length pre-check must reject an
 // obviously oversized body before formData() is called at all, or the size cap does nothing
 // to stop a memory-exhaustion DoS.
-describe("POST /api/uploads — Content-Length size guard (CR-02)", () => {
-  let POST: typeof import("@/app/api/uploads/route").POST;
+describe("POST /api/uploads/r2 — Content-Length size guard (CR-02)", () => {
+  let POST: typeof import("@/app/api/uploads/r2/route").POST;
   const createdUsers: string[] = [];
   const createdWorkspaces: string[] = [];
 
   beforeAll(async () => {
-    ({ POST } = await import("@/app/api/uploads/route"));
+    ({ POST } = await import("@/app/api/uploads/r2/route"));
   });
 
   afterEach(async () => {
@@ -103,7 +117,7 @@ describe("POST /api/uploads — Content-Length size guard (CR-02)", () => {
 
     const form = new FormData();
     form.set("file", new File([PNG_BYTES], "photo.png", { type: "image/png" }));
-    const req = new Request(`http://localhost/api/uploads?wsId=${ws.id}`, {
+    const req = new Request(`http://localhost/api/uploads/r2?wsId=${ws.id}`, {
       method: "POST",
       body: form,
       // The real body is tiny — only the header is oversized, proving the route trusts

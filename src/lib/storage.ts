@@ -1,23 +1,22 @@
-// TRD §8 "저장 함수 하나 교체로 끝나도록 업로드 경로를 한 모듈에 가둔다" — saveUpload is the
-// ONLY export. Nothing outside this module knows the storage directory or naming scheme, so an
-// S3-style swap later is a rewrite of this file alone.
+// 업로드 이미지의 **검증 규칙**만 담는 모듈. 저장은 storage-r2.ts가 한다(TRD §8).
+//
+// 원래는 여기에 로컬 디스크 저장(saveUpload)이 함께 있었지만, 서버리스 파일시스템이 읽기
+// 전용이라 프로덕션에서 동작하지 않았고 정적 서빙 경로에 권한 검증도 없었다(WR-02). R2로
+// 옮기면서 그 함수를 지웠고, 저장 위치와 무관한 규칙인 아래 둘만 남겨 R2 쪽이 가져다 쓴다.
 //
 // EDIT-09 / Pitfall 1: the client's File.type/File.name are never trusted for the stored
 // extension — the server sniffs the actual bytes (magic numbers) and decides for itself.
 // EDIT-09 / Pitfall 3: size is checked BEFORE arrayBuffer() reads the file into memory, so an
 // oversized upload never has its bytes read.
-import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 // Exported so the route handler can reject an oversized Content-Length before req.formData()
 // ever buffers the body (CR-02, 05-REVIEW) — single source of truth for the 5MB cap.
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // CONTEXT: 최대 5MB
-const MAX_BYTES = MAX_UPLOAD_BYTES;
 
 // Magic-byte signatures, offset 0. [CITED: 웹서치 cross-check, PNG Wikipedia + file-signature 레퍼런스]
-function sniffImageType(buf: Buffer): { ext: string } | null {
+// storage-r2.ts가 그대로 가져다 쓴다 — 어떤 바이트를 이미지로 인정하는지는 저장 위치와
+//무관한 규칙이라 두 벌로 갈라두면 한쪽만 고쳐지는 사고가 난다.
+export function sniffImageType(buf: Buffer): { ext: string } | null {
   if (
     buf.length >= 8 &&
     buf[0] === 0x89 &&
@@ -59,32 +58,4 @@ function sniffImageType(buf: Buffer): { ext: string } | null {
     return { ext: "webp" };
   }
   return null;
-}
-
-export async function saveUpload(
-  file: File,
-): Promise<{ url: string } | { error: "TOO_LARGE" | "BAD_TYPE" }> {
-  if (file.size > MAX_BYTES) return { error: "TOO_LARGE" }; // Pitfall 3: size cap before any byte read
-
-  const buf = Buffer.from(await file.arrayBuffer());
-  const sniffed = sniffImageType(buf); // Pitfall 1: file.type/file.name are never consulted
-  if (!sniffed) return { error: "BAD_TYPE" };
-
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  const filename = `${randomUUID()}.${sniffed.ext}`; // CONTEXT: uuid 파일명, 클라 경로 미신뢰
-  await writeFile(path.join(UPLOAD_DIR, filename), buf);
-
-  // WR-02 (05-REVIEW, accepted risk — do NOT fix without a TRD/PRD update): this URL is served
-  // by Next.js's default static file serving with NO server-side authz check. requireRole gates
-  // the POST (write) above, but the GET of `/uploads/<uuid>.ext` is wide open — anyone who has
-  // (or guesses) the UUID can fetch the image regardless of workspace membership, even after
-  // the owning document is deleted. TRD scopes storage as "dev local disk to start", and the
-  // UUID filename is unguessable, so this is treated as an acceptable trade-off for now rather
-  // than a bug to patch here.
-  // Upgrade path when this needs closing: move serving behind an
-  // `/api/uploads/[filename]` route that resolves the file's owning document/workspace and
-  // calls `requireRole(workspaceId, "VIEWER")` before streaming it — or, when moving off local
-  // disk (S3/object storage), serve via short-lived presigned/signed GET URLs instead of a
-  // permanent public path.
-  return { url: `/uploads/${filename}` }; // public/uploads/ → Next.js 기본 정적 서빙
 }
