@@ -1135,3 +1135,7 @@ Continue the conversation from where it left off without asking the user any fur
 /clear
 
 
+### 178. 2026-08-25
+
+이제 가비아에 있는 내 도메인을 버셀에 연결할 예정이야 @docs/connect.md 에서 기술한 방식과 같이 어떻게 진행해야 하는지 단계별로 정리해줘
+
