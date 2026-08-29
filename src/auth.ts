@@ -1,8 +1,14 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { user } from "@/db/schema";
+import {
+  displayNameFromProfile,
+  findOrCreateOAuthUser,
+  isVerifiedGoogleProfile,
+} from "@/lib/account";
 import { verifyPassword } from "@/lib/password";
 import { checkLoginRateLimit, recordLoginFailure, undoLoginFailure } from "@/lib/rate-limit";
 import { normalizeEmail } from "@/lib/validation";
@@ -50,9 +56,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return { id: found.id, email: found.email, name: found.name };
       },
     }),
+    // FR-A2. clientId/clientSecret을 안 넘기는 건 실수가 아니다 — Auth.js v5가 AUTH_GOOGLE_ID /
+    // AUTH_GOOGLE_SECRET 을 규칙으로 자동 주입한다(docs/oauth-google.md §요약). 어댑터는 쓰지
+    // 않는다: 세션이 이미 JWT 고정(D-07)이라 account/session 테이블이 할 일이 없고, 회원 행은
+    // 아래 jwt 콜백이 우리 user 테이블에 직접 만든다.
+    Google,
   ],
+  // 실패한 OAuth 로그인을 Auth.js 기본 에러 화면 대신 우리 로그인 페이지로 돌린다(?error=...).
+  // 겸사겸사 기본 /api/auth/signin 페이지도 노출되지 않는다.
+  pages: { signIn: "/login", error: "/login" },
   callbacks: {
-    async jwt({ token, user: authedUser }) {
+    // Google이 이메일 소유를 검증하지 않은 프로필은 여기서 끊는다. 통과시키면 남의 이메일을
+    // 주장하는 것만으로 아래 jwt 콜백의 자동 연결에 올라타 그 계정을 탈취할 수 있다.
+    async signIn({ account, profile }) {
+      if (account?.provider !== "google") return true; // credentials 경로는 authorize()가 이미 판정했다
+      return isVerifiedGoogleProfile(profile);
+    },
+    async jwt({ token, user: authedUser, account, profile }) {
+      // OAuth의 authedUser.id는 Google의 sub이지 우리 user.id가 아니다. 여기서 우리 uuid로
+      // 덮어쓰지 않으면 session.user.id가 sub이 되어 lib/rbac.ts의 권한 조회가 전부
+      // "멤버 아님"으로 조용히 빗나간다.
+      if (account?.provider === "google" && isVerifiedGoogleProfile(profile)) {
+        const email = normalizeEmail(profile.email);
+        const dbUser = await findOrCreateOAuthUser({
+          email,
+          name: displayNameFromProfile(profile.name, email),
+        });
+        token.id = dbUser.id;
+        token.name = dbUser.name;
+        return token;
+      }
       if (authedUser) {
         token.id = authedUser.id;
         // 리디자인(Avatar 이니셜 배지) — 헤더/멤버 목록이 표시 이름을 필요로 하게 되면서

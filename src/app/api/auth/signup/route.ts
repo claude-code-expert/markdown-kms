@@ -1,9 +1,8 @@
 // bcrypt is a native addon — cannot run on the Edge runtime (Pitfall 1).
 export const runtime = "nodejs";
 
-import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { user, workspace, workspaceMember } from "@/db/schema";
+import { createUserInDefaultWorkspace } from "@/lib/account";
 import { signupSchema } from "@/lib/validation";
 import { hashPassword } from "@/lib/password";
 
@@ -40,28 +39,11 @@ export async function POST(req: Request) {
 
   try {
     // AUTH-01 + AUTH-03 in one transaction — a partial failure must leave no orphaned user (Pitfall 3).
-    const created = await db.transaction(async (tx) => {
-      const [defaultWs] = await tx
-        .select({ id: workspace.id })
-        .from(workspace)
-        .where(eq(workspace.isDefault, true));
-      if (!defaultWs) {
-        throw new Error("default workspace not seeded");
-      }
-
-      const [newUser] = await tx
-        .insert(user)
-        .values({ email, name, passwordHash })
-        .returning({ id: user.id, email: user.email, name: user.name });
-
-      await tx.insert(workspaceMember).values({
-        workspaceId: defaultWs.id,
-        userId: newUser.id,
-        role: "EDITOR",
-      });
-
-      return newUser;
-    });
+    // 트랜잭션 본문은 lib/account.ts와 공유한다 — Google 로그인도 같은 "기본 워크스페이스 EDITOR
+    // 편입"을 거쳐야 하므로 규칙의 원천이 하나여야 한다.
+    const created = await db.transaction((tx) =>
+      createUserInDefaultWorkspace(tx, { email, name, passwordHash }),
+    );
 
     return Response.json(created);
   } catch (err) {
