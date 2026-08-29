@@ -261,6 +261,8 @@ curl -s -o /dev/null -w "%{http_code}\n" -I https://example.com/api/auth/csrf
 
 ## 알려진 미해결 이슈
 
-`/api/uploads`(이미지 업로드)는 `public/uploads`에 디스크 쓰기를 하므로 Vercel 프로덕션에서 500이 난다. 환경변수로는 해결되지 않는다.
+`/api/uploads`(툴바의 **이미지 삽입** 버튼)는 `public/uploads`에 디스크 쓰기를 하므로 Vercel 프로덕션에서 500이 난다. 환경변수로는 해결되지 않는다.
 
-고칠 때는 `src/lib/storage.ts`의 `saveUpload` 하나만 교체하면 된다 — TRD §8이 이 스왑을 전제로 설계돼 있다. 후보는 Vercel Blob.
+**우회 경로가 생겼다** — 툴바의 **클라우드에 이미지 업로드**(구름 아이콘) 버튼은 Cloudflare R2로 나가며 프로덕션에서 정상 동작한다. 설정은 `r2-storage.md`, 필요한 env는 `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` 4개다.
+
+기존 버튼까지 고치려면 `src/lib/storage.ts`의 `saveUpload` 본문을 `saveUploadToR2` 호출로 바꾸면 된다 — TRD §8이 이 스왑을 전제로 설계돼 있고 호출부는 건드릴 필요가 없다. 지금은 두 경로를 나란히 둔 상태다.

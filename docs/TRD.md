@@ -265,6 +265,21 @@ export interface EditorPlugin {
 
 이미지 저장소는 R2에서 로컬 디스크(`/uploads`)로 시작한다. S3 계열 전환은 저장 함수 하나 교체로 끝나도록 업로드 경로를 한 모듈에 가둔다.
 
+**현재 상태 — 두 경로가 병존한다.**
+
+| 경로 | 모듈 | 저장 위치 | 읽기 권한 검증 |
+|---|---|---|---|
+| `POST /api/uploads` | `src/lib/storage.ts` | 서버 로컬 디스크 | 없음 (WR-02 수용된 위험). Vercel에서는 쓰기 자체가 실패 |
+| `POST /api/uploads/r2` | `src/lib/storage-r2.ts` | Cloudflare R2 | `GET /api/uploads/r2/[...key]`가 `requireRole(wsId, "VIEWER")` |
+
+R2 오브젝트 키는 `w/<workspace_id>/<uuid>.<ext>`다. 워크스페이스 id를 키에 박아 두면 조회 라우트가 DB 없이 권한을 판정할 수 있고, 이것이 로컬 디스크 경로의 무인가 읽기(WR-02)를 닫는 지점이다.
+
+버킷은 비공개로 두고 앱이 대신 서빙한다. presigned GET을 쓰지 않는 이유는 마크다운 본문에 URL이 원문 그대로 저장되기 때문이다(NFR-5.2) — 만료되는 URL은 시간이 지난 문서를 깨뜨린다.
+
+매직바이트 스니핑(`sniffImageType`)과 5MB 상한(`MAX_UPLOAD_BYTES`)은 `storage.ts`가 원천이고 R2 쪽이 그것을 import해 쓴다. 어떤 바이트를 이미지로 인정하는지는 저장 위치와 무관한 규칙이라 두 벌로 갈라두지 않는다.
+
+절차는 `docs/r2-storage.md`.
+
 ## 9. 초대 토큰 (NFR-3.3)
 
 `token = base64url(invitation_id + "." + HMAC-SHA256(secret, invitation_id + expires_at))`
