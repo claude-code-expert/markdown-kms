@@ -37,7 +37,9 @@ test("uploads an image via the toolbar button and inserts the markdown at the ca
   await editor.click();
 
   await page.getByRole("button", { name: "이미지 삽입" }).click();
-  await page.locator('input[type="file"]').setInputFiles({
+  // R2 업로드 버튼이 두 번째 file input을 추가했으므로 셀렉터를 특정한다. exact:true가
+  // 필요한 이유는 getByLabel이 기본 부분일치라 "클라우드 이미지 파일 선택"까지 잡기 때문이다.
+  await page.getByLabel("이미지 파일 선택", { exact: true }).setInputFiles({
     name: "photo.png",
     mimeType: "image/png",
     buffer: PNG_BUFFER,
@@ -67,7 +69,10 @@ test("ignores a second file selection while an upload is already in flight (Pitf
   // localhost fetch to finish before the second fires) — this is what actually races
   // useImageUpload's uploadingRef guard instead of just proving two sequential uploads work.
   await page.evaluate((pngBytes) => {
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    // 로컬 디스크 업로드용 input. R2용 input이 나란히 있으므로 aria-label로 특정한다.
+    const input = document.querySelector(
+      'input[aria-label="이미지 파일 선택"]',
+    ) as HTMLInputElement;
     function fire(name: string) {
       const dt = new DataTransfer();
       dt.items.add(new File([new Uint8Array(pngBytes)], name, { type: "image/png" }));
@@ -82,4 +87,34 @@ test("ignores a second file selection while an upload is already in flight (Pitf
 
   const finalContent = await editor.textContent();
   expect(finalContent?.match(/!\[/g)?.length).toBe(1);
+});
+
+// R2 업로드 버튼. R2 자격증명은 CI·로컬에 없으므로 성공 경로는 여기서 볼 수 없다 — 대신
+// "버튼이 존재하고, 전용 input으로 배선돼 있고, 설정이 없을 때 사용자에게 원인을 알린다"는
+// 계약을 검증한다. 키 설계와 권한 파생은 tests/upload/storage-r2.test.ts가 다룬다.
+test("클라우드 업로드 버튼은 R2 미설정 시 원인을 알리고 본문을 되돌린다", async ({ page }) => {
+  const seed = `${Date.now()}-r2`;
+  const docTitle = `E2E R2 ${seed}`;
+
+  await signupAndOpenDefaultWorkspace(page, seed);
+  await createDocument(page, docTitle);
+
+  const editor = page.locator(".cm-content");
+  await editor.click();
+
+  await expect(page.getByRole("button", { name: "클라우드에 이미지 업로드" })).toBeVisible();
+
+  await page.getByLabel("클라우드 이미지 파일 선택").setInputFiles({
+    name: "cloud.png",
+    mimeType: "image/png",
+    buffer: PNG_BUFFER,
+  });
+
+  // 라우트가 503 + 한국어 사유를 주고, 훅이 그 문구를 그대로 배너에 띄운다.
+  await expect(page.getByText("클라우드 저장소가 설정되지 않았어요.")).toBeVisible({
+    timeout: 10_000,
+  });
+
+  // 실패했으면 플레이스홀더가 남아 문서를 더럽히면 안 된다.
+  await expect(editor).not.toContainText("업로드 중...");
 });

@@ -10,6 +10,8 @@
 // insert(3). `plugins` (index.ts) is already registered in that flat 13-item
 // order; GROUP_SIZES below carves it into the 4 flat groups rendered after the
 // heading dropdown, each separated by a 1px divider.
+import { Fragment } from "react";
+import { CloudUpload } from "lucide-react";
 import type { EditorView } from "@codemirror/view";
 import { LayoutModeToggle } from "../layout/LayoutModeToggle";
 import type { LayoutMode } from "../layout/EditorPreviewLayout";
@@ -23,6 +25,9 @@ interface ToolbarProps {
   // it opens EditorPreviewLayout's hidden file input instead. Optional so any other Toolbar
   // caller (if one ever exists) keeps working without this prop.
   onImageButtonClick?: () => void;
+  // R2 업로드 — 기존 이미지 버튼과 별개의 저장 경로다. 핸들러를 안 넘기면 버튼 자체가
+  // 렌더되지 않으므로, R2를 안 쓰는 화면에는 아무 흔적도 남지 않는다.
+  onCloudImageButtonClick?: () => void;
   // 보기 모드(분할/에디터만/미리보기만) 세그먼트 — 에디터+프리뷰를 합친 이 통합 툴바의
   // 우측 끝에 함께 둔다(기존엔 titleRow에 별도로 있었음). 둘 다 없으면 렌더하지 않는다.
   layoutMode?: LayoutMode;
@@ -30,6 +35,9 @@ interface ToolbarProps {
 }
 
 const GROUP_SIZES = [4, 3, 3, 3];
+
+// 기존 "이미지 삽입"과 구분되게 저장 위치를 라벨에 드러낸다. e2e가 이 문자열로 버튼을 잡는다.
+const CLOUD_UPLOAD_LABEL = "클라우드에 이미지 업로드";
 
 // 리디자인(README Assets — lucide 목록에서 서식 아이콘 대부분이 빠졌다) — 인라인/목록/블록
 // 그룹(10개)은 Mono 타이포그래픽 글리프로, 삽입 그룹(링크/이미지/표)만 lucide 아이콘으로
@@ -57,7 +65,13 @@ function buildGroups() {
   });
 }
 
-export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeChange }: ToolbarProps) {
+export function Toolbar({
+  getView,
+  onImageButtonClick,
+  onCloudImageButtonClick,
+  layoutMode,
+  onLayoutModeChange,
+}: ToolbarProps) {
   const groups = buildGroups();
 
   return (
@@ -70,7 +84,8 @@ export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeC
             const Icon = plugin.icon;
             const glyph = GLYPH[plugin.id];
             return (
-              <div key={plugin.id} className={styles.buttonWrap}>
+              <Fragment key={plugin.id}>
+              <div className={styles.buttonWrap}>
                 <button
                   type="button"
                   className={styles.button}
@@ -99,6 +114,27 @@ export function Toolbar({ getView, onImageButtonClick, layoutMode, onLayoutModeC
                 </button>
                 <span className={styles.tooltip}>{plugin.tooltip}</span>
               </div>
+              {/* 이미지 버튼 바로 오른쪽 — 같은 "삽입" 맥락이라 그룹을 새로 만들지 않고 옆에
+                  붙인다. 기존 버튼은 서버 로컬 디스크로, 이쪽은 R2로 나간다. 툴팁이
+                  .buttonWrap 기준으로 위치를 잡으므로 wrap을 따로 둔다. */}
+              {plugin.id === "image" && onCloudImageButtonClick && (
+                <div className={styles.buttonWrap}>
+                  <button
+                    type="button"
+                    className={styles.button}
+                    aria-label={CLOUD_UPLOAD_LABEL}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => {
+                      if (!getView()) return;
+                      onCloudImageButtonClick();
+                    }}
+                  >
+                    <CloudUpload size={15} />
+                  </button>
+                  <span className={styles.tooltip}>{CLOUD_UPLOAD_LABEL}</span>
+                </div>
+              )}
+              </Fragment>
             );
           })}
           {groupIndex < groups.length - 1 && <div className={styles.divider} />}

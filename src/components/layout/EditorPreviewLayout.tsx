@@ -71,6 +71,16 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
     const { inputRef, openFilePicker, handleFileChange, errorMessage, dismissError } =
       useImageUpload(getView);
 
+    // R2 업로드 — 같은 훅을 엔드포인트만 바꿔 한 번 더 인스턴스화한다. 플레이스홀더 삽입·치환,
+    // 중복 업로드 가드, 에러 문구 처리가 로컬 경로와 한 벌로 유지된다.
+    const {
+      inputRef: cloudInputRef,
+      openFilePicker: openCloudFilePicker,
+      handleFileChange: handleCloudFileChange,
+      errorMessage: cloudErrorMessage,
+      dismissError: dismissCloudError,
+    } = useImageUpload(getView, "/api/uploads/r2");
+
     function handleChange(next: string) {
       setContent(next);
       onChange?.(next);
@@ -159,6 +169,7 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
         <Toolbar
           getView={getView}
           onImageButtonClick={openFilePicker}
+          onCloudImageButtonClick={openCloudFilePicker}
           layoutMode={layoutMode}
           onLayoutModeChange={onLayoutModeChange}
         />
@@ -183,8 +194,21 @@ export const EditorPreviewLayout = forwardRef<EditorPreviewLayoutHandle, EditorP
                 style={{ display: "none" }}
                 aria-label="이미지 파일 선택"
               />
+              <input
+                ref={cloudInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/gif,image/webp"
+                onChange={handleCloudFileChange}
+                style={{ display: "none" }}
+                aria-label="클라우드 이미지 파일 선택"
+              />
               {isDraggingFile && <ImageDropzone />}
+              {/* 두 업로드 경로가 각자 에러 상태를 들고 있지만 배너는 하나만 띄운다 — 한 번에
+                  하나만 진행되고, 둘을 동시에 보여줄 자리도 없다. */}
               {errorMessage && <UploadErrorBanner message={errorMessage} onClose={dismissError} />}
+              {!errorMessage && cloudErrorMessage && (
+                <UploadErrorBanner message={cloudErrorMessage} onClose={dismissCloudError} />
+              )}
               {layoutMode === "split" && (
                 <div
                   className={styles.resizeHandle}
