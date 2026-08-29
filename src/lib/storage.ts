@@ -17,7 +17,9 @@ export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // CONTEXT: 최대 5MB
 const MAX_BYTES = MAX_UPLOAD_BYTES;
 
 // Magic-byte signatures, offset 0. [CITED: 웹서치 cross-check, PNG Wikipedia + file-signature 레퍼런스]
-function sniffImageType(buf: Buffer): { ext: string } | null {
+// storage-r2.ts가 그대로 가져다 쓴다 — 어떤 바이트를 이미지로 인정하는지는 저장 위치와
+//무관한 규칙이라 두 벌로 갈라두면 한쪽만 고쳐지는 사고가 난다.
+export function sniffImageType(buf: Buffer): { ext: string } | null {
   if (
     buf.length >= 8 &&
     buf[0] === 0x89 &&
