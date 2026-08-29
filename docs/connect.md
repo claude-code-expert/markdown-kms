@@ -16,11 +16,16 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 | `AUTH_SECRET` | 랜덤 32바이트 base64 | `openssl rand -base64 32` |
 | `AUTH_URL` | `https://<도메인>` | 배포 후 확정되는 프로덕션 도메인 |
 
-Google 로그인까지 켤 거면 `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` 2개가 더 필요하다. 이 문서 범위 밖이고 절차가 따로 있다 — `oauth-google.md` 참조. 없어도 이메일+비밀번호 로그인은 정상 동작한다.
+기능별로 필요한 env가 더 있다. 둘 다 절차가 따로 있고 이 문서 범위 밖이다.
+
+| 기능 | 추가 env | 문서 | 없으면 |
+|---|---|---|---|
+| Google 로그인 | `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` | `oauth-google.md` | 버튼만 동작 안 함 |
+| 가입 이메일 인증 | `RESEND_API_KEY` | `email-verification.md` | **아무도 가입을 못 끝냄** (코드가 서버 로그에만 남음) |
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
-그리고 env만으로는 앱이 돌지 않는다. 배포 후 **마이그레이션 + 시드**를 1회 실행해야 한다(3단계).
+그리고 env만으로는 앱이 돌지 않는다. 배포 후 **마이그레이션 + 시드**를 1회 실행해야 한다(3단계). 마이그레이션은 배포할 때마다 새로 추가됐는지 확인한다 — 예를 들어 `0009`(이메일 인증)를 빠뜨리면 가입이 전부 500이다.
 
 ---
 
