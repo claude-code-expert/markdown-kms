@@ -53,60 +53,95 @@ test("클라우드 업로드 버튼이 이미지 삽입 버튼 옆에 있다", a
   await expect(page.getByRole("button", { name: "클라우드에 이미지 업로드" })).toBeVisible();
 });
 
-// R2 자격증명은 CI·로컬에 없으므로 업로드 성공 경로는 여기서 볼 수 없다 — 대신 "파일이 전용
-// input으로 배선돼 있고, 실패하면 사용자에게 원인을 알리고 본문을 되돌린다"는 계약을 본다.
-// 라우트의 인가·크기 가드는 tests/upload/rbac.test.ts가, 키 설계는 storage-r2.test.ts가 다룬다.
-test("클라우드 업로드는 R2 미설정 시 원인을 알리고 본문을 되돌린다", async ({ page }) => {
-  const seed = `${Date.now()}-r2`;
+// R2 자격증명 유무에 따라 도달 가능한 결말이 갈린다. 하나의 테스트에 두 결말을 or로 묶으면
+// 어느 쪽도 제대로 검증하지 못하므로, 환경을 보고 각각의 계약을 따로 단언한다.
+// helpers.ts가 .env.local을 이미 로드하므로 여기서 그대로 읽힌다.
+const R2_CONFIGURED = Boolean(
+  process.env.R2_ACCOUNT_ID &&
+    process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_BUCKET,
+);
 
-  await signupAndOpenDefaultWorkspace(page, seed);
-  await createDocument(page, `E2E R2 ${seed}`);
-
-  const editor = page.locator(".cm-content");
-  await editor.click();
-
+async function pickFile(page: Page, name: string) {
   await page.getByLabel("이미지 업로드 파일 선택").setInputFiles({
-    name: "cloud.png",
+    name,
     mimeType: "image/png",
     buffer: PNG_BUFFER,
   });
+}
 
-  await expect(page.getByText("클라우드 저장소가 설정되지 않았어요.")).toBeVisible({
-    timeout: 10_000,
+test.describe("클라우드 업로드 — R2 설정됨", () => {
+  test.skip(!R2_CONFIGURED, "R2 환경변수 없음 (.env.local)");
+
+  test("파일을 올리고 본문의 플레이스홀더를 실제 URL로 바꾼다", async ({ page }) => {
+    const seed = `${Date.now()}-r2ok`;
+
+    await signupAndOpenDefaultWorkspace(page, seed);
+    await createDocument(page, `E2E R2 OK ${seed}`);
+
+    const editor = page.locator(".cm-content");
+    await editor.click();
+    await pickFile(page, "cloud.png");
+
+    // 워크스페이스 id가 키에 박힌 영구 경로 — 이게 조회 라우트의 권한 판정 근거다.
+    await expect(editor).toContainText("](/api/uploads/r2/w/", { timeout: 15_000 });
+    await expect(editor).toContainText("![cloud.png](/api/uploads/r2/w/");
+    await expect(editor).not.toContainText("업로드 중...");
   });
 
-  // 실패한 업로드가 플레이스홀더를 남겨 문서를 더럽히면 안 된다.
-  await expect(editor).not.toContainText("업로드 중...");
+  test("업로드 중에는 두 번째 파일 선택을 무시한다 (Pitfall 2 가드)", async ({ page }) => {
+    const seed = `${Date.now()}-concurrent`;
+
+    await signupAndOpenDefaultWorkspace(page, seed);
+    await createDocument(page, `E2E Upload Concurrent ${seed}`);
+
+    const editor = page.locator(".cm-content");
+    await editor.click();
+
+    // 두 change 이벤트를 같은 틱에 동기로 쏜다 — Playwright 액션 두 번은 왕복 지연이 있어
+    // 첫 업로드가 끝난 뒤 두 번째가 발사되므로 uploadingRef 가드를 실제로 경합시키지 못한다.
+    await page.evaluate((pngBytes) => {
+      const input = document.querySelector(
+        'input[aria-label="이미지 업로드 파일 선택"]',
+      ) as HTMLInputElement;
+      function fire(name: string) {
+        const dt = new DataTransfer();
+        dt.items.add(new File([new Uint8Array(pngBytes)], name, { type: "image/png" }));
+        input.files = dt.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      fire("first.png");
+      fire("second.png");
+    }, Array.from(PNG_BUFFER));
+
+    await expect(editor).toContainText("](/api/uploads/r2/w/", { timeout: 15_000 });
+    await expect(editor).not.toContainText("업로드 중...");
+
+    // 두 번째가 무시됐다면 이미지 마크다운은 하나뿐이다.
+    const finalContent = await editor.textContent();
+    expect(finalContent?.match(/!\[/g)?.length).toBe(1);
+  });
 });
 
-test("업로드 중에는 두 번째 파일 선택을 무시한다 (Pitfall 2 가드)", async ({ page }) => {
-  const seed = `${Date.now()}-concurrent`;
+test.describe("클라우드 업로드 — R2 미설정", () => {
+  test.skip(R2_CONFIGURED, "R2가 설정된 환경");
 
-  await signupAndOpenDefaultWorkspace(page, seed);
-  await createDocument(page, `E2E Upload Concurrent ${seed}`);
+  test("원인을 알리고 본문을 되돌린다", async ({ page }) => {
+    const seed = `${Date.now()}-r2off`;
 
-  const editor = page.locator(".cm-content");
-  await editor.click();
+    await signupAndOpenDefaultWorkspace(page, seed);
+    await createDocument(page, `E2E R2 OFF ${seed}`);
 
-  // 두 change 이벤트를 같은 틱에 동기로 쏜다 — Playwright 액션 두 번은 왕복 지연이 있어
-  // 첫 업로드가 끝난 뒤 두 번째가 발사되므로 uploadingRef 가드를 실제로 경합시키지 못한다.
-  await page.evaluate((pngBytes) => {
-    const input = document.querySelector(
-      'input[aria-label="이미지 업로드 파일 선택"]',
-    ) as HTMLInputElement;
-    function fire(name: string) {
-      const dt = new DataTransfer();
-      dt.items.add(new File([new Uint8Array(pngBytes)], name, { type: "image/png" }));
-      input.files = dt.files;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    fire("first.png");
-    fire("second.png");
-  }, Array.from(PNG_BUFFER));
+    const editor = page.locator(".cm-content");
+    await editor.click();
+    await pickFile(page, "cloud.png");
 
-  // 두 번째가 무시됐다면 플레이스홀더도 배너도 하나뿐이다.
-  await expect(page.getByText("클라우드 저장소가 설정되지 않았어요.")).toBeVisible({
-    timeout: 10_000,
+    await expect(page.getByText("클라우드 저장소가 설정되지 않았어요.")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // 실패한 업로드가 플레이스홀더를 남겨 문서를 더럽히면 안 된다.
+    await expect(editor).not.toContainText("업로드 중...");
   });
-  await expect(editor).not.toContainText("업로드 중...");
 });
