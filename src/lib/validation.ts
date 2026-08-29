@@ -23,6 +23,21 @@ export const signupSchema = z.object({
 
 export type SignupInput = z.infer<typeof signupSchema>;
 
+// TRD §9.1. 이메일은 signupSchema와 같은 정규화(trim→lowercase)를 거쳐야 저장된 값과 매칭된다.
+// 코드는 자릿수까지 서버에서 막는다 — 형식이 틀린 입력에 DB·HMAC 비용을 쓰지 않는다.
+export const verifyEmailSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email("올바른 이메일 형식이 아닙니다.")),
+  code: z.string().trim().regex(/^\d{6}$/, "인증 코드는 6자리 숫자입니다."),
+});
+
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
+
+export const resendCodeSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email("올바른 이메일 형식이 아닙니다.")),
+});
+
+export type ResendCodeInput = z.infer<typeof resendCodeSchema>;
+
 // O2: no cap in REQUIREMENT/PRD/TRD — UI-SPEC delegates to planner. 100 chars, enforced
 // identically client+server via this shared schema. DB column stays `text` (no TRD §3 change).
 export const workspaceSchema = z.object({

@@ -17,6 +17,28 @@ async function deleteUserByEmail(email: string) {
   await db.delete(user).where(eq(user.id, existing.id));
 }
 
+/**
+ * 비밀번호로 가입시킨다. 기본은 인증까지 끝낸 상태 — 코드는 랜덤이라 알 수 없으므로 DB를
+ * 직접 뒤집는다(이 파일의 관심사는 OAuth 연결이지 코드 검증이 아니다. 검증 흐름 자체는
+ * email-verification.test.ts가 실제 라우트로 커버한다).
+ */
+async function signUpVerified(email: string, opts: { verify?: boolean } = {}) {
+  const res = await signupPOST(
+    new Request("http://localhost/api/auth/signup", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email, password: "password123", name: "비밀번호 가입자" }),
+    }),
+  );
+  if (res.status !== 200) throw new Error(`signup failed: ${res.status}`);
+  const created = await res.json();
+
+  if (opts.verify !== false) {
+    await db.update(user).set({ emailVerified: true }).where(eq(user.id, created.id));
+  }
+  return created as { id: string; email: string; name: string };
+}
+
 describe("findOrCreateOAuthUser", () => {
   const createdEmails: string[] = [];
 
@@ -71,18 +93,9 @@ describe("findOrCreateOAuthUser", () => {
     expect(memberships).toHaveLength(1);
   });
 
-  it("links to an existing password account by email without touching its passwordHash", async () => {
+  it("links to an existing verified password account without touching its passwordHash", async () => {
     const email = trackEmail("oauth-link");
-
-    const signupRes = await signupPOST(
-      new Request("http://localhost/api/auth/signup", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, password: "password123", name: "비밀번호 가입자" }),
-      }),
-    );
-    expect(signupRes.status).toBe(200);
-    const passwordUser = await signupRes.json();
+    const passwordUser = await signUpVerified(email);
 
     const linked = await findOrCreateOAuthUser({ email, name: "구글 프로필 이름" });
 
@@ -90,12 +103,31 @@ describe("findOrCreateOAuthUser", () => {
     expect(linked.id).toBe(passwordUser.id);
 
     const [row] = await db.select().from(user).where(eq(user.email, email));
-    // 자동 연결이 기존 계정을 훼손하지 않는다: 비밀번호 로그인도 계속 살아있어야 한다.
+    // 이메일 소유가 이미 증명된 계정이라 비밀번호 로그인도 계속 살아있어야 한다.
     expect(row.passwordHash).toBeTruthy();
     expect(row.name).toBe("비밀번호 가입자");
 
     const users = await db.select().from(user).where(eq(user.email, email));
     expect(users).toHaveLength(1);
+  });
+
+  // 계정 선점 차단의 핵심 케이스. 공격자가 피해자 주소로 먼저 가입해도 그 비밀번호는 아무도
+  // 소유를 증명하지 않은 값이라, Google이 진짜 소유자를 데려오면 폐기해야 한다.
+  it("takes over an unverified password account and wipes its passwordHash", async () => {
+    const email = trackEmail("oauth-preempt");
+    const pending = await signUpVerified(email, { verify: false });
+
+    const [before] = await db.select().from(user).where(eq(user.email, email));
+    expect(before.emailVerified).toBe(false);
+    expect(before.passwordHash).toBeTruthy();
+
+    const linked = await findOrCreateOAuthUser({ email, name: "진짜 소유자" });
+    expect(linked.id).toBe(pending.id);
+
+    const [row] = await db.select().from(user).where(eq(user.email, email));
+    expect(row.emailVerified).toBe(true);
+    // 비워지지 않으면 공격자가 아는 비밀번호로 그대로 로그인할 수 있다.
+    expect(row.passwordHash).toBeNull();
   });
 });
 
