@@ -1221,3 +1221,92 @@ MIGRATE_DATABASE_URL 을 환경 변수에 추가하라는거야? PR 머지 후�
 
 클라우드 플레어의 R2 오브젝트 스토리지를 연결해야 하고, 초기 셋업부터 이미지 업로드 까지 단계별 설정 및 연동 작업을 진행해줘
 
+### 190. 2026-08-29
+
+기존 이미지 삽입 버튼은 이미지 링크 첨부 태그인데 업로드 기능은 없어야 맞는 기능이야. 수정해주고, 이미지 업로드를 위한 연동 방식을 단계별로 알려줘
+
+### 191. 2026-08-29
+
+https://56c0966e818733be365abd1b1b1f0af5.r2.cloudflarestorage.com
+
+accountId 56c0966e818733be365abd1b1b1f0af5
+
+### 192. 2026-08-29
+
+Token value
+cfat_<REDACTED-CLOUDFLARE-API-TOKEN>
+
+
+Access Key ID
+<REDACTED-R2-ACCESS-KEY-ID>
+
+Secret Access Key
+<REDACTED-R2-SECRET-ACCESS-KEY>
+
+
+https://56c0966e818733be365abd1b1b1f0af5.r2.cloudflarestorage.com
+
+accountId 56c0966e818733be365abd1b1b1f0af5 이 값들을 통해 연동 작업 진행해
+
+### 193. 2026-08-29
+
+Token value
+cfat_<REDACTED-CLOUDFLARE-API-TOKEN>
+
+
+Access Key ID
+<REDACTED-R2-ACCESS-KEY-ID>
+
+Secret Access Key
+<REDACTED-R2-SECRET-ACCESS-KEY>
+
+
+https://56c0966e818733be365abd1b1b1f0af5.r2.cloudflarestorage.com
+
+accountId 56c0966e818733be365abd1b1b1f0af5
+이 값을 통해 연동작업 시작해  markdown-kms-image 가 버킷 명이야
+
+### 194. 2026-08-29
+
+값 다 넣었어. 남은 작업 짆애해
+
+### 195. 2026-08-29
+
+값 다 넣었어. 남은 작업 진행해
+
+### 196. 2026-08-29
+
+api key 재생성해서 넣어줬어. 이미 노출된 값은 처리하지 말고 새로 입력한 env.local 을 기준으로 테스트 진행해야해
+
+### 197. 2026-08-29
+
+저장 했어 다시 작업해
+
+### 198. 2026-08-29
+
+## Error Type
+Console Error
+
+## Error Message
+An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string.
+
+
+    at img (<anonymous>:null:null)
+    at renderMarkdown (src/lib/markdown/pipeline.ts:121:39)
+    at PreviewPane (src/components/preview/PreviewPane.tsx:26:24)
+    at EditorPreviewLayout (src/components/layout/EditorPreviewLayout.tsx:201:15)
+    at DocumentWorkspace (src/components/document/DocumentWorkspace.tsx:222:9)
+    at DocumentPage (src/app/(main)/w/[wsId]/d/[docId]/page.tsx:64:5)
+
+## Code Frame
+  119 |
+  120 | export function renderMarkdown(markdown: string): ReactElement {
+> 121 |   const file = markdownProcessorReact.processSync(markdown);
+      |                                       ^
+  122 |   return file.result;
+  123 | }
+  124 |
+
+Next.js version: 15.5.22 (Webpack)
+에러가 나는데 원인 파악을 해서 패치 진행해줘
+
