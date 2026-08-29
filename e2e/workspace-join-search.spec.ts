@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // WS-03 개정 — 워크스페이스 ID 직접 입력 대신 이름 검색 → 결과 목록에서 신청하는 플로우.
 // folder-tree.spec.ts의 signupAndOpenWorkspace 패턴 재사용, label로 계정을 구분한다.
@@ -6,12 +7,7 @@ async function signupAndOpenWorkspace(page: Page, seed: string, label: string) {
   const email = `e2e-join-${label}-${seed}@example.com`;
   const workspaceName = `E2E Join WS ${label} ${seed}`;
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill(`E2E Join ${label}`);
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   await page.getByRole("button", { name: "워크스페이스 만들기" }).click();
   await page.getByLabel("이름").fill(workspaceName);
@@ -30,12 +26,7 @@ test("searches a workspace by name and submits a join request from the dashboard
   const targetName = await signupAndOpenWorkspace(ownerPage, seed, "owner");
   await ownerContext.close();
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Join Applicant");
-  await page.getByLabel("이메일").fill(`e2e-join-applicant-${seed}@example.com`);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, `e2e-join-applicant-${seed}@example.com`);
 
   await page.getByRole("textbox", { name: "워크스페이스 검색" }).fill(targetName);
   const row = page.locator("li").filter({ hasText: targetName });

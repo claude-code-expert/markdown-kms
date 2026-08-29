@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // 04-05 Task 3 e2e coverage split (see 04-05-PLAN.md action note): a fresh signup joins the
 // seeded default workspace ("기본 워크스페이스") as EDITOR (signup/route.ts), not OWNER/ADMIN —
@@ -12,12 +13,7 @@ import { expect, test, type Page } from "@playwright/test";
 async function signupAndOpenDefaultWorkspace(page: Page, seed: string) {
   const email = `e2e-trash-${seed}@example.com`;
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Trash");
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   await page.getByRole("link", { name: "기본 워크스페이스" }).click();
   await expect(page).toHaveURL(/\/w\/[^/]+$/);

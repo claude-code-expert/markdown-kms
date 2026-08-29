@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // Phase 9 마감 플랜(09-04): 랜딩(로그인/회원가입)·워크스페이스 메인·에디터 3개 화면이 모두
 // 리스킨된 뒤, 로그인부터 문서 CRUD까지 전체 사용자 여정을 새 UI에서 단일 e2e로 회귀
@@ -15,12 +16,7 @@ async function signupAndCreateWorkspace(page: Page, seed: string) {
   const workspaceName = `E2E 디자인 플로우 WS ${seed}`;
 
   // AUTH-01: 가입 즉시 로그인 (랜딩 리스킨 후 회귀 확인 — 09-01)
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Design Flow");
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   // WS-02: 워크스페이스 생성(생성자=OWNER) — 워크스페이스 메인 리스킨 후 회귀 확인 (09-02)
   await page.getByRole("button", { name: "워크스페이스 만들기" }).click();

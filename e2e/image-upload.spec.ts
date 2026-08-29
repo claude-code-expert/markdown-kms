@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signUpAndLogin } from "./helpers";
 
 // 05-01 TRACER e2e: the phase's single end-to-end proof for image upload — toolbar image
 // button -> hidden file input -> placeholder insert -> server-validated POST /api/uploads ->
@@ -8,12 +9,7 @@ import { expect, test, type Page } from "@playwright/test";
 async function signupAndOpenDefaultWorkspace(page: Page, seed: string) {
   const email = `e2e-upload-${seed}@example.com`;
 
-  await page.goto("/signup");
-  await page.getByLabel("이름").fill("E2E Upload");
-  await page.getByLabel("이메일").fill(email);
-  await page.getByLabel("비밀번호").fill("password123");
-  await page.getByRole("button", { name: "가입하기" }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await signUpAndLogin(page, email);
 
   await page.getByRole("link", { name: "기본 워크스페이스" }).click();
   await expect(page).toHaveURL(/\/w\/[^/]+$/);
