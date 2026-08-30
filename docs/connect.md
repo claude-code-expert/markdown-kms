@@ -231,6 +231,14 @@ https://example.com
 
 끝 슬래시 없이, primary로 정한 쪽 하나만. 그리고 **재배포**한다. 안 바꾸면 2단계 ③에 적은 것과 똑같은 증상이 난다 — 로그인은 되는데 로그아웃이 `*.vercel.app`으로 튀고, 초대 링크도 옛 도메인으로 발송된다.
 
+**apex와 `www` 중 어느 쪽이 primary인지 반드시 확인하고 그 값을 넣는다.** 한쪽은 다른 쪽으로 308 리다이렉트되는데, 리다이렉트되는 쪽을 `AUTH_URL`에 넣으면 모든 링크가 한 번씩 더 튀고 검색엔진에는 "리다이렉트가 있는 페이지"로 잡힌다(`search-console.md`). 확인 방법:
+
+```bash
+curl -s -o /dev/null -w "%{http_code} → %{redirect_url}\n" https://mingleup.net/
+```
+
+`308`과 함께 다른 주소가 나오면 **그 나온 주소가 primary**다.
+
 ### ⑤ 확인
 
 ```bash

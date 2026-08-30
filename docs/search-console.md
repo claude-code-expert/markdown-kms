@@ -12,8 +12,11 @@
 |---|---|
 | 속성 유형 | **도메인 속성** (`mingleup.net`) |
 | 소유권 확인 | **DNS TXT 레코드** — 가비아 DNS에 추가 |
-| 사이트맵 | `https://mingleup.net/sitemap.xml` (자동 생성) |
+| 대표(canonical) 주소 | **`https://www.mingleup.net`** — apex는 여기로 308 리다이렉트된다 |
+| 사이트맵 | `https://www.mingleup.net/sitemap.xml` (자동 생성) |
 | 추가 환경변수 | 없음 (DNS 방식은 코드 변경 불필요) |
+
+> **선행 조건** — `AUTH_URL`이 **대표 주소와 정확히 같아야** 한다. canonical·OpenGraph·사이트맵 URL이 전부 그 값에서 나오기 때문이다(`src/lib/site.ts`). 값이 apex인데 실제 대표가 `www`면 구글이 색인하려는 모든 URL이 리다이렉트를 한 번 거치고, Search Console에 "리다이렉트가 있는 페이지"로 잡힌다. 로그아웃·초대 링크도 같은 값을 쓰므로(`connect.md` §5 ④) 함께 어긋난다.
 
 **색인 대상은 공개 페이지 3개뿐이다** — 랜딩(`/`), 가입(`/signup`), 로그인(`/login`). 문서·워크스페이스는 로그인 뒤에 있고 멤버에게만 보이므로 사이트맵에 올리지 않고 `robots.txt`로 크롤링도 막는다.
 
@@ -92,9 +95,11 @@ sitemap.xml
 사이트맵은 코드가 자동 생성한다(`src/app/sitemap.ts`). 배포할 때마다 `lastmod`가 갱신되므로 따로 관리할 파일이 없다.
 
 ```bash
-curl -s https://mingleup.net/sitemap.xml
-curl -s https://mingleup.net/robots.txt
+curl -s https://www.mingleup.net/sitemap.xml
+curl -s https://www.mingleup.net/robots.txt
 ```
+
+`content-type`이 `application/xml`·`text/plain`이 아니라 `text/html`로 나오면 **아직 배포가 안 된 것**이다 — Next가 404 페이지를 HTML로 내주고 있다는 뜻이다.
 
 ---
 
@@ -102,7 +107,9 @@ curl -s https://mingleup.net/robots.txt
 
 사이트맵을 냈다고 바로 색인되지 않는다. 랜딩 페이지만 수동으로 밀어준다.
 
-**위치**: 상단 검색창(URL 검사)에 `https://mingleup.net/` 입력 → **색인 생성 요청**
+**위치**: 상단 검색창(URL 검사)에 `https://www.mingleup.net/` 입력 → **색인 생성 요청**
+
+리다이렉트되는 apex(`https://mingleup.net/`)가 아니라 **대표 주소**를 넣는다. apex를 넣으면 "리다이렉트가 있는 페이지"로만 보고되고 색인은 되지 않는다.
 
 신규 도메인은 첫 색인까지 **며칠에서 2주** 걸린다. 요청을 반복해도 빨라지지 않는다.
 
@@ -163,7 +170,9 @@ GOOGLE_SITE_VERIFICATION=여기만_복사
 3. **기존 TXT를 덮어쓴다.** SPF와 별개 레코드로 추가한다. 덮으면 메일 발송 인증이 깨진다 (2단계 함정 ③).
 4. **DNS 전파를 안 기다린다.** `dig +short TXT mingleup.net`으로 값이 실제로 보이는지 먼저 확인한다.
 5. **사이트맵 제출 = 색인이라고 생각한다.** 발견을 앞당길 뿐이고, 신규 도메인은 며칠~2주 걸린다.
-6. **`AUTH_URL`이 실제 도메인과 다르다.** canonical·OG·사이트맵 URL이 전부 그 값에서 나오므로, 틀리면 구글이 엉뚱한 주소를 색인한다. `connect.md` 5단계 ④와 같은 항목이다.
+6. **`AUTH_URL`이 대표 주소와 다르다.** canonical·OG·사이트맵 URL이 전부 그 값에서 나온다. `www`가 대표인데 apex로 잡아두면 색인 대상 URL이 전부 308을 거치고 Search Console에 "리다이렉트가 있는 페이지"로 잡힌다. 실제로 이 프로젝트에서 그랬다 — `connect.md` 5단계 ④와 같은 항목이다.
+7. **코드 배포 전에 사이트맵을 제출한다.** `robots.txt`·`sitemap.xml`은 앱이 생성하므로 배포되기 전에는 404다. `content-type`이 `text/html`이면 아직 안 올라간 것이다 (3단계).
+8. **URL 검사에 apex를 넣는다.** 대표 주소(`www`)를 넣어야 색인된다 (4단계).
 
 ---
 
