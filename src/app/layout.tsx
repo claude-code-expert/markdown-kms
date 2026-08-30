@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans_KR } from "next/font/google";
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
 import Script from "next/script";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // 리디자인(docs/claude_design): DM Sans/Mono 자체호스팅 → IBM Plex Sans KR/Mono로 교체.
@@ -23,8 +24,49 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "markdown-kms",
-  description: "워크스페이스 기반 마크다운 문서 관리",
+  // metadataBase가 없으면 openGraph/canonical의 상대 경로가 절대 URL로 확장되지 않는다
+  // (Next가 빌드 경고를 낸다). SITE_URL은 AUTH_URL에서 나오므로 초대 메일 링크와 같은 origin이다.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    // 하위 페이지가 title을 주면 "가입하기 · markdown-kms" 형태가 된다.
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  // 랜딩이 유일한 색인 대상이라 canonical을 루트로 고정한다. 하위 공개 페이지가 늘면
+  // 각 page.tsx가 alternates.canonical을 덮어쓴다.
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      // 검색결과 스니펫·미리보기 제한을 두지 않는다(기본값이 보수적일 때가 있다).
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  // Search Console을 **URL 접두어 속성 + HTML 태그**로 확인할 때만 필요하다. env가 없으면
+  // 태그 자체가 나가지 않는다 — 도메인 속성(DNS TXT)으로 확인했다면 설정할 필요 없다.
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export default async function RootLayout({

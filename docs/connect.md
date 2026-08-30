@@ -23,6 +23,7 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 | Google 로그인 | `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` | `oauth-google.md` | 버튼만 동작 안 함 |
 | 가입 이메일 인증 | `RESEND_API_KEY` | `email-verification.md` | **아무도 가입을 못 끝냄** (코드가 서버 로그에만 남음) |
 | 이미지 업로드 | `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` | `r2-storage.md` | 업로드가 503 |
+| 검색엔진 등록 | (DNS 방식이면 없음) `GOOGLE_SITE_VERIFICATION` | `search-console.md` | 구글 검색에 안 잡힘 |
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
@@ -229,6 +230,14 @@ https://example.com
 ```
 
 끝 슬래시 없이, primary로 정한 쪽 하나만. 그리고 **재배포**한다. 안 바꾸면 2단계 ③에 적은 것과 똑같은 증상이 난다 — 로그인은 되는데 로그아웃이 `*.vercel.app`으로 튀고, 초대 링크도 옛 도메인으로 발송된다.
+
+**apex와 `www` 중 어느 쪽이 primary인지 반드시 확인하고 그 값을 넣는다.** 한쪽은 다른 쪽으로 308 리다이렉트되는데, 리다이렉트되는 쪽을 `AUTH_URL`에 넣으면 모든 링크가 한 번씩 더 튀고 검색엔진에는 "리다이렉트가 있는 페이지"로 잡힌다(`search-console.md`). 확인 방법:
+
+```bash
+curl -s -o /dev/null -w "%{http_code} → %{redirect_url}\n" https://mingleup.net/
+```
+
+`308`과 함께 다른 주소가 나오면 **그 나온 주소가 primary**다.
 
 ### ⑤ 확인
 
