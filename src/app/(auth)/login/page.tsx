@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { LoginForm } from "./login-form";
@@ -11,6 +12,14 @@ const OAUTH_ERRORS: Record<string, string> = {
   AccessDenied: "Google 로그인이 취소되었거나 허용되지 않은 계정입니다.",
 };
 const OAUTH_FALLBACK_ERROR = "Google 로그인에 실패했어요. 잠시 후 다시 시도해 주세요.";
+
+// 사이트맵에 올린 공개 페이지라 개별 title/description을 준다. 루트 layout의
+// template가 "%s · markdown-kms" 로 감싼다. canonical은 자기 경로로 덮어쓴다.
+export const metadata: Metadata = {
+  title: "로그인",
+  description: "이미 만든 워크스페이스로 돌아가세요.",
+  alternates: { canonical: "/login" },
+};
 
 // E1 — UI-SPEC Visual Hierarchy: centered auth card, reading order title → email → password →
 // CTA → signup link.
