@@ -2,7 +2,7 @@
 
 `mingleup.net`을 Google 검색에 노출시키는 절차. 코드 쪽(robots.txt·sitemap.xml·메타태그)은 이미 들어가 있으므로, 이 문서는 **콘솔에서 사람이 해야 하는 일**을 순서대로 다룬다.
 
-관련 문서: 배포·도메인은 `connect.md`, 환경변수 전반도 같은 문서.
+관련 문서: 배포·도메인은 `connect.md`, 네이버 등록은 `naver-search-advisor.md`.
 
 ---
 

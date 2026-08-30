@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans_KR } from "next/font/google";
 import { cookies } from "next/headers"; // [CITED: nextjs.org/docs/app/api-reference/functions/cookies]
 import Script from "next/script";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { buildVerification, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // 리디자인(docs/claude_design): DM Sans/Mono 자체호스팅 → IBM Plex Sans KR/Mono로 교체.
@@ -62,11 +62,8 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-  // Search Console을 **URL 접두어 속성 + HTML 태그**로 확인할 때만 필요하다. env가 없으면
-  // 태그 자체가 나가지 않는다 — 도메인 속성(DNS TXT)으로 확인했다면 설정할 필요 없다.
-  verification: process.env.GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
-    : undefined,
+  // 검색엔진 소유확인 태그. env가 있는 것만 나간다(근거는 lib/site.ts).
+  verification: buildVerification(),
 };
 
 export default async function RootLayout({

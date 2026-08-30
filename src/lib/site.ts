@@ -25,3 +25,31 @@ export const SITE_DESCRIPTION =
  * - `/api/` 는 애초에 사람이 볼 페이지가 아니다.
  */
 export const DISALLOWED_PATHS = ["/api/", "/dashboard", "/w/", "/invitations/"];
+
+/** Next의 Metadata["verification"]과 같은 모양. layout.tsx를 import하지 않고 테스트하려고
+ *  타입을 여기서 좁게 다시 쓴다(layout은 next/font를 끌고 와 유닛 테스트에서 못 연다). */
+export interface SiteVerification {
+  google?: string;
+  other?: Record<string, string>;
+}
+
+/**
+ * 설정된 소유확인 태그만 담아 반환한다. 하나도 없으면 undefined — 빈 객체를 넘기면 Next가
+ * 값 없는 메타태그를 찍을 수 있어 명시적으로 걸러낸다.
+ *
+ * - Google: 도메인 속성(DNS TXT)으로 확인했다면 불필요. URL 접두어 속성 + HTML 태그를 쓸
+ *   때만 설정한다(docs/search-console.md).
+ * - Naver: 서치어드바이저에는 DNS 확인 방식이 없어 **HTML 태그가 사실상 유일한 수단**이다
+ *   (docs/naver-search-advisor.md). Next의 verification에 naver 전용 키가 없어 `other`로
+ *   임의 메타명을 넣는다 — 결과는 동일한 <meta name="naver-site-verification">.
+ */
+export function buildVerification(): SiteVerification | undefined {
+  const google = process.env.GOOGLE_SITE_VERIFICATION;
+  const naver = process.env.NAVER_SITE_VERIFICATION;
+  if (!google && !naver) return undefined;
+
+  return {
+    ...(google ? { google } : {}),
+    ...(naver ? { other: { "naver-site-verification": naver } } : {}),
+  };
+}

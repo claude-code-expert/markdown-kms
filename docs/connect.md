@@ -23,7 +23,8 @@ Vercel에 넣어야 할 환경변수는 **3개**다.
 | Google 로그인 | `AUTH_GOOGLE_ID`·`AUTH_GOOGLE_SECRET` | `oauth-google.md` | 버튼만 동작 안 함 |
 | 가입 이메일 인증 | `RESEND_API_KEY` | `email-verification.md` | **아무도 가입을 못 끝냄** (코드가 서버 로그에만 남음) |
 | 이미지 업로드 | `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`·`R2_BUCKET` | `r2-storage.md` | 업로드가 503 |
-| 검색엔진 등록 | (DNS 방식이면 없음) `GOOGLE_SITE_VERIFICATION` | `search-console.md` | 구글 검색에 안 잡힘 |
+| 구글 검색 등록 | (DNS 방식이면 없음) `GOOGLE_SITE_VERIFICATION` | `search-console.md` | 구글 검색에 안 잡힘 |
+| 네이버 검색 등록 | `NAVER_SITE_VERIFICATION` | `naver-search-advisor.md` | 소유확인 자체가 불가 |
 
 넣지 않아도 되는 것: `DATABASE_URL_TEST`(vitest 로컬 전용), `NODE_ENV`(Vercel이 자동 설정).
 
