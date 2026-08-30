@@ -1310,3 +1310,7 @@ An empty string ("") was passed to the src attribute. This may cause the browser
 Next.js version: 15.5.22 (Webpack)
 에러가 나는데 원인 파악을 해서 패치 진행해줘
 
+### 199. 2026-08-29
+
+소스 커밋하고 메인 브랜치에 PR 만들어줘
+
