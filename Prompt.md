@@ -1138,3 +1138,12 @@ Continue the conversation from where it left off without asking the user any fur
 
 현재 커밋한거 메인에 PR 만들어줘
 
+### 200. 2026-08-30
+
+https://imweb.me/faq?mode=view&category=29&category2=35&idx=71197 
+구글 서치 콘솔에 우리 웹 사이트를 등록할거야. 이 주소를 분석하고 우리 사이트를 구글에 등록하기 위한 절차를 단계별로 설명하고, 검색 엔진 등록 작업을 위한 코드들을 작성해줘
+
+### 201. 2026-08-30
+
+가비아 dns txt 설정까지 완료 했어. 그 뒤에 해야 할 작업 알려줘
+
